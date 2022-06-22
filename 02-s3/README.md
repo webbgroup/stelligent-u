@@ -545,6 +545,8 @@ using a single bucket policy.
 
 When you're done, verify your access again.
 
+
+
 ### Retrospective 2.2
 
 See [this AWS security blog post](https://aws.amazon.com/blogs/security/iam-policies-and-bucket-policies-and-acls-oh-my-controlling-access-to-s3-resources/)
