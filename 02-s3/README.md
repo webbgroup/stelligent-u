@@ -328,11 +328,18 @@ Looks like they are by default.
 _How could you use "aws s3 cp" or "aws s3 sync" command to modify the
 permissions on the file?_
 
+```
+aws s3 cp --acl
+aws s3 sync --acl
+```
+By passing the flags at creation
+
 (Hint: see the list of [Canned ACLs](https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl).)
 
 ##### Question: Changing Permissions
 
 _Is there a way you can change the permissions on the file without re-uploading it?_
+Using the web GUI to change the permission.
 
 #### Lab 2.2.3: Using the API from the CLI
 
@@ -340,14 +347,90 @@ The [aws s3api command](https://docs.aws.amazon.com/cli/latest/reference/s3api/i
 gives you a lot more options. Remove the bucket again, then recreate it
 to start fresh.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 rb s3://stelligent-u-joel.webb.labs-11-40 --region us-west-2 --profile temp  --force
+delete: s3://stelligent-u-joel.webb.labs-11-40/data/JustinsSavevsProspectTeam.osp
+delete: s3://stelligent-u-joel.webb.labs-11-40/data/Make a Payment Workflow.txt
+delete: s3://stelligent-u-joel.webb.labs-11-40/data/private.txt
+delete: s3://stelligent-u-joel.webb.labs-11-40/data/nuke_users_cleanup.txt
+remove_bucket: stelligent-u-joel.webb.labs-11-40
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 mb s3://stelligent-u-joel.webb.labs-13-01 --profile temp --region us-west-2
+make_bucket: stelligent-u-joel.webb.labs-13-01
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 sync ~/Documents/Stelligent/stelligent-u/02-s3/data/ s3://stelligent-u-joel.webb.labs-13-01 --region us-west-2 --profile temp --acl public-read --dryrun
+(dryrun) upload: data/JustinsSavevsProspectTeam.osp to s3://stelligent-u-joel.webb.labs-13-01/JustinsSavevsProspectTeam.osp
+(dryrun) upload: data/Make a Payment Workflow.txt to s3://stelligent-u-joel.webb.labs-13-01/Make a Payment Workflow.txt
+(dryrun) upload: data/nuke_users_cleanup.txt to s3://stelligent-u-joel.webb.labs-13-01/nuke_users_cleanup.txt
+(dryrun) upload: data/private.txt to s3://stelligent-u-joel.webb.labs-13-01/private.txt
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 sync ~/Documents/Stelligent/stelligent-u/02-s3/data/ s3://stelligent-u-joel.webb.labs-13-01 --region us-west-2 --profile temp --acl public-read
+upload: data/Make a Payment Workflow.txt to s3://stelligent-u-joel.webb.labs-13-01/Make a Payment Workflow.txt
+upload: data/nuke_users_cleanup.txt to s3://stelligent-u-joel.webb.labs-13-01/nuke_users_cleanup.txt
+upload: data/private.txt to s3://stelligent-u-joel.webb.labs-13-01/private.txt
+upload: data/JustinsSavevsProspectTeam.osp to s3://stelligent-u-joel.webb.labs-13-01/JustinsSavevsProspectTeam.osp
+
+```
+
 Make all files publicly readable, grant yourself access to do anything
 to all files, and block access to "private.txt" unless you're an
 authenticated user:
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3api get-bucket-acl --bucket stelligent-u-joel.webb.labs-13-01 --region us-west-2 --profile temp
+{
+    "Owner": {
+        "DisplayName": "awsroot+324320755747-labs",
+        "ID": "325cbed028b3247baa4404c5c980cc7554f85fc72bd5140692f3b781beedeb33"
+    },
+    "Grants": [
+        {
+            "Grantee": {
+                "DisplayName": "awsroot+324320755747-labs",
+                "ID": "325cbed028b3247baa4404c5c980cc7554f85fc72bd5140692f3b781beedeb33",
+                "Type": "CanonicalUser"
+            },
+            "Permission": "FULL_CONTROL"
+        }
+    ]
+}
+
+```
 - Create and assign an IAM policy to explicitly grant yourself
   maintenance access.
 
+
+
 - Set a bucket policy to grant public read access.
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3api get-bucket-acl --bucket stelligent-u-joel.webb.labs-13-01 --region us-west-2 --profile temp
+{
+    "Owner": {
+        "DisplayName": "awsroot+324320755747-labs",
+        "ID": "325cbed028b3247baa4404c5c980cc7554f85fc72bd5140692f3b781beedeb33"
+    },
+    "Grants": [
+        {
+            "Grantee": {
+                "DisplayName": "awsroot+324320755747-labs",
+                "ID": "325cbed028b3247baa4404c5c980cc7554f85fc72bd5140692f3b781beedeb33",
+                "Type": "CanonicalUser"
+            },
+            "Permission": "FULL_CONTROL"
+        },
+        {
+            "Grantee": {
+                "Type": "Group",
+                "URI": "http://acs.amazonaws.com/groups/global/AllUsers"
+            },
+            "Permission": "READ"
+        }
+    ]
+}
+```
 
 - Set an S3 ACL on "private.txt" to block read access unless you're
   authenticated.
@@ -355,6 +438,34 @@ authenticated user:
 When you're done, verify that anybody (e.g. you, unauthenticated) can
 read most files but can't read "private.txt", and only you can modify
 file and read "private.txt".
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3api put-object-acl --bucket stelligent-u-joel.webb.labs-13-01 --key data/private.txt --region us-west-2 --profile temp --acl authenticated-read
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3api get-object-acl --bucket stelligent-u-joel.webb.labs-13-01 --key data/private.txt --region us-west-2 --profile temp
+{
+    "Owner": {
+        "DisplayName": "awsroot+324320755747-labs",
+        "ID": "325cbed028b3247baa4404c5c980cc7554f85fc72bd5140692f3b781beedeb33"
+    },
+    "Grants": [
+        {
+            "Grantee": {
+                "DisplayName": "awsroot+324320755747-labs",
+                "ID": "325cbed028b3247baa4404c5c980cc7554f85fc72bd5140692f3b781beedeb33",
+                "Type": "CanonicalUser"
+            },
+            "Permission": "FULL_CONTROL"
+        },
+        {
+            "Grantee": {
+                "Type": "Group",
+                "URI": "http://acs.amazonaws.com/groups/global/AuthenticatedUsers"
+            },
+            "Permission": "READ"
+        }
+    ]
+}
+```
 
 #### Question: Reading Policy
 
