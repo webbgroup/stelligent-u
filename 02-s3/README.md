@@ -545,7 +545,14 @@ using a single bucket policy.
 
 When you're done, verify your access again.
 
+##### See s3stack.yaml
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws cloudformation create-stack --stack-name joels-west-stack --profile temp --region us-west-2 --template-body file://s3stack.yaml
+{
+    "StackId": "arn:aws:cloudformation:us-west-2:324320755747:stack/joels-west-stack/4f741250-f25d-11ec-9ea6-02aa62c7c049"
+}
+```
 
 ### Retrospective 2.2
 
