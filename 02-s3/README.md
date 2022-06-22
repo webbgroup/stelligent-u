@@ -165,10 +165,24 @@ joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 ls s3://ste
 
 _How would you copy the contents of the directory to the top level of your bucket?_
 
+First with a dry run, then actual:
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 cp s3://stelligent-u-joel.webb.labs-09-36/data/ s3://stelligent-u-joel.webb.labs-09-36/ --recursive --region us-west-2 --dryrun --profile temp
+(dryrun) copy: s3://stelligent-u-joel.webb.labs-09-36/data/JustinsSavevsProspectTeam.osp to s3://stelligent-u-joel.webb.labs-09-36/JustinsSavevsProspectTeam.osp
+(dryrun) copy: s3://stelligent-u-joel.webb.labs-09-36/data/Make a Payment Workflow.txt to s3://stelligent-u-joel.webb.labs-09-36/Make a Payment Workflow.txt
+(dryrun) copy: s3://stelligent-u-joel.webb.labs-09-36/data/nuke_users_cleanup.txt to s3://stelligent-u-joel.webb.labs-09-36/nuke_users_cleanup.txt
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 cp s3://stelligent-u-joel.webb.labs-09-36/data/ s3://stelligent-u-joel.webb.labs-09-36/ --recursive --region us-west-2 --profile temp
+copy: s3://stelligent-u-joel.webb.labs-09-36/data/nuke_users_cleanup.txt to s3://stelligent-u-joel.webb.labs-09-36/nuke_users_cleanup.txt
+copy: s3://stelligent-u-joel.webb.labs-09-36/data/Make a Payment Workflow.txt to s3://stelligent-u-joel.webb.labs-09-36/Make a Payment Workflow.txt
+copy: s3://stelligent-u-joel.webb.labs-09-36/data/JustinsSavevsProspectTeam.osp to s3://stelligent-u-joel.webb.labs-09-36/JustinsSavevsProspectTeam.osp
+```
+
 ##### Question: Directory Copying
 
 _How would you copy the contents and include the directory name in the s3 object
 paths?_
+
+Usually with an additional slash '/'
 
 ##### Question: Object Access
 
@@ -176,9 +190,14 @@ _[Can anyone else see your file yet](https://docs.aws.amazon.com/AmazonS3/latest
 
 For further reading, see the S3 [Access Policy Language Overview](https://docs.aws.amazon.com/AmazonS3/latest/dev/access-policy-language-overview.html).
 
+
+
 ##### Question: Sync vs Copy
 
 _What makes "sync" a better choice than "cp" for some S3 uploads?_
+
+I would sync is like rsync to which can be run multiple times.
+cp on the other hand will run once... and exit cleanly on an overwrite if an existing object exist.
 
 #### Lab 2.1.3: Exclude Private Objects When Uploading to a Bucket
 
