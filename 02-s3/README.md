@@ -315,6 +315,13 @@ You just made "private.txt" publicly readable. Ensure that only the
 bucket owner can read or write that file without changing the
 permissions of the other files.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 sync ~/Documents/Stelligent/stelligent-u/02-s3/data/ s3://stelligent-u-joel.webb.labs-11-40/data/ --region us-west-2 --profile temp --acl public-read --debug
+
+```
+Looks like they are by default.
+
+
 
 ##### Question: Modify Permissions
 
