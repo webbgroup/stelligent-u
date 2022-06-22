@@ -105,6 +105,32 @@ Using "aws s3", create a bucket:
 
 - List the contents of the bucket.
 
+```
+aws s3api create-bucket --bucket stelligent-u-joel.webb.labs --profile temp
+{
+    "Location": "/stelligent-u-joel.webb.labs"
+}
+```
+
+This somehow doesn't work:
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u$ aws s3api create-bucket --bucket stelligent-u-joel.webb.labs --region us-west-1 --profile temp
+
+An error occurred (IllegalLocationConstraintException) when calling the CreateBucket operation: The unspecified location constraint is incompatible for the region specific endpoint this request was sent to.
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u$ aws s3api create-bucket --bucket stelligent-u-joel.webb.labs --region us-east-1 --profile temp
+{
+    "Location": "/stelligent-u-joel.webb.labs"
+}
+```
+
+Changed to the aws s3 mb command and one has to make sure the bucket is 1. unique. and 2. if you delete a bucket, it has to be 100% purged by the system to call it again.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 mb s3://stelligent-u-joel.webb.labs-09-36 --region us-west-2 --profile temp
+make_bucket: stelligent-u-joel.webb.labs-09-36
+```
+
+
 #### Lab 2.1.2: Upload Objects to a Bucket
 
 Add an object to your bucket:
