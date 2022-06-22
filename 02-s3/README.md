@@ -196,7 +196,7 @@ No. By default all files are private
 
 _What makes "sync" a better choice than "cp" for some S3 uploads?_
 
-I would imagine sync is like rsync to which can be run multiple times.
+Sync is like rsync to which can be run multiple times.
 cp on the other hand will run once... and exit cleanly on an overwrite if an existing object exist.
 
 #### Lab 2.1.3: Exclude Private Objects When Uploading to a Bucket
@@ -204,12 +204,34 @@ cp on the other hand will run once... and exit cleanly on an overwrite if an exi
 Add a private file to your data directory. Then, upload the directory to your
 bucket again **without including the private file**.
 
+I had to copy the files down first:
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 cp s3://stelligent-u-joel.webb.labs-09-36/data/ data/ --recursive --region us-west-2 --profile temp
+download: s3://stelligent-u-joel.webb.labs-09-36/data/Make a Payment Workflow.txt to data/Make a Payment Workflow.txt
+download: s3://stelligent-u-joel.webb.labs-09-36/data/nuke_users_cleanup.txt to data/nuke_users_cleanup.txt
+download: s3://stelligent-u-joel.webb.labs-09-36/data/JustinsSavevsProspectTeam.osp to data/JustinsSavevsProspectTeam.osp
+```
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 sync ~/Documents/Stelligent/stelligent-u/02-s3/data/ s3://stelligent-u-joel.webb.labs-09-36/data/ --exclude "private.txt" --region us-west-2 --dryrun --profile temp
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 sync ~/Documents/Stelligent/stelligent-u/02-s3/data/ s3://stelligent-u-joel.webb.labs-09-36/data/ --exclude "private.txt" --region us-west-2 --profile temp
+```
 
 - Verify after uploading that the file doesn't exist in the bucket.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 ls s3://stelligent-u-joel.webb.labs-09-36/data/ --region us-west-2 --profile temp
+2022-06-22 09:50:00    1796180 JustinsSavevsProspectTeam.osp
+2022-06-22 09:52:19        933 Make a Payment Workflow.txt
+2022-06-22 09:51:35       5243 nuke_users_cleanup.txt
+```
 - Did you find two different ways to accomplish this task? If not, make sure to
   read the [documentation on sync flags](https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html).
+
+```
+--exclude
+--dryrun
+```
 
 #### Lab 2.1.4: Clean Up
 
