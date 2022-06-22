@@ -190,19 +190,21 @@ _[Can anyone else see your file yet](https://docs.aws.amazon.com/AmazonS3/latest
 
 For further reading, see the S3 [Access Policy Language Overview](https://docs.aws.amazon.com/AmazonS3/latest/dev/access-policy-language-overview.html).
 
-
+No. By default all files are private
 
 ##### Question: Sync vs Copy
 
 _What makes "sync" a better choice than "cp" for some S3 uploads?_
 
-I would sync is like rsync to which can be run multiple times.
+I would imagine sync is like rsync to which can be run multiple times.
 cp on the other hand will run once... and exit cleanly on an overwrite if an existing object exist.
 
 #### Lab 2.1.3: Exclude Private Objects When Uploading to a Bucket
 
 Add a private file to your data directory. Then, upload the directory to your
 bucket again **without including the private file**.
+
+
 
 - Verify after uploading that the file doesn't exist in the bucket.
 
