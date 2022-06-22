@@ -554,6 +554,35 @@ joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws cloudformation
 }
 ```
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3api get-bucket-acl --bucket stelligent-u-joel.webb.labs-14-43 --region us-west-2 --profile temp
+{
+    "Owner": {
+        "DisplayName": "awsroot+324320755747-labs",
+        "ID": "325cbed028b3247baa4404c5c980cc7554f85fc72bd5140692f3b781beedeb33"
+    },
+    "Grants": [
+        {
+            "Grantee": {
+                "DisplayName": "awsroot+324320755747-labs",
+                "ID": "325cbed028b3247baa4404c5c980cc7554f85fc72bd5140692f3b781beedeb33",
+                "Type": "CanonicalUser"
+            },
+            "Permission": "FULL_CONTROL"
+        },
+        {
+            "Grantee": {
+                "Type": "Group",
+                "URI": "http://acs.amazonaws.com/groups/global/AllUsers"
+            },
+            "Permission": "READ"
+        }
+    ]
+}
+
+```
+
+
 ### Retrospective 2.2
 
 See [this AWS security blog post](https://aws.amazon.com/blogs/security/iam-policies-and-bucket-policies-and-acls-oh-my-controlling-access-to-s3-resources/)
