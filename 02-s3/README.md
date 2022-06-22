@@ -138,10 +138,28 @@ Add an object to your bucket:
 - Create a local subdirectory, "data", for s3 files and put a few
   files in it.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 cp ~/JustinsSavevsProspectTeam.osp s3://stelligent-u-joel.webb.labs-09-36/data/ --region us-west-2 --profile temp
+upload: ../../../../JustinsSavevsProspectTeam.osp to s3://stelligent-u-joel.webb.labs-09-36/data/JustinsSavevsProspectTeam.osp
+```
+
 - Copy the file to your bucket using the "aws s3" command. Find more
   than one way to upload it.
 
+Dangerous though as it really does perform a delete operation after execution
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 mv ~/Make\ a\ Payment\ Workflow.txt s3://stelligent-u-joel.webb.labs-09-36/data/ --region us-west-2 --profile temp
+move: ../../../../Make a Payment Workflow.txt to s3://stelligent-u-joel.webb.labs-09-36/data/Make a Payment Workflow.txt
+```
+
 - List the contents of the bucket after each upload.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 ls s3://stelligent-u-joel.webb.labs-09-36/data/ --region us-west-2 --profile temp
+2022-06-22 09:50:00    1796180 JustinsSavevsProspectTeam.osp
+2022-06-22 09:52:19        933 Make a Payment Workflow.txt
+2022-06-22 09:51:35       5243 nuke_users_cleanup.txt
+```
 
 ##### Question: Copying to Top Level
 
