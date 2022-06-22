@@ -238,6 +238,19 @@ joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 ls s3://ste
 Clean up: remove your bucket. What do you have to do before you can
 remove it?
 
+Buckets must be empty before they can be deleted. To delete all objects in the bucket, use the empty bucket configuration.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 rb s3://stelligent-u-joel.webb.labs-09-36/ --force --region us-west-2 --profile temp
+delete: s3://stelligent-u-joel.webb.labs-09-36/nuke_users_cleanup.txt
+delete: s3://stelligent-u-joel.webb.labs-09-36/JustinsSavevsProspectTeam.osp
+delete: s3://stelligent-u-joel.webb.labs-09-36/data/JustinsSavevsProspectTeam.osp
+delete: s3://stelligent-u-joel.webb.labs-09-36/data/Make a Payment Workflow.txt
+delete: s3://stelligent-u-joel.webb.labs-09-36/Make a Payment Workflow.txt
+delete: s3://stelligent-u-joel.webb.labs-09-36/data/nuke_users_cleanup.txt
+remove_bucket: stelligent-u-joel.webb.labs-09-36
+```
+
 ### Retrospective 2.1
 
 For additional s3 commands and reference see the
@@ -259,19 +272,49 @@ directory with the "aws s3 sync" command.
 
 - Include the "private.txt" file this time.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 mb s3://stelligent-u-joel.webb.labs-11-40 --profile temp --region us-west-2
+make_bucket: stelligent-u-joel.webb.labs-11-40
+```
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 sync ~/Documents/Stelligent/stelligent-u/02-s3/data/ s3://stelligent-u-joel.webb.labs-11-40 --region us-west-2 --profile temp --dryrun
+(dryrun) upload: data/JustinsSavevsProspectTeam.osp to s3://stelligent-u-joel.webb.labs-11-40/JustinsSavevsProspectTeam.osp
+(dryrun) upload: data/Make a Payment Workflow.txt to s3://stelligent-u-joel.webb.labs-11-40/Make a Payment Workflow.txt
+(dryrun) upload: data/nuke_users_cleanup.txt to s3://stelligent-u-joel.webb.labs-11-40/nuke_users_cleanup.txt
+(dryrun) upload: data/private.txt to s3://stelligent-u-joel.webb.labs-11-40/private.txt
+
+```
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 sync ~/Documents/Stelligent/stelligent-u/02-s3/data/ s3://stelligent-u-joel.webb.labs-11-40 --region us-west-2 --profile temp
+upload: data/Make a Payment Workflow.txt to s3://stelligent-u-joel.webb.labs-11-40/Make a Payment Workflow.txt
+upload: data/nuke_users_cleanup.txt to s3://stelligent-u-joel.webb.labs-11-40/nuke_users_cleanup.txt
+upload: data/private.txt to s3://stelligent-u-joel.webb.labs-11-40/private.txt
+upload: data/JustinsSavevsProspectTeam.osp to s3://stelligent-u-joel.webb.labs-11-40/JustinsSavevsProspectTeam.osp
+
+```
+
 - Use a "sync" command parameter to make all the files in the bucket
   publicly readable.
+
+publicly readble on the start is bad form. should be done in 2 seperate steps for security purposes.
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 sync ~/Documents/Stelligent/stelligent-u/02-s3/data/ s3://stelligent-u-joel.webb.labs-11-40 --region us-west-2 --profile temp --acl public-read --debug
+```
+
 
 ##### Question: Downloading Protection
 
 _After this, can you download one of your files from the bucket without using
 your API credentials?_
 
+Yes.
+
 #### Lab 2.2.2: Use the CLI to Restrict Access to Private Data
 
 You just made "private.txt" publicly readable. Ensure that only the
 bucket owner can read or write that file without changing the
 permissions of the other files.
+
 
 ##### Question: Modify Permissions
 
