@@ -1,0 +1,69 @@
+# Field, Type, Null, Key, Default, Extra
+'uid', 'mediumint(6) unsigned', 'NO', 'PRI', NULL, 'auto_increment'
+'name', 'varchar(15)', 'NO', 'MUL', '', ''
+'uname', 'varchar(25)', 'NO', 'UNI', '', ''
+'email', 'varchar(255)', 'NO', 'UNI', '', ''
+#     'femail', 'varchar(255)', 'NO', '', '', ''  //Fake email, not used
+'url', 'varchar(255)', 'NO', '', '', ''
+'user_avatar', 'varchar(30)', 'YES', '', NULL, ''
+'user_regdate', 'date', 'NO', 'MUL', '0000-00-00', ''
+'lname', 'varchar(30)', 'YES', 'MUL', NULL, ''
+'user_occ1', 'tinyint(3) unsigned', 'NO', 'MUL', '0', ''
+'user_occ2', 'tinyint(3) unsigned', 'NO', '', '0', ''
+#  'forum_display', 'tinyint(2) unsigned', 'YES', '', '0', '' //configuration setting for users forum display
+'user_intrest', 'varchar(150)', 'YES', '', NULL, ''
+'user_sig', 'varchar(255)', 'YES', '', NULL, ''
+#   'user_viewemail', 'tinyint(1) unsigned', 'NO', '', '1', ''  //configuration setting for user to allow others to see their email. Currently, only companies have their email shown
+'user_theme', 'tinyint(1) unsigned', 'YES', '', NULL, ''
+#   'partnerID', 'mediumint(6) unsigned', 'YES', '', '0', ''   //precursor to PropBot Companies
+#   'user_yim', 'varchar(25)', 'YES', '', NULL, ''            //Yahoo IM doesn't exist anymore
+#   'user_msnm', 'varchar(25)', 'YES', '', NULL, ''          // msn messenger doesn't exist anymore
+'pass', 'varchar(40)', 'NO', '', '', ''
+#??? 'storynum', 'tinyint(1) unsigned', 'NO', '', '5', ''    //nuke_article/nuke_posts configuration setting - how many stories do I want to see?
+#??? 'umode', 'varchar(10)', 'NO', '', '', ''                //nuke_article/nuke_posts configuration setting - article mode setting.
+#??? 'uorder', 'tinyint(1) unsigned', 'NO', '', '0', ''      //nuke_article/nuke_posts configuration setting - how do i want to see the comment threading
+#??? 'thold', 'tinyint(2)', 'NO', '', '0', ''                //nuke_article/nuke_posts configuration setting - what threshold do I want to see
+#??? 'noscore', 'tinyint(1) unsigned', 'NO', '', '0', ''     //nuke_article/nuke_posts configuration setting - what score of posts do I want to see.
+'bio', 'tinytext', 'YES', '', NULL, ''
+#??? 'ublockon', 'tinyint(1) unsigned', 'NO', '', '0', ''    //Blocking other users
+#??? 'ublock', 'tinytext', 'YES', '', NULL, ''               // Another configuration as well.
+'theme', 'varchar(255)', 'NO', '', '', ''                 // will be required for night,day,afternoon theme setting 
+#    'commentmax', 'int(10) unsigned', 'NO', '', '4096', '' //nuke_article/ how many comments do i want to see.
+#???  'counter', 'tinyint(3) unsigned', 'NO', '', '0', ''    // not sure about this.
+'newsletter', 'tinyint(1) unsigned', 'NO', '', '1', ''
+'newsevents', 'tinyint(1) unsigned', 'NO', '', '1', ''
+'newsprops', 'tinyint(1) unsigned', 'NO', '', '1', ''
+'newsschool', 'tinyint(1) unsigned', 'NO', '', '1', ''
+'newsocc', 'tinyint(3) unsigned', 'NO', '', '1', ''
+'user_posts', 'mediumint(6) unsigned', 'NO', '', '0', '' // Being used for Karma
+#    'user_attachsig', 'tinyint(1) unsigned', 'NO', '', '0', '' //users have signatures, if they create a post, their signature will be automatically added.
+'user_rank', 'tinyint(1) unsigned', 'NO', '', '0', ''   //Was used but not anymore, should we keep it?
+'user_level', 'tinyint(1) unsigned', 'NO', '', '1', ''  // Key column for user_level access throughout the website
+#???   'points', 'decimal(10,2) unsigned', 'NO', '', '0.00', '' // Not sure if this is used.
+'address1', 'varchar(64)', 'YES', '', NULL, ''
+'address2', 'varchar(64)', 'YES', '', NULL, ''
+'city', 'varchar(64)', 'YES', 'MUL', NULL, ''
+'state', 'varchar(32)', 'YES', 'MUL', NULL, ''
+'country', 'varchar(64)', 'YES', '', NULL, ''
+'postcode', 'varchar(16)', 'YES', 'MUL', NULL, ''
+'dayPhone', 'varchar(64)', 'YES', '', NULL, ''
+#     'dayFax', 'varchar(64)', 'YES', '', '', ''  // Nobody uses faxes anymore
+'evePhone', 'varchar(64)', 'YES', '', NULL, ''
+#     'fax', 'varchar(64)', 'YES', '', '', ''     // nobody uses faxes anymore
+#     'myCurr', 'int(2)', 'YES', '', '2', ''   //We aren't tracking currency anymore
+#     'dealer', 'tinyint(1) unsigned', 'NO', '', '0', ''   // we aren't keeping track of this anymore
+#???? 'account', 'tinyint(1) unsigned', 'NO', 'MUL', '1', '' // Not sure what this is for anymore
+#     'chanpart', 'tinyint(1) unsigned', 'NO', 'MUL', '0', '' // Was to keep track of folks selling products
+#     'lender', 'tinyint(1) unsigned', 'NO', 'MUL', '0', '' //Was to keep track of who was signed up as a lender
+#     'website', 'tinyint(1) unsigned', 'NO', 'MUL', '0', '' //We deprecated websites
+'termofuse', 'tinyint(1) unsigned', 'NO', 'MUL', '1', ''
+'error', 'tinyint(4) unsigned', 'NO', 'MUL', '0', ''
+'memb_until', 'datetime', 'NO', 'MUL', '0000-00-00 00:00:00', '' //used in relationship to the subscriptions
+'lastlogged', 'datetime', 'NO', 'MUL', '0000-00-00 00:00:00', '' //last time they logged in.
+'saddress1', 'varchar(64)', 'NO', '', '', ''
+'saddress2', 'varchar(64)', 'NO', '', '', ''
+'scity', 'varchar(64)', 'NO', '', '', ''
+'sstate', 'varchar(32)', 'NO', '', '', ''
+'spostcode', 'varchar(16)', 'NO', '', '', ''
+'xmlfeed', 'tinyint(1) unsigned', 'NO', 'MUL', '0', '' // Was used to keep track of who was needing an xmlfeed
+
