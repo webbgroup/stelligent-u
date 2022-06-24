@@ -5,6 +5,7 @@ Resources:
   JoelsMyIamRole:
     Type: AWS::IAM::Role
     Properties:
+      Description: My Own Policy that uses Native Managed ReadOnly
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/IAMReadOnlyAccess
       AssumeRolePolicyDocument:
@@ -16,3 +17,27 @@ Resources:
                 - iam.amazonaws.com
             Action:
               - 'sts:AssumeRole'
+  LaeticiasRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Description: Customer Managed Policy
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - iam.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+        - PolicyName: inlineIAMReadOnlyPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'iam:Get*'
+                  - 'iam:List*'
+                  - 'iam:Generate*'
+                Resource: "*"
