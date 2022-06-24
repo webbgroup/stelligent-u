@@ -1,0 +1,30 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Read Only Template
+Resources:
+  JoelsMyIamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Policies:
+        - PolicyName: JoelsReadOnlyPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "iam:GenerateCredentialReport"
+                  - "iam:GenerateServiceLastAccessedDetails"
+                  - "iam:Get*"
+                  - "iam:List*"
+                  - "iam:SimulateCustomPolicy"
+                  - "iam:SimulatePrincipalPolicy"
+                Resource: '*'
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - iam.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'

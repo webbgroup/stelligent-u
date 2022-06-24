@@ -92,6 +92,39 @@ Create a CFN template that specifies an IAM Role.
   - List all the Roles
   - Describe the specific Role your Stack created.
 
+>!This is hidden text!<
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws iam list-roles --profile temp | grep -A 20 -i joel -B 4
+            "MaxSessionDuration": 3600
+        },
+        {
+            "Path": "/",
+            "RoleName": "joelsreadonlystack-JoelsMyIamRole-JBZR005LLTKV",
+            "RoleId": "AROAUXAYGAARXSJFLYIUD",
+            "Arn": "arn:aws:iam::324320755747:role/joelsreadonlystack-JoelsMyIamRole-JBZR005LLTKV",
+            "CreateDate": "2022-06-24T15:16:46+00:00",
+            "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Effect": "Allow",
+                        "Principal": {
+                            "Service": "iam.amazonaws.com"
+                        },
+                        "Action": "sts:AssumeRole"
+                    }
+                ]
+            },
+            "Description": "",
+            "MaxSessionDuration": 3600
+        },
+        {
+            "Path": "/",
+            "RoleName": "JohnMitchellLambdaS3CodeE-SingletonServiceRoleDDD8-1KWLSU21NT3UA",
+            "RoleId": "AROAUXAYGAARRDDSDBRJP",
+```
+
 #### Lab 3.1.2: Customer Managed Policy
 
 Update the template and the corresponding Stack to make the IAM Role's
