@@ -9,16 +9,21 @@ Resources:
       # https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_job-functions.html
       ManagedPolicyArns:
         # https://us-east-1.console.aws.amazon.com/iam/home?region=us-east-1&skipRegion=true#/policies/arn:aws:iam::aws:policy/ReadOnlyAccess$jsonEditor
+        # What they can do
         - arn:aws:iam::aws:policy/ReadOnlyAccess
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
           - Effect: Allow
             Principal:
+              # Who can do this
+              AWS:
+                - arn:aws:iam::324320755747:user/joel.webb.labs
               Service:
                 - iam.amazonaws.com
             Action:
               - 'sts:AssumeRole'
+            #Resource: arn:aws:iam::324320755747:user/joel.webb.labs
   JoelsIAMReadOnlyRole:
     Type: AWS::IAM::Role
     Properties:
@@ -26,13 +31,22 @@ Resources:
       # https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_job-functions.html
       ManagedPolicyArns:
         # https://us-east-1.console.aws.amazon.com/iam/home#/policies/arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess$jsonEditor
+        # What they can do
         - arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
           - Effect: Allow
             Principal:
+              # Who can do this
+              AWS:
+                - arn:aws:iam::324320755747:user/joel.webb.labs
               Service:
                 - iam.amazonaws.com
             Action:
               - 'sts:AssumeRole'
+            #Resource: arn:aws:iam::324320755747:user/joel.webb.labs
+  JoelsMyIamReadOnlyUser:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: JoelsReadOnlyUser

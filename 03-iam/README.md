@@ -329,6 +329,12 @@ your User to assume that role.
 
 - The role should reference the AWS managed policy ReadOnlyAccess.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws sts assume-role --role-arn arn:aws:iam::324320755747:role/joelsreadonlystack-JoelsGlobalReadOnlyRole-EWMFEK88ADO5 --role-session-name joels-assume-role-test --profile temp
+
+An error occurred (AccessDenied) when calling the AssumeRole operation: User: arn:aws:iam::324320755747:user/joel.webb.labs is not authorized to perform: sts:AssumeRole on resource: arn:aws:iam::324320755747:role/joelsreadonlystack-JoelsGlobalReadOnlyRole-EWMFEK88ADO5
+```
+
 - Add a trust relationship to the role that enables your specific IAM
   user to assume that role.
 
@@ -336,6 +342,13 @@ your User to assume that role.
 
 - Using the AWS CLI, assume that new role. If this fails, take note of
   the error you receive, diagnose the issue and fix it.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws sts assume-role --role-arn arn:aws:iam::324320755747:role/joelsreadonlystack-JoelsGlobalReadOnlyRole-EWMFEK88ADO5 --role-session-name joels-assume-role-test --profile temp
+
+An error occurred (AccessDenied) when calling the AssumeRole operation: User: arn:aws:iam::324320755747:user/joel.webb.labs is not authorized to perform: sts:AssumeRole on resource: arn:aws:iam::324320755747:role/joelsreadonlystack-JoelsGlobalReadOnlyRole-EWMFEK88ADO5
+
+```
 
 *Hint: Instead of setting up a new profile in your \~/.aws/credentials
 file, use [aws sts assume-role](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp_use-resources.html#using-temp-creds-sdk-cli).
@@ -354,6 +367,32 @@ Test the capabilities of this new Role.
   - Did it succeed? It should not have!
   - If it succeeded, troubleshoot how Read access allowed the role
     to create a bucket.
+
+I couldn't assume the Role
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws sts assume-role --role-arn arn:aws:iam::324320755747:role/joelsreadonlystack-JoelsGlobalReadOnlyRole-852K0G5NVEO8 --role-session-name joelsS3SessionTest --profile temp
+
+An error occurred (AccessDenied) when calling the AssumeRole operation: User: arn:aws:iam::324320755747:user/joel.webb.labs is not authorized to perform: sts:AssumeRole on resource: arn:aws:iam::324320755747:role/joelsreadonlystack-JoelsGlobalReadOnlyRole-852K0G5NVEO8
+
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws sts assume-role --role-arn arn:aws:iam::324320755747:role/joelsreadonlystack-JoelsIAMReadOnlyRole-UV235Z1W8OWS --role-session-name joelsS3SessionTest --profile temp
+{
+    "Credentials": {
+        "AccessKeyId": "ASIAUXAYGAARQXOESZ5G",
+        "SecretAccessKey": "BhjHIkrLKqguM/n1Xp7ydSAwfJgo+8e3zav8pKjz",
+        "SessionToken": "IQoJb3JpZ2luX2VjEH0aCXVzLWVhc3QtMSJIMEYCIQD89m3d8SF5rjAUrAzmH+pscOwl3ll+ks6MT36WhTx92AIhAON9eTq0GpuPVzxyAewbzM+T6YJtD1H1ZRkqwCYEVQ6gKqwCCJb//////////wEQABoMMzI0MzIwNzU1NzQ3IgxHZhi5QYK30izbUUMqgAIvy7Mglqt94Zb08ugY6InUzqN72lZ7w9A8K6eBouIQClfl5qAGsBUNufmWltNtNxQ+yOFE7ehuN/tXvek5YctsKpkemrEsKZXDTvAd6ktgR1yArrsZAj8AxT1igK2/nPYeT+7P0pwCvxOva1QurrOdIFUMRNMpBNcW3rGJwJP/84e4F0KhwBQcCotARY/HCq4nYy3SzZxNvi/FHQvH7dymelTS+17xxTVFKigXy/rRsaIQoW1CYj5unLVqnf/kO3FORcg2xFQx3JNJp+q/6vgJLc0X+8WLDdcBjm0XOEBLpCzHlEBHb8KBZr7ZdFpqycddPuNL9g4qyDw5F7TZUI/PMLLK2JUGOpwBtWmeq7TTeQIEoPH4vVjHOwwF2zsSxuEnEDztDavvk60tCmtAVdzDBjJw/Q2zfMr3vntQrt+X6oXvkh+LBTkjgH/4+Kmi4ch4OF+tZVPG7h3vZ/7AjHmDr3kKfsdtZbGflVfJ5klcGhyS869eNh4tLml5OX2kMjTZIdsfCEbZUkv8SL2IpNRvjzHME2QD60tY7Rcs112X4b9RPSHN",
+        "Expiration": "2022-06-24T21:57:22+00:00"
+    },
+    "AssumedRoleUser": {
+        "AssumedRoleId": "AROAUXAYGAARSCZHBQN5N:joelsS3SessionTest",
+        "Arn": "arn:aws:sts::324320755747:assumed-role/joelsreadonlystack-JoelsIAMReadOnlyRole-UV235Z1W8OWS/joelsS3SessionTest"
+    }
+}
+
+```
 
 #### Lab 3.2.3: Add privileges to the role
 
