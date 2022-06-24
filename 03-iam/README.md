@@ -138,6 +138,45 @@ inline policy more generally usable:
 
 - Update the Stack using the modified template.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws cloudformation --profile temp update-stack --stack-name joelsreadonlystack --template-body file://cfn-readonlyrole.yaml --capabilities CAPABILITY_NAMED_IAM
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/joelsreadonlystack/46789ee0-f3d0-11ec-9908-0a16f5aec431"
+}
+
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws iam list-roles --profile temp | grep -A 20 -i joel -B 4
+            "MaxSessionDuration": 3600
+        },
+        {
+            "Path": "/",
+            "RoleName": "joelsreadonlystack-JoelsMyIamRole-JBZR005LLTKV",
+            "RoleId": "AROAUXAYGAARXSJFLYIUD",
+            "Arn": "arn:aws:iam::324320755747:role/joelsreadonlystack-JoelsMyIamRole-JBZR005LLTKV",
+            "CreateDate": "2022-06-24T15:16:46+00:00",
+            "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Effect": "Allow",
+                        "Principal": {
+                            "Service": "iam.amazonaws.com"
+                        },
+                        "Action": "sts:AssumeRole"
+                    }
+                ]
+            },
+            "Description": "",
+            "MaxSessionDuration": 3600
+        },
+        {
+            "Path": "/",
+            "RoleName": "JohnMitchellLambdaS3CodeE-SingletonServiceRoleDDD8-1KWLSU21NT3UA",
+            "RoleId": "AROAUXAYGAARRDDSDBRJP",
+```
+
 #### Lab 3.1.3: Customer Managed Policy Re-Use
 
 Update the template further to demonstrate reuse of the customer managed
