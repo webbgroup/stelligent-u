@@ -251,6 +251,11 @@ tool and practice using it.
 
 Clean up after yourself by deleting the stack.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws cloudformation --profile temp delete-stack --stack-name joelsreadonlystack
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$
+```
+
 ### Retrospective 3.1
 
 #### Question: Stack Outputs
@@ -260,10 +265,38 @@ stack's two roles in order to pass those values to the CLI function. You
 probably used the AWS web console to get the ARN for each role. What
 could you have done to your CFN template to make that unnecessary?_
 
+Dunno.
+
+
 #### Task: Stack Outputs
 
 Institute that change from the Question above. Recreate the stack as per
 Lab 3.1.5, and demonstrate how to retrieve the ARNs.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws iam simulate-custom-policy \
+>     --policy-input-list '{"Version":"2012-10-17","Statement":{"Effect":"Allow","Action":"sts:AssumeRole","Resource":"*","Condition":{"DateGreaterThan":{"aws:CurrentTime":"2018-08-16T12:00:00Z"}}}}' \
+>     --action-names iam:CreateRole \
+>     --profile temp
+{
+    "EvaluationResults": [
+        {
+            "EvalActionName": "iam:CreateRole",
+            "EvalResourceName": "*",
+            "EvalDecision": "implicitDeny",
+            "MatchedStatements": [],
+            "MissingContextValues": [
+                "aws:CurrentTime"
+            ]
+        }
+    ]
+}
+```
+
+```
+--resource-arns
+--caller-arn
+```
 
 ## Lesson 3.2: Trust Relationships & Assuming Roles
 
