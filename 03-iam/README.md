@@ -194,6 +194,8 @@ policy:
 
 - Update the Stack. *Did the stack update work?*
 
+  Yes
+
   - Query the stack to determine its state.
   - If the stack update was not successful,
     [troubleshoot and determine why](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html#update-replacement).
@@ -211,6 +213,15 @@ Replace the customer managed policy with
   Read permissions to the EC2 service.
 
 - Update the stack.
+
+Updated:
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws cloudformation --profile temp update-stack --stack-name joelsreadonlystack --template-body file://cfn-readonlyrole.yaml --capabilities CAPABILITY_NAMED_IAM
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/joelsreadonlystack/46789ee0-f3d0-11ec-9908-0a16f5aec431"
+}
+```
 
 #### Lab 3.1.5: Policy Simulator
 
