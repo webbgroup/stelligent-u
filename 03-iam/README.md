@@ -238,6 +238,15 @@ tool and practice using it.
   - `ec2:RunInstances`
   - `ec2:DescribeSecurityGroups`
 
+  Policy Similator works great
+
+  ```
+  https://policysim.aws.amazon.com/home/index.jsp?#roles/joelsreadonlystack-JoelsIAMReadOnlyRole-8P5XJ7PZO19G
+  ```
+
+  1. Choose Roles
+  2. Then in Policy Simulator role, Search for the Technology To Use, then run the Policy Simulator
+
 #### Lab 3.1.6: Clean Up
 
 Clean up after yourself by deleting the stack.
