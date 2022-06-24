@@ -2,12 +2,14 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: Read Only Template
 Resources:
-  JoelsMyIamRole:
+  JoelsGlobalReadOnlyRole:
     Type: AWS::IAM::Role
     Properties:
       Description: My Own Policy that uses Native Managed ReadOnly
+      # https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_job-functions.html
       ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/IAMReadOnlyAccess
+        # https://us-east-1.console.aws.amazon.com/iam/home?region=us-east-1&skipRegion=true#/policies/arn:aws:iam::aws:policy/ReadOnlyAccess$jsonEditor
+        - arn:aws:iam::aws:policy/ReadOnlyAccess
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -17,10 +19,14 @@ Resources:
                 - iam.amazonaws.com
             Action:
               - 'sts:AssumeRole'
-  LaeticiasRole:
+  JoelsIAMReadOnlyRole:
     Type: AWS::IAM::Role
     Properties:
       Description: Customer Managed Policy
+      # https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_job-functions.html
+      ManagedPolicyArns:
+        # https://us-east-1.console.aws.amazon.com/iam/home#/policies/arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess$jsonEditor
+        - arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -30,14 +36,3 @@ Resources:
                 - iam.amazonaws.com
             Action:
               - 'sts:AssumeRole'
-      Policies:
-        - PolicyName: inlineIAMReadOnlyPolicy
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action:
-                  - 'iam:Get*'
-                  - 'iam:List*'
-                  - 'iam:Generate*'
-                Resource: "*"
