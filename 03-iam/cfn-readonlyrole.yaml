@@ -5,20 +5,8 @@ Resources:
   JoelsMyIamRole:
     Type: AWS::IAM::Role
     Properties:
-      Policies:
-        - PolicyName: JoelsReadOnlyPolicy
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action:
-                  - "iam:GenerateCredentialReport"
-                  - "iam:GenerateServiceLastAccessedDetails"
-                  - "iam:Get*"
-                  - "iam:List*"
-                  - "iam:SimulateCustomPolicy"
-                  - "iam:SimulatePrincipalPolicy"
-                Resource: '*'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/IAMReadOnlyAccess
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
