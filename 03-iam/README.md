@@ -715,6 +715,47 @@ that grants list access only to objects that start with "lebowski/".
     policy or the list command syntax until you are able to
     list a file.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws sts assume-role --role-arn arn:aws:iam::324320755747:role/joelss3stack-JoelsS3CustomerManagedRole-1FGE7K5FIA60D --role-session-name joelsS3SessionTest --profile temp
+{
+    "Credentials": {
+        "AccessKeyId": "ASIAUXAYGAARWAKNDLGI",
+        "SecretAccessKey": "9HQfn4zIZqMdvOBbdohy/NR3EY5fqM2SbR0ccCwo",
+        "SessionToken": "REDACTED",
+        "Expiration": "2022-06-27T18:17:15+00:00"
+    },
+    "AssumedRoleUser": {
+        "AssumedRoleId": "AROAUXAYGAAR7EIKQTT4V:joelsS3SessionTest",
+        "Arn": "arn:aws:sts::324320755747:assumed-role/joelss3stack-JoelsS3CustomerManagedRole-1FGE7K5FIA60D/joelsS3SessionTest"
+    }
+}
+
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws sts get-caller-identity --profile S3FullAccessUser
+{
+    "UserId": "AROAUXAYGAAR7EIKQTT4V:joelsS3SessionTest",
+    "Account": "324320755747",
+    "Arn": "arn:aws:sts::324320755747:assumed-role/joelss3stack-JoelsS3CustomerManagedRole-1FGE7K5FIA60D/joelsS3SessionTest"
+}
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 ls s3://joels-fullaccess-s3-bucket-11-16/ --profile S3FullAccessUser
+2022-06-27 11:33:38         56 blahblah
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 ls s3://joels-fullaccess-s3-bucket-11-15/ --profile S3FullAccessUser
+2022-06-27 11:33:25         56 blahblah
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 ls s3://joels-fullaccess-s3-bucket-11-15/* --profile S3FullAccessUser
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 ls s3://joels-fullaccess-s3-bucket-11-15/* --profile S3FullAccessUser
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 ls s3://joels-fullaccess-s3-bucket-11-15/ --profile S3FullAccessUser
+2022-06-27 11:33:25         56 blahblah
+2022-06-27 14:00:06         25 lebowski.txt
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 ls s3://joels-fullaccess-s3-bucket-11-15/blablah --profile S3FullAccessUser
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 ls s3://joels-fullaccess-s3-bucket-11-15/lebowski.txt --profile S3FullAccessUser
+2022-06-27 14:00:06         25 lebowski.txt
+
+```
+
+
+
 ### Retrospective
 
 #### Question: Positive and Negative Tests
