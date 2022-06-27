@@ -298,6 +298,66 @@ joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws iam simulate-
 --caller-arn
 ```
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws cloudformation --profile temp create-stack --stack-name joelsreadonlystack --template-body file://cfn-readonlyrole.yaml --capabilities CAPABILITY_NAMED_IAM
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/joelsreadonlystack/c963b790-f61e-11ec-9eba-120d12b05dcf"
+}
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws iam list-roles --profile temp | grep -i -C10 joel
+                            "Service": "lambda.amazonaws.com"
+                        },
+                        "Action": "sts:AssumeRole"
+                    }
+                ]
+            },
+            "MaxSessionDuration": 3600
+        },
+        {
+            "Path": "/",
+            "RoleName": "joelsreadonlystack-JoelsGlobalReadOnlyRole-100GO0I7TJE5N",
+            "RoleId": "AROAUXAYGAAR6YA2ZAWAK",
+            "Arn": "arn:aws:iam::324320755747:role/joelsreadonlystack-JoelsGlobalReadOnlyRole-100GO0I7TJE5N",
+            "CreateDate": "2022-06-27T13:41:07+00:00",
+            "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Effect": "Allow",
+                        "Principal": {
+                            "AWS": "arn:aws:iam::324320755747:user/joel.webb.labs",
+                            "Service": "iam.amazonaws.com"
+                        },
+                        "Action": "sts:AssumeRole"
+                    }
+                ]
+            },
+            "Description": "My Own Policy that uses Native Managed ReadOnly",
+            "MaxSessionDuration": 3600
+        },
+        {
+            "Path": "/",
+            "RoleName": "joelsreadonlystack-JoelsIAMReadOnlyRole-D7LZV3PG1729",
+            "RoleId": "AROAUXAYGAARQV5PEXSUI",
+            "Arn": "arn:aws:iam::324320755747:role/joelsreadonlystack-JoelsIAMReadOnlyRole-D7LZV3PG1729",
+            "CreateDate": "2022-06-27T13:41:08+00:00",
+            "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Effect": "Allow",
+                        "Principal": {
+                            "AWS": "arn:aws:iam::324320755747:user/joel.webb.labs",
+                            "Service": "iam.amazonaws.com"
+                        },
+                        "Action": "sts:AssumeRole"
+                    }
+                ]
+            },
+            "Description": "Customer Managed Policy",
+            "MaxSessionDuration": 3600
+        },
+```
+
 ## Lesson 3.2: Trust Relationships & Assuming Roles
 
 ### Principle 3.2
@@ -400,6 +460,8 @@ Update the CFN template to give this role the ability to upload to S3
 buckets.
 
 - Create an S3 bucket.
+
+
 
 - Using either an inline policy or an AWS managed policy, provide the
   role with S3 full access
