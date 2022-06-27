@@ -454,6 +454,17 @@ joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws sts assume-ro
 
 ```
 
+###### notice this is using my temp credentials
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 mb s3://joels-read-only-s3-bucket-9-56 --region us-west-2 --profile temp
+make_bucket: joels-read-only-s3-bucket-9-56
+```
+And now this is using the assumed role credentials
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 mb s3://joels-read-only-s3-bucket-9-57 --region us-west-2 --profile readOnlyUser
+make_bucket failed: s3://joels-read-only-s3-bucket-9-57 An error occurred (AccessDenied) when calling the CreateBucket operation: Access Denied
+```
+
 #### Lab 3.2.3: Add privileges to the role
 
 Update the CFN template to give this role the ability to upload to S3
@@ -461,14 +472,38 @@ buckets.
 
 - Create an S3 bucket.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 mb s3://joels-read-only-s3-bucket-9-56 --region us-west-2 --profile temp
+make_bucket: joels-read-only-s3-bucket-9-56
+```
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws cloudformation --profile temp update-stack --stack-name joelsreadonlystack --template-body file://cfn-readonlyrole.yaml --capabilities CAPABILITY_NAMED_IAM
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/joelsreadonlystack/c963b790-f61e-11ec-9eba-120d12b05dcf"
+}
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 mb s3://joels-read-only-s3-bucket-10-16 --region us-west-2 --profile readOnlyUser
+make_bucket failed: s3://joels-read-only-s3-bucket-10-16 An error occurred (AccessDenied) when calling the CreateBucket operation: Access Denied
+```
 
 - Using either an inline policy or an AWS managed policy, provide the
   role with S3 full access
 
 - Update the stack.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 mb s3://joels-read-only-s3-bucket-10-16 --region us-west-2 --profile readOnlyIamUser
+make_bucket: joels-read-only-s3-bucket-10-16
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ echo $?
+0
+```
+
 - Assuming this role again, try to upload a text file to the bucket.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 cp /tmp/blahblah s3://joels-read-only-s3-bucket-10-16/ --region us-west-2 --profile readOnlyIamUser
+upload: ../../../../../../tmp/blahblah to s3://joels-read-only-s3-bucket-10-16/blahblah
+```
 
 - If it failed, troubleshoot the error iteratively until the role is
   able to upload a file to the bucket.
@@ -476,6 +511,10 @@ buckets.
 #### Lab 3.2.4: Clean up
 
 Clean up. Take the actions necessary to delete the stack.
+
+```
+aws cloudformation --profile temp delete-stack --stack-name joelsreadonlystack
+```
 
 ### Retrospective 3.2
 
