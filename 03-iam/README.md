@@ -500,6 +500,16 @@ joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ echo $?
 
 - Assuming this role again, try to upload a text file to the bucket.
 
+##### Validate who I am though first
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws sts get-caller-identity --profile readOnlyUser
+{
+    "UserId": "AROAUXAYGAAR6YA2ZAWAK:joelsS3SessionTest",
+    "Account": "324320755747",
+    "Arn": "arn:aws:sts::324320755747:assumed-role/joelsreadonlystack-JoelsGlobalReadOnlyRole-100GO0I7TJE5N/joelsS3SessionTest"
+}
+```
+
 ```
 joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 cp /tmp/blahblah s3://joels-read-only-s3-bucket-10-16/ --region us-west-2 --profile readOnlyIamUser
 upload: ../../../../../../tmp/blahblah to s3://joels-read-only-s3-bucket-10-16/blahblah
@@ -516,6 +526,14 @@ Clean up. Take the actions necessary to delete the stack.
 aws cloudformation --profile temp delete-stack --stack-name joelsreadonlystack
 ```
 
+Looks like the temporary user credentials are deleted as well.
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws sts get-caller-identity --profile readOnlyIamUser
+
+An error occurred (InvalidClientTokenId) when calling the GetCallerIdentity operation: The security token included in the request is invalid.
+
+```
+
 ### Retrospective 3.2
 
 #### Question: Inline vs Customer Managed Policies
@@ -524,6 +542,8 @@ _In the context of an AWS User or Role, what is the difference between
 an inline policy and a customer managed policy? What are the differences
 between a customer managed policy and an AWS managed policy?_
 
+One is more granular, and the AWS managed is more broadly used and maintained by Amazon.
+
 #### Question: Role Assumption
 
 _When assuming a role, are the permissions of the initial principal
@@ -531,6 +551,8 @@ mixed with those of the role being assumed?
 Describe how that could easily be demonstrated with both a
 [positive and negative testing](https://www.guru99.com/positive-vs-negative-testing.html)
 approach._
+
+It would be very easy to create programatic unit test to test out a stack before the stack itself goes to the next environment.
 
 ## Lesson 3.3: Fine-Grained Controls With Policies
 
@@ -567,8 +589,90 @@ demonstrate you have full access to each bucket with this new role.
 
 - As your User:
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws iam list-roles --profile temp | grep -i -C10 joels
+                            "Service": "lambda.amazonaws.com"
+                        },
+                        "Action": "sts:AssumeRole"
+                    }
+                ]
+            },
+            "MaxSessionDuration": 3600
+        },
+        {
+            "Path": "/",
+            "RoleName": "joelss3stack-JoelsGlobalReadOnlyRole-6TXY4M4Y2R2F",
+            "RoleId": "AROAUXAYGAARXWKN6EUB7",
+            "Arn": "arn:aws:iam::324320755747:role/joelss3stack-JoelsGlobalReadOnlyRole-6TXY4M4Y2R2F",
+            "CreateDate": "2022-06-27T15:24:38+00:00",
+            "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Effect": "Allow",
+                        "Principal": {
+                            "AWS": "arn:aws:iam::324320755747:user/joel.webb.labs",
+                            "Service": "iam.amazonaws.com"
+                        },
+                        "Action": "sts:AssumeRole"
+                    }
+                ]
+            },
+            "Description": "My Own Policy that uses Native Managed ReadOnly",
+            "MaxSessionDuration": 3600
+        },
+        {
+            "Path": "/",
+            "RoleName": "joelss3stack-JoelsS3CustomerManagedRole-1FGE7K5FIA60D",
+            "RoleId": "AROAUXAYGAAR7EIKQTT4V",
+            "Arn": "arn:aws:iam::324320755747:role/joelss3stack-JoelsS3CustomerManagedRole-1FGE7K5FIA60D",
+            "CreateDate": "2022-06-27T15:24:37+00:00",
+            "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Effect": "Allow",
+                        "Principal": {
+                            "AWS": "arn:aws:iam::324320755747:user/joel.webb.labs",
+                            "Service": "iam.amazonaws.com"
+
+```
+
   - list the contents of your 2 new buckets
   - upload a file to each new bucket
+
+  ```
+  joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws sts assume-role --role-arn arn:aws:iam::324320755747:role/joelss3stack-JoelsS3CustomerManagedRole-1FGE7K5FIA60D --role-session-name joelsS3SessionTest --profile temp
+{
+    "Credentials": {
+        "AccessKeyId": "ASIAUXAYGAAR2VY7L4WZ",
+        "SecretAccessKey": "222KXBzUruDqpMwjVMQC3afm6R/yeggjvEw99Q1z",
+        "SessionToken": "===REDACTED==="
+    },
+    "AssumedRoleUser": {
+        "AssumedRoleId": "AROAUXAYGAAR7EIKQTT4V:joelsS3SessionTest",
+        "Arn": "arn:aws:sts::324320755747:assumed-role/joelss3stack-JoelsS3CustomerManagedRole-1FGE7K5FIA60D/joelsS3SessionTest"
+    }
+}
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws sts get-caller-identity --profile S3FullAccessUser
+
+Partial credentials found in shared-credentials-file, missing: aws_secret_access_key
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws sts get-caller-identity --profile S3FullAccessUser
+{
+    "UserId": "AROAUXAYGAAR7EIKQTT4V:joelsS3SessionTest",
+    "Account": "324320755747",
+    "Arn": "arn:aws:sts::324320755747:assumed-role/joelss3stack-JoelsS3CustomerManagedRole-1FGE7K5FIA60D/joelsS3SessionTest"
+}
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 cp /tmp/blahblah s3:joels-fullaccess-s3-bucket-11-15/ --profile S3FullAccessUser
+
+usage: aws s3 cp <LocalPath> <S3Uri> or <S3Uri> <LocalPath> or <S3Uri> <S3Uri>
+Error: Invalid argument type
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 cp /tmp/blahblah s3://joels-fullaccess-s3-bucket-11-15/ --profile S3FullAccessUser
+upload: ../../../../../../tmp/blahblah to s3://joels-fullaccess-s3-bucket-11-15/blahblah
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 cp /tmp/blahblah s3://joels-fullaccess-s3-bucket-11-16/ --profile S3FullAccessUser
+upload: ../../../../../../tmp/blahblah to s3://joels-fullaccess-s3-bucket-11-16/blahblah
+
+  ```
 
 - Assume the new role and repeat those two checks as that role.
 
