@@ -59,7 +59,9 @@ Resources:
                   - "s3:*"
                   - "s3-object-lambda:*"
                 Resource:
-                  - '*'
+                  - "arn:aws:s3:::joels-fullaccess-s3-bucket-11-16"
+                  - "arn:aws:s3:::joels-fullaccess-s3-bucket-11-16/*"
+                  #- '*''
         - PolicyName: JoelsReadOnlyS3AccessCustomerManagedPolicyLebowski
           PolicyDocument:
             Version: "2012-10-17"
@@ -71,7 +73,10 @@ Resources:
                   - "s3:GetObject"
                   - "s3-object-lambda:*"
                 Resource:
-                  - "arn:aws:s3:::joels-fullaccess-s3-bucket-11-15/lebowski*"
+                  - "arn:aws:s3:::joels-fullaccess-s3-bucket-11-15"
+                Condition:
+                  StringEquals:
+                    "s3:prefix": "lebowski/"
   JoelsMyIamReadOnlyUser:
     Type: AWS::IAM::User
     Properties:
