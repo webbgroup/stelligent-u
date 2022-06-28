@@ -83,7 +83,17 @@ create an AWS Simple Storage Service (S3) Bucket.
 - Launch a Stack by [using the AWS CLI tool](https://docs.aws.amazon.com/cli/latest/reference/cloudformation/create-stack.html)
   to run the template. Use your preferred region.
 
+```
+aws cloudformation --profile temp create-stack --stack-name JoelsStack --template-body file://cfn.yaml
+```
+
 - Note the output provided by creating the Stack.
+
+```
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/JoelsStack/60ea9340-ed82-11ec-acd1-121a3e1e60c1"
+}
+```
 
 - Though *functionally* unnecessary, the Description (i.e. its *purpose*)
   element documents your code's *intent*, so provide one. The Description
@@ -108,7 +118,12 @@ to the stack and use the parameter's value as the name of the S3 bucket.
 - Update your stack.
 
 - Add the template changes and new parameter file to your Github repo.
-
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/01-cloudformation$ aws cloudformation --profile temp create-stack --stack-name JoelsStack --template-body file://cfn.yaml --parameters file://cfn.json
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/JoelsStack/2094e2d0-ed8e-11ec-960e-0ae6c94b1995"
+}
+```
 #### Lab 1.1.3: Pseudo-Parameters
 
 Update the same template by prefixing the name of the bucket with the
@@ -141,6 +156,13 @@ name.
 
 - Commit the changes to your Github repo.
 
+```
+aws cloudformation --profile temp create-stack --stack-name JoelsStack --template-body file://cfn.yaml --parameters file://cfn.json --region us-west-1
+{
+    "StackId": "arn:aws:cloudformation:us-west-1:324320755747:stack/JoelsStack/a4e48290-ee31-11ec-a714-0678a9bc3a37"
+}
+```
+
 #### Lab 1.1.5: Termination Protection; Clean up
 
 - Before deleting this lesson's Stacks, apply
@@ -149,29 +171,41 @@ name.
 
 - Try to delete the Stack using the AWS CLI. What happens?
 
+
 - Remove termination protection and try again.
 
 - List the S3 buckets in both regions once this lesson's Stacks have been
   deleted to ensure their removal.
+
+accountidbucketname
+regionbucketname
 
 ### Retrospective 1.1
 
 #### Question: Why YAML
 
 _Why do we prefer the YAML format for CFN templates?_
+It's easy to understand
+
+Very lintable
 
 #### Question: Protecting Resources
 
 _What else can you do to prevent resources in a stack from being deleted?_
+set the DeletionPolicy:
 
 See [DeletionPolicy](https://aws.amazon.com/premiumsupport/knowledge-center/cloudformation-accidental-updates/).
 
 _How is that different from applying Termination Protection?_
+while the stack is deleted the resources are preserved
+
 
 #### Task: String Substitution
 
 Demonstrate 2 ways to code string combination/substitution using
 built-in CFN functions.
+
+Concatinating the strings like we did in step 1.1.2
 
 ## Lesson 1.2: Integration with Other AWS Resources
 
@@ -201,6 +235,13 @@ IAM Managed Policy that controls that user.
 
 - Create the Stack.
 
+```
+aws cloudformation --profile temp delete-stack --stack-name JoelsStack
+```
+```
+aws cloudformation --profile temp create-stack --stack-name JoelsStack --template-body file://cfn.yaml --parameters file://cfn.json --capabilities CAPABILITY_NAMED_IAM --debug
+```
+
 #### Lab 1.2.2: Exposing Resource Details via Exports
 
 Update the template by adding a CFN Output that exports the Managed
@@ -220,6 +261,49 @@ the Managed Policy ARN created by and exported from the previous Stack.
 
 - [List all the Stack Imports](https://docs.aws.amazon.com/cli/latest/reference/cloudformation/list-imports.html)
   in that stack's region.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/01-cloudformation$ aws cloudformation --profile temp list-exports
+{
+    "Exports": [
+        {
+            "ExportingStackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Pipeline-Factory-automated-portfolio/20073530-ca15-11ec-b9bb-12d17da272b5",
+            "Name": "ECS-Application-ServiceCatalogCloudFormationProductName",
+            "Value": "ECSWebApplication"
+        },
+        {
+            "ExportingStackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Pipeline-Factory-automated-portfolio/20073530-ca15-11ec-b9bb-12d17da272b5",
+            "Name": "ECS-Application-ServiceCatalogCloudFormationProvisioningArtifactIds",
+            "Value": "pa-y3zypza6cctn2"
+        },
+        {
+            "ExportingStackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Pipeline-Factory-automated-portfolio/20073530-ca15-11ec-b9bb-12d17da272b5",
+            "Name": "ECS-Application-ServiceCatalogCloudFormationProvisioningArtifactNames",
+            "Value": "NGINXProductExample"
+        },
+        {
+            "ExportingStackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Pipeline-Factory-automated-portfolio/20073530-ca15-11ec-b9bb-12d17da272b5",
+            "Name": "Pipeline-Factory-automated-portfolio-ServiceCatalogPortfolio",
+            "Value": "port-ri7dzcazjawbk"
+        },
+        {
+            "ExportingStackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Pipeline-Factory-automated-portfolio/20073530-ca15-11ec-b9bb-12d17da272b5",
+            "Name": "Pipeline-Factory-automated-portfolio-ServiceCatalogPortfolioName",
+            "Value": "Validated Products"
+        },
+        {
+            "ExportingStackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Pipeline-Factory-automated-portfolio/20073530-ca15-11ec-b9bb-12d17da272b5",
+            "Name": "Pipeline-Factory-automated-portfolio-ServiceCatalogProductTagOptions",
+            "Value": "tag-34ppwuueljmf4"
+        },
+        {
+            "ExportingStackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/mattgstack/b5a82e70-ee5d-11ec-9334-0e6ca049a619",
+            "Name": "mattgstack-s3-arn",
+            "Value": "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+        }
+    ]
+}
+```
 
 #### Lab 1.2.4: Import/Export Dependencies
 
@@ -271,6 +355,16 @@ deploy _a single S3 bucket_.
 - Use shell scripting (bash or PowerShell) to create a Stack in each
   of the [4 American regions](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html),
   using a looping construct to run the template the proper number of times.
+
+```
+#!/bin/bash
+array=( us-east-1 us-east-2 us-west-1 us-west-2 )
+for region in "${array[@]}"
+do
+    echo "The next region to provision is $region"
+    aws cloudformation --profile temp create-stack --stack-name JoelsStack --template-body file://cfn.yaml --parameters file://cfn.json --region $region
+done
+```
 
 - Use an external JSON or YAML configuration file to maintain the target
   deployment region parameters.  Consider using `jq` or `yq` to parse this file.
