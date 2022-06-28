@@ -103,6 +103,11 @@ We can't call your subnet "private" any more. Now that it has an
 Internet Gateway, it can get traffic directly from the public Internet.
 
 See the files:
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/04-vpcs$ aws cloudformation --profile temp create-stack --stack-name JoelsVPC --template-body file://cfn-vpcs.yaml --parameters file://cfn-vpcs-parameters.json
+```
+
 ```
 joel@joels-desktop:~/Documents/Stelligent/stelligent-u/04-vpcs$ aws cloudformation --profile temp update-stack --stack-name JoelsVPC --template-body file://cfn-vpcs.yaml --parameters file://cfn-vpcs-parameters.json
 {
