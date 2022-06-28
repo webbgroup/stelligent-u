@@ -18,7 +18,7 @@ Resources:
         - Key: stelligent-u-lesson
           Value: 4.1
         - Key: stelligent-u-lab
-          Value: 4.1.1
+          Value: 4.1.2
   JoelsSubnet:
     Type: 'AWS::EC2::Subnet'
     Properties:
@@ -29,12 +29,56 @@ Resources:
         - Key: Application
           Value:
             Ref: 'AWS::StackId'
+        - Key: Name
+          Value: joels-subnet
         - Key: user
           Value: joel.webb.labs
         - Key: stelligent-u-lesson
           Value: 4.1
         - Key: stelligent-u-lab
-          Value: 4.1.1
+          Value: 4.1.2
+  JoelsInternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        - Key: Application
+          Value:
+            Ref: 'AWS::StackId'
+        - Key: Name
+          Value: joels-internetgateway
+        - Key: user
+          Value: joel.webb.labs
+        - Key: stelligent-u-lesson
+          Value: 4.1
+        - Key: stelligent-u-lab
+          Value: 4.1.2
+  JoelsAttachGateway:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      VpcId:
+        Ref: JoelsVPC
+      InternetGatewayId:
+        Ref: JoelsInternetGateway
+  JoelsRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId:
+        Ref: JoelsVPC
+      Tags:
+        - Key: Application
+          Value:
+            Ref: 'AWS::StackId'
+        - Key: Name
+          Value: joels-routetable
+  Route:
+    Type: 'AWS::EC2::Route'
+    DependsOn: JoelsAttachGateway
+    Properties:
+      RouteTableId:
+        Ref: JoelsRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId:
+        Ref: JoelsInternetGateway
 Parameters:
   Network:
     Type: String
