@@ -5,13 +5,13 @@ Resources:
   S3Bucket:
     DeletionPolicy: Delete
     Type: 'AWS::S3::Bucket'
-    Description: Creating Amazon S3 bucket from CloudFormation
+    # Description: Creating Amazon S3 bucket from CloudFormation
     Properties:
       # Dynamic Substitution Working
-      # BucketName: !Sub ${AWS::AccountId}-${BucketName}
+      BucketName: !Sub ${AWS::AccountId}-${BucketName}
       #
       # Regional Logic Working (names have to be lower case)
-      BucketName: !If [CreateBucketName, accountidbucketname, regionbucketname]
+      # BucketName: !If [CreateBucketName, accountidbucketname, regionbucketname]
       #
       # Dynamic Substitution within Regional Logic NOT working
       # BucketName: !If [CreateBucketName, !Sub ${AWS::AccountId}-${BucketName}, !Sub ${AWS::Region}-${BucketName}]
@@ -65,21 +65,21 @@ Resources:
         }
       Users:
         - JoelsReadOnlyUser
-Conditions:
-  CreateBucketName: !Equals
-    - !Ref "AWS::Region"
-    - us-east-1
+#Conditions:
+#  CreateBucketName: !Equals
+#    - !Ref "AWS::Region"
+#    - us-east-1
 Parameters:
   BucketName:
     Type: String
-  EnvType:
-    Description: Environment type.
-    Default: test
-    Type: String
-    AllowedValues:
-      - prod
-      - test
-    ConstraintDescription: must specify prod or test.
+#  EnvType:
+#    Description: Environment type.
+#    Default: test
+#    Type: String
+#    AllowedValues:
+#      - prod
+#      - test
+#    ConstraintDescription: must specify prod or test.
 Outputs:
   S3Bucket:
     Description: Bucket Template Creation.
