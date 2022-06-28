@@ -6,7 +6,25 @@ Resources:
   JoelsVPC:
     Type: 'AWS::EC2::VPC'
     Properties:
-      CidrBlock: ${Network}/16
+      CidrBlock: !Sub ${Network}/16
+      Tags:
+        - Key: Application
+          Value:
+            Ref: 'AWS::StackId'
+        - Key: Name
+          Value: joels-vpc
+        - Key: user
+          Value: joel.webb.labs
+        - Key: stelligent-u-lesson
+          Value: 4.1
+        - Key: stelligent-u-lab
+          Value: 4.1.1
+  JoelsSubnet:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId:
+        Ref: JoelsVPC
+      CidrBlock: !Sub ${Network}/24
       Tags:
         - Key: Application
           Value:
@@ -17,16 +35,6 @@ Resources:
           Value: 4.1
         - Key: stelligent-u-lab
           Value: 4.1.1
-  Subnet:
-    Type: 'AWS::EC2::Subnet'
-    Properties:
-      VpcId:
-        Ref: JoelsVPC
-      CidrBlock: ${Network}/24
-      Tags:
-        - Key: Application
-          Value:
-            Ref: 'AWS::StackId'
 Parameters:
   Network:
     Type: String
@@ -34,8 +42,15 @@ Outputs:
   JoelsVPC:
     Description: Joels Virtual Private Cloud.
     Value: !Ref JoelsVPC
+  JoelsSubnet:
+    Description: Joels Subnet for the VPC
+    Value: !Ref JoelsSubnet
 #  MyStacksVPCID:
 #    Value: !Ref "AWS::VpcId"
+#  MyStacksVPC:
+#    Value: !Ref "AWS::EC2::VPC"
+#  MyStacksSubnetId:
+#    Value: !Ref "AWS::EC2::Subnet"
   MyStacksRegion:
     Value: !Ref "AWS::Region"
   AccountId:
