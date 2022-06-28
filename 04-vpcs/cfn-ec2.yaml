@@ -9,11 +9,11 @@ Resources:
       ImageId: !Sub ${EC2AmiId}
       InstanceType: !Sub ${InstanceType}
       SubnetId: subnet-0156d42d4eb9ed5ba
-      KeyName: joels_aws_key_pair
+      KeyName: joels-key-pair
       Tags:
-        - Key: Application
-          Value:
-            Ref: 'AWS::EC2::Instance'
+#        - Key: Application
+#          Value:
+#            Ref: 'AWS::EC2::Instance'
         - Key: Name
           Value: joels-instance
         - Key: user
