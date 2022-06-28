@@ -123,7 +123,13 @@ AWS CLI.
 
 - Save the output as a .pem file in your project directory.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/04-vpcs$ aws ec2 create-key-pair --profile temp --key-name joels-key-pair --key-type rsa --key-format pem --query "KeyMaterial" --output text > joels_aws_key_pair.pem
+```
+
 - Be sure to create it in the same region you'll be doing your labs.
+
+Created
 
 #### Lab 4.1.4: Test Instance
 
