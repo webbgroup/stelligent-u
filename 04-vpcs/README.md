@@ -141,6 +141,12 @@ Launch an EC2 instance into your VPC.
 
 - Use the latest Amazon Linux AMI.
 
+Use the following at your own risk. It comes back with way too many choices.
+```
+ aws ec2 describe-images --profile temp --owners self amazon | grep '"PlatformDetails": "Linux/UNIX"' -B4
+
+```
+
 - Create a new parameter file for this template. Include the EC2 AMI
   ID, a T2 instance type, and the name of your key pair.
 
