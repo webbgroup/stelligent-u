@@ -105,6 +105,32 @@ Using "aws s3", create a bucket:
 
 - List the contents of the bucket.
 
+```
+aws s3api create-bucket --bucket stelligent-u-joel.webb.labs --profile temp
+{
+    "Location": "/stelligent-u-joel.webb.labs"
+}
+```
+
+This somehow doesn't work:
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u$ aws s3api create-bucket --bucket stelligent-u-joel.webb.labs --region us-west-1 --profile temp
+
+An error occurred (IllegalLocationConstraintException) when calling the CreateBucket operation: The unspecified location constraint is incompatible for the region specific endpoint this request was sent to.
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u$ aws s3api create-bucket --bucket stelligent-u-joel.webb.labs --region us-east-1 --profile temp
+{
+    "Location": "/stelligent-u-joel.webb.labs"
+}
+```
+
+Changed to the aws s3 mb command and one has to make sure the bucket is 1. unique. and 2. if you delete a bucket, it has to be 100% purged by the system to call it again.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 mb s3://stelligent-u-joel.webb.labs-09-36 --region us-west-2 --profile temp
+make_bucket: stelligent-u-joel.webb.labs-09-36
+```
+
+
 #### Lab 2.1.2: Upload Objects to a Bucket
 
 Add an object to your bucket:
@@ -112,19 +138,51 @@ Add an object to your bucket:
 - Create a local subdirectory, "data", for s3 files and put a few
   files in it.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 cp ~/JustinsSavevsProspectTeam.osp s3://stelligent-u-joel.webb.labs-09-36/data/ --region us-west-2 --profile temp
+upload: ../../../../JustinsSavevsProspectTeam.osp to s3://stelligent-u-joel.webb.labs-09-36/data/JustinsSavevsProspectTeam.osp
+```
+
 - Copy the file to your bucket using the "aws s3" command. Find more
   than one way to upload it.
 
+Dangerous though as it really does perform a delete operation after execution
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 mv ~/Make\ a\ Payment\ Workflow.txt s3://stelligent-u-joel.webb.labs-09-36/data/ --region us-west-2 --profile temp
+move: ../../../../Make a Payment Workflow.txt to s3://stelligent-u-joel.webb.labs-09-36/data/Make a Payment Workflow.txt
+```
+
 - List the contents of the bucket after each upload.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 ls s3://stelligent-u-joel.webb.labs-09-36/data/ --region us-west-2 --profile temp
+2022-06-22 09:50:00    1796180 JustinsSavevsProspectTeam.osp
+2022-06-22 09:52:19        933 Make a Payment Workflow.txt
+2022-06-22 09:51:35       5243 nuke_users_cleanup.txt
+```
 
 ##### Question: Copying to Top Level
 
 _How would you copy the contents of the directory to the top level of your bucket?_
 
+First with a dry run, then actual:
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 cp s3://stelligent-u-joel.webb.labs-09-36/data/ s3://stelligent-u-joel.webb.labs-09-36/ --recursive --region us-west-2 --dryrun --profile temp
+(dryrun) copy: s3://stelligent-u-joel.webb.labs-09-36/data/JustinsSavevsProspectTeam.osp to s3://stelligent-u-joel.webb.labs-09-36/JustinsSavevsProspectTeam.osp
+(dryrun) copy: s3://stelligent-u-joel.webb.labs-09-36/data/Make a Payment Workflow.txt to s3://stelligent-u-joel.webb.labs-09-36/Make a Payment Workflow.txt
+(dryrun) copy: s3://stelligent-u-joel.webb.labs-09-36/data/nuke_users_cleanup.txt to s3://stelligent-u-joel.webb.labs-09-36/nuke_users_cleanup.txt
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 cp s3://stelligent-u-joel.webb.labs-09-36/data/ s3://stelligent-u-joel.webb.labs-09-36/ --recursive --region us-west-2 --profile temp
+copy: s3://stelligent-u-joel.webb.labs-09-36/data/nuke_users_cleanup.txt to s3://stelligent-u-joel.webb.labs-09-36/nuke_users_cleanup.txt
+copy: s3://stelligent-u-joel.webb.labs-09-36/data/Make a Payment Workflow.txt to s3://stelligent-u-joel.webb.labs-09-36/Make a Payment Workflow.txt
+copy: s3://stelligent-u-joel.webb.labs-09-36/data/JustinsSavevsProspectTeam.osp to s3://stelligent-u-joel.webb.labs-09-36/JustinsSavevsProspectTeam.osp
+```
+
 ##### Question: Directory Copying
 
 _How would you copy the contents and include the directory name in the s3 object
 paths?_
+
+Usually with an additional slash '/'
 
 ##### Question: Object Access
 
@@ -132,24 +190,66 @@ _[Can anyone else see your file yet](https://docs.aws.amazon.com/AmazonS3/latest
 
 For further reading, see the S3 [Access Policy Language Overview](https://docs.aws.amazon.com/AmazonS3/latest/dev/access-policy-language-overview.html).
 
+No. By default all files are private
+
 ##### Question: Sync vs Copy
 
 _What makes "sync" a better choice than "cp" for some S3 uploads?_
+
+Sync is like rsync to which can be run multiple times.
+cp on the other hand will run once... and exit cleanly on an overwrite if an existing object exist.
 
 #### Lab 2.1.3: Exclude Private Objects When Uploading to a Bucket
 
 Add a private file to your data directory. Then, upload the directory to your
 bucket again **without including the private file**.
 
+I had to copy the files down first:
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 cp s3://stelligent-u-joel.webb.labs-09-36/data/ data/ --recursive --region us-west-2 --profile temp
+download: s3://stelligent-u-joel.webb.labs-09-36/data/Make a Payment Workflow.txt to data/Make a Payment Workflow.txt
+download: s3://stelligent-u-joel.webb.labs-09-36/data/nuke_users_cleanup.txt to data/nuke_users_cleanup.txt
+download: s3://stelligent-u-joel.webb.labs-09-36/data/JustinsSavevsProspectTeam.osp to data/JustinsSavevsProspectTeam.osp
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 sync ~/Documents/Stelligent/stelligent-u/02-s3/data/ s3://stelligent-u-joel.webb.labs-09-36/data/ --exclude "private.txt" --region us-west-2 --dryrun --profile temp
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 sync ~/Documents/Stelligent/stelligent-u/02-s3/data/ s3://stelligent-u-joel.webb.labs-09-36/data/ --exclude "private.txt" --region us-west-2 --profile temp
+```
+
 - Verify after uploading that the file doesn't exist in the bucket.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 ls s3://stelligent-u-joel.webb.labs-09-36/data/ --region us-west-2 --profile temp
+2022-06-22 09:50:00    1796180 JustinsSavevsProspectTeam.osp
+2022-06-22 09:52:19        933 Make a Payment Workflow.txt
+2022-06-22 09:51:35       5243 nuke_users_cleanup.txt
+```
 - Did you find two different ways to accomplish this task? If not, make sure to
   read the [documentation on sync flags](https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html).
+
+```
+--exclude
+--dryrun
+```
 
 #### Lab 2.1.4: Clean Up
 
 Clean up: remove your bucket. What do you have to do before you can
 remove it?
+
+Buckets must be empty before they can be deleted. To delete all objects in the bucket, use the empty bucket configuration.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 rb s3://stelligent-u-joel.webb.labs-09-36/ --force --region us-west-2 --profile temp
+delete: s3://stelligent-u-joel.webb.labs-09-36/nuke_users_cleanup.txt
+delete: s3://stelligent-u-joel.webb.labs-09-36/JustinsSavevsProspectTeam.osp
+delete: s3://stelligent-u-joel.webb.labs-09-36/data/JustinsSavevsProspectTeam.osp
+delete: s3://stelligent-u-joel.webb.labs-09-36/data/Make a Payment Workflow.txt
+delete: s3://stelligent-u-joel.webb.labs-09-36/Make a Payment Workflow.txt
+delete: s3://stelligent-u-joel.webb.labs-09-36/data/nuke_users_cleanup.txt
+remove_bucket: stelligent-u-joel.webb.labs-09-36
+```
 
 ### Retrospective 2.1
 
@@ -172,13 +272,42 @@ directory with the "aws s3 sync" command.
 
 - Include the "private.txt" file this time.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 mb s3://stelligent-u-joel.webb.labs-11-40 --profile temp --region us-west-2
+make_bucket: stelligent-u-joel.webb.labs-11-40
+```
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 sync ~/Documents/Stelligent/stelligent-u/02-s3/data/ s3://stelligent-u-joel.webb.labs-11-40 --region us-west-2 --profile temp --dryrun
+(dryrun) upload: data/JustinsSavevsProspectTeam.osp to s3://stelligent-u-joel.webb.labs-11-40/JustinsSavevsProspectTeam.osp
+(dryrun) upload: data/Make a Payment Workflow.txt to s3://stelligent-u-joel.webb.labs-11-40/Make a Payment Workflow.txt
+(dryrun) upload: data/nuke_users_cleanup.txt to s3://stelligent-u-joel.webb.labs-11-40/nuke_users_cleanup.txt
+(dryrun) upload: data/private.txt to s3://stelligent-u-joel.webb.labs-11-40/private.txt
+
+```
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 sync ~/Documents/Stelligent/stelligent-u/02-s3/data/ s3://stelligent-u-joel.webb.labs-11-40 --region us-west-2 --profile temp
+upload: data/Make a Payment Workflow.txt to s3://stelligent-u-joel.webb.labs-11-40/Make a Payment Workflow.txt
+upload: data/nuke_users_cleanup.txt to s3://stelligent-u-joel.webb.labs-11-40/nuke_users_cleanup.txt
+upload: data/private.txt to s3://stelligent-u-joel.webb.labs-11-40/private.txt
+upload: data/JustinsSavevsProspectTeam.osp to s3://stelligent-u-joel.webb.labs-11-40/JustinsSavevsProspectTeam.osp
+
+```
+
 - Use a "sync" command parameter to make all the files in the bucket
   publicly readable.
+
+publicly readble on the start is bad form. should be done in 2 seperate steps for security purposes.
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 sync ~/Documents/Stelligent/stelligent-u/02-s3/data/ s3://stelligent-u-joel.webb.labs-11-40 --region us-west-2 --profile temp --acl public-read --debug
+```
+
 
 ##### Question: Downloading Protection
 
 _After this, can you download one of your files from the bucket without using
 your API credentials?_
+
+Yes.
 
 #### Lab 2.2.2: Use the CLI to Restrict Access to Private Data
 
@@ -186,16 +315,31 @@ You just made "private.txt" publicly readable. Ensure that only the
 bucket owner can read or write that file without changing the
 permissions of the other files.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 sync ~/Documents/Stelligent/stelligent-u/02-s3/data/ s3://stelligent-u-joel.webb.labs-11-40/data/ --region us-west-2 --profile temp --acl public-read --debug
+
+```
+Looks like they are by default.
+
+
+
 ##### Question: Modify Permissions
 
 _How could you use "aws s3 cp" or "aws s3 sync" command to modify the
 permissions on the file?_
+
+```
+aws s3 cp --acl
+aws s3 sync --acl
+```
+By passing the flags at creation
 
 (Hint: see the list of [Canned ACLs](https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl).)
 
 ##### Question: Changing Permissions
 
 _Is there a way you can change the permissions on the file without re-uploading it?_
+Using the web GUI to change the permission.
 
 #### Lab 2.2.3: Using the API from the CLI
 
@@ -203,14 +347,90 @@ The [aws s3api command](https://docs.aws.amazon.com/cli/latest/reference/s3api/i
 gives you a lot more options. Remove the bucket again, then recreate it
 to start fresh.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 rb s3://stelligent-u-joel.webb.labs-11-40 --region us-west-2 --profile temp  --force
+delete: s3://stelligent-u-joel.webb.labs-11-40/data/JustinsSavevsProspectTeam.osp
+delete: s3://stelligent-u-joel.webb.labs-11-40/data/Make a Payment Workflow.txt
+delete: s3://stelligent-u-joel.webb.labs-11-40/data/private.txt
+delete: s3://stelligent-u-joel.webb.labs-11-40/data/nuke_users_cleanup.txt
+remove_bucket: stelligent-u-joel.webb.labs-11-40
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 mb s3://stelligent-u-joel.webb.labs-13-01 --profile temp --region us-west-2
+make_bucket: stelligent-u-joel.webb.labs-13-01
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 sync ~/Documents/Stelligent/stelligent-u/02-s3/data/ s3://stelligent-u-joel.webb.labs-13-01 --region us-west-2 --profile temp --acl public-read --dryrun
+(dryrun) upload: data/JustinsSavevsProspectTeam.osp to s3://stelligent-u-joel.webb.labs-13-01/JustinsSavevsProspectTeam.osp
+(dryrun) upload: data/Make a Payment Workflow.txt to s3://stelligent-u-joel.webb.labs-13-01/Make a Payment Workflow.txt
+(dryrun) upload: data/nuke_users_cleanup.txt to s3://stelligent-u-joel.webb.labs-13-01/nuke_users_cleanup.txt
+(dryrun) upload: data/private.txt to s3://stelligent-u-joel.webb.labs-13-01/private.txt
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3 sync ~/Documents/Stelligent/stelligent-u/02-s3/data/ s3://stelligent-u-joel.webb.labs-13-01 --region us-west-2 --profile temp --acl public-read
+upload: data/Make a Payment Workflow.txt to s3://stelligent-u-joel.webb.labs-13-01/Make a Payment Workflow.txt
+upload: data/nuke_users_cleanup.txt to s3://stelligent-u-joel.webb.labs-13-01/nuke_users_cleanup.txt
+upload: data/private.txt to s3://stelligent-u-joel.webb.labs-13-01/private.txt
+upload: data/JustinsSavevsProspectTeam.osp to s3://stelligent-u-joel.webb.labs-13-01/JustinsSavevsProspectTeam.osp
+
+```
+
 Make all files publicly readable, grant yourself access to do anything
 to all files, and block access to "private.txt" unless you're an
 authenticated user:
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3api get-bucket-acl --bucket stelligent-u-joel.webb.labs-13-01 --region us-west-2 --profile temp
+{
+    "Owner": {
+        "DisplayName": "awsroot+324320755747-labs",
+        "ID": "325cbed028b3247baa4404c5c980cc7554f85fc72bd5140692f3b781beedeb33"
+    },
+    "Grants": [
+        {
+            "Grantee": {
+                "DisplayName": "awsroot+324320755747-labs",
+                "ID": "325cbed028b3247baa4404c5c980cc7554f85fc72bd5140692f3b781beedeb33",
+                "Type": "CanonicalUser"
+            },
+            "Permission": "FULL_CONTROL"
+        }
+    ]
+}
+
+```
 - Create and assign an IAM policy to explicitly grant yourself
   maintenance access.
 
+
+
 - Set a bucket policy to grant public read access.
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3api get-bucket-acl --bucket stelligent-u-joel.webb.labs-13-01 --region us-west-2 --profile temp
+{
+    "Owner": {
+        "DisplayName": "awsroot+324320755747-labs",
+        "ID": "325cbed028b3247baa4404c5c980cc7554f85fc72bd5140692f3b781beedeb33"
+    },
+    "Grants": [
+        {
+            "Grantee": {
+                "DisplayName": "awsroot+324320755747-labs",
+                "ID": "325cbed028b3247baa4404c5c980cc7554f85fc72bd5140692f3b781beedeb33",
+                "Type": "CanonicalUser"
+            },
+            "Permission": "FULL_CONTROL"
+        },
+        {
+            "Grantee": {
+                "Type": "Group",
+                "URI": "http://acs.amazonaws.com/groups/global/AllUsers"
+            },
+            "Permission": "READ"
+        }
+    ]
+}
+```
 
 - Set an S3 ACL on "private.txt" to block read access unless you're
   authenticated.
@@ -219,14 +439,99 @@ When you're done, verify that anybody (e.g. you, unauthenticated) can
 read most files but can't read "private.txt", and only you can modify
 file and read "private.txt".
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3api put-object-acl --bucket stelligent-u-joel.webb.labs-13-01 --key data/private.txt --region us-west-2 --profile temp --acl authenticated-read
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3api get-object-acl --bucket stelligent-u-joel.webb.labs-13-01 --key data/private.txt --region us-west-2 --profile temp
+{
+    "Owner": {
+        "DisplayName": "awsroot+324320755747-labs",
+        "ID": "325cbed028b3247baa4404c5c980cc7554f85fc72bd5140692f3b781beedeb33"
+    },
+    "Grants": [
+        {
+            "Grantee": {
+                "DisplayName": "awsroot+324320755747-labs",
+                "ID": "325cbed028b3247baa4404c5c980cc7554f85fc72bd5140692f3b781beedeb33",
+                "Type": "CanonicalUser"
+            },
+            "Permission": "FULL_CONTROL"
+        },
+        {
+            "Grantee": {
+                "Type": "Group",
+                "URI": "http://acs.amazonaws.com/groups/global/AuthenticatedUsers"
+            },
+            "Permission": "READ"
+        }
+    ]
+}
+```
+
 #### Question: Reading Policy
 
 _What do you see when you try to read the existing bucket policy before you
 replace it?_
 
+### Before
+```
+{
+    "Owner": {
+        "DisplayName": "awsroot+324320755747-labs",
+        "ID": "325cbed028b3247baa4404c5c980cc7554f85fc72bd5140692f3b781beedeb33"
+    },
+    "Grants": [
+        {
+            "Grantee": {
+                "DisplayName": "awsroot+324320755747-labs",
+                "ID": "325cbed028b3247baa4404c5c980cc7554f85fc72bd5140692f3b781beedeb33",
+                "Type": "CanonicalUser"
+            },
+            "Permission": "FULL_CONTROL"
+        },
+        {
+            "Grantee": {
+                "Type": "Group",
+                "URI": "http://acs.amazonaws.com/groups/global/AllUsers"
+            },
+            "Permission": "READ"
+        }
+    ]
+}
+```
+
 #### Question: Default Permissions
 
 _How do the default permissions differ from the policy you're setting?_
+
+
+### After
+
+
+```
+{
+    "Owner": {
+        "DisplayName": "awsroot+324320755747-labs",
+        "ID": "325cbed028b3247baa4404c5c980cc7554f85fc72bd5140692f3b781beedeb33"
+    },
+    "Grants": [
+        {
+            "Grantee": {
+                "DisplayName": "awsroot+324320755747-labs",
+                "ID": "325cbed028b3247baa4404c5c980cc7554f85fc72bd5140692f3b781beedeb33",
+                "Type": "CanonicalUser"
+            },
+            "Permission": "FULL_CONTROL"
+        },
+        {
+            "Grantee": {
+                "Type": "Group",
+                "URI": "http://acs.amazonaws.com/groups/global/AuthenticatedUsers"
+            },
+            "Permission": "READ"
+        }
+    ]
+}
+```
 
 #### Lab 2.2.4: Using CloudFormation
 
@@ -239,6 +544,44 @@ single template. To keep things simple, implement all of the permissions
 using a single bucket policy.
 
 When you're done, verify your access again.
+
+##### See s3stack.yaml
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws cloudformation create-stack --stack-name joels-west-stack --profile temp --region us-west-2 --template-body file://s3stack.yaml
+{
+    "StackId": "arn:aws:cloudformation:us-west-2:324320755747:stack/joels-west-stack/4f741250-f25d-11ec-9ea6-02aa62c7c049"
+}
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/02-s3$ aws s3api get-bucket-acl --bucket stelligent-u-joel.webb.labs-14-43 --region us-west-2 --profile temp
+{
+    "Owner": {
+        "DisplayName": "awsroot+324320755747-labs",
+        "ID": "325cbed028b3247baa4404c5c980cc7554f85fc72bd5140692f3b781beedeb33"
+    },
+    "Grants": [
+        {
+            "Grantee": {
+                "DisplayName": "awsroot+324320755747-labs",
+                "ID": "325cbed028b3247baa4404c5c980cc7554f85fc72bd5140692f3b781beedeb33",
+                "Type": "CanonicalUser"
+            },
+            "Permission": "FULL_CONTROL"
+        },
+        {
+            "Grantee": {
+                "Type": "Group",
+                "URI": "http://acs.amazonaws.com/groups/global/AllUsers"
+            },
+            "Permission": "READ"
+        }
+    ]
+}
+
+```
+
 
 ### Retrospective 2.2
 

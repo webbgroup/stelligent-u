@@ -1,0 +1,16 @@
+{
+    "Owner": {
+        "DisplayName": "awsroot+324320755747-labs",
+        "ID": "325cbed028b3247baa4404c5c980cc7554f85fc72bd5140692f3b781beedeb33"
+    },
+    "Grants": [
+        {
+            "Grantee": {
+                "DisplayName": "awsroot+324320755747-labs",
+                "ID": "325cbed028b3247baa4404c5c980cc7554f85fc72bd5140692f3b781beedeb33",
+                "Type": "CanonicalUser"
+            },
+            "Permission": "READ"
+        }
+    ]
+}

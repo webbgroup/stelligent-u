@@ -1,0 +1,21 @@
+
+Make a Payment.
+
+Who do you want to pay?
+
+- I have an Invoice
+    - Which Task/Estimate are you paying on? ( Goes to legacy Project task payments workflow )
+- No Invoice - They just handed it to me.
+    - What is their name?
+    - What is their company name?
+    - What Property Address is associated (Dropdown Ajax of existing OR add an Address (creates a validated address property within the system)
+    - Memo field
+        - Email is sent to Service Recipient " Hey (User) just paid you through PropBot. Come claim your payment"
+        - Service Receipient is Onboarded, Added to Stripe, Provides reasoning as to why use PropBot.
+            * Allows you to maintain your customer base
+            * Allows you to show your work off in Portfolios
+            * PropBot fees are cheap. Real cheap!
+            * Get Feedback from customers to faciliate Word of Mouth
+            * Gain more Sales and Revenue!
+
+

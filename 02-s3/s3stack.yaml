@@ -1,0 +1,11 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: CloudFormation Template for S3 bucket
+Resources:
+  S3Bucket:
+    DeletionPolicy: Delete
+    Type: AWS::S3::Bucket
+    Description: Creating Amazon S3 Bucket For Example
+    Properties:
+      BucketName: 'stelligent-u-joel.webb.labs-14-43'
+      AccessControl: PublicRead
