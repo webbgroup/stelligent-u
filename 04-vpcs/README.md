@@ -165,6 +165,8 @@ An error occurred (ValidationError) when calling the CreateStack operation: Para
 
 - Use the same tags you put on your VPC.
 
+Tags added.
+
 ##### Question: Post Launch
 
 _After you launch your new stack, can you ssh to the instance?_
