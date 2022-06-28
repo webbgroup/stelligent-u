@@ -1,5 +1,5 @@
 ---
-AWSTemplateFormatVersion: "2010-09-09"
+AWSTemplateFormatVersion: '2010-09-09'
 Description: CloudFormation Template for EC2 Instance
 
 Resources:
@@ -10,7 +10,6 @@ Resources:
       InstanceType: !Ref {InstanceType}
       SubnetId: subnet-0156d42d4eb9ed5ba
       KeyName: joels_aws_key_pair
-
       Tags:
         - Key: Application
           Value:
