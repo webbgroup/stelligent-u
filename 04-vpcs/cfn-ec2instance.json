@@ -1,8 +1,12 @@
 [
     {
-        "ParameterKey": "EC2-AMI-ID",
+        "ParameterKey": "EC2AmiId",
         "ParameterValue": "ami-0cff7528ff583bf9a",
+        "UsePreviousValue": false
+    },
+    {
         "ParameterKey": "InstanceType",
-        "ParameterValue": "t2.small"
+        "ParameterValue": "t2.small",
+        "UsePreviousValue": false
     }
 ]

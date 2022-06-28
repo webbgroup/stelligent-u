@@ -150,6 +150,13 @@ Use the following at your own risk. It comes back with way too many choices.
 aws ec2 describe-images --profile temp --owners self amazon | grep '"PlatformDetails": "Linux/UNIX"' -B4q
 ```
 
+Hitting odd error:
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/04-vpcs$ aws cloudformation --profile temp create-stack --stack-name JoelsEC2 --template-body file://cfn-ec2.yaml --parameters file://cfn-ec2instance.json
+
+An error occurred (ValidationError) when calling the CreateStack operation: Parameter values specified for a template which does not require them.
+
+```
 
 - Create a new parameter file for this template. Include the EC2 AMI
   ID, a T2 instance type, and the name of your key pair.

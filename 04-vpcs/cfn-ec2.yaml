@@ -6,8 +6,8 @@ Resources:
   JoelsInstance:
     Type: 'AWS::EC2::Instance'
     Properties:
-      ImageId: !Ref {EC2-AMI-ID}
-      InstanceType: !Ref {InstanceType}
+      ImageId: !Sub ${EC2AmiId}
+      InstanceType: !Sub ${InstanceType}
       SubnetId: subnet-0156d42d4eb9ed5ba
       KeyName: joels_aws_key_pair
       Tags:
@@ -22,6 +22,13 @@ Resources:
           Value: 4.1
         - Key: stelligent-u-lab
           Value: 4.1.4
+Parameters:
+  EC2AmiId:
+    Type: String
+    Description: What VM Image ID
+  InstanceType:
+    Type: String
+    Description: What Instance Type
 Outputs:
   JoelsInstance:
     Description: Joels Virtual Private Cloud.
