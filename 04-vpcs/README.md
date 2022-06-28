@@ -102,6 +102,14 @@ on your "private" subnet.
 We can't call your subnet "private" any more. Now that it has an
 Internet Gateway, it can get traffic directly from the public Internet.
 
+See the files:
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/04-vpcs$ aws cloudformation --profile temp update-stack --stack-name JoelsVPC --template-body file://cfn-vpcs.yaml --parameters file://cfn-vpcs-parameters.json
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/JoelsVPC/12e1ff60-f6e4-11ec-be28-0ad2b770bb63"
+}
+```
+
 #### Lab 4.1.3: EC2 Key Pair
 
 [Create an EC2 key pair](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html#having-ec2-create-your-key-pair)
