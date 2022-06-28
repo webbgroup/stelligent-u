@@ -6,7 +6,7 @@ Resources:
   JoelsVPC:
     Type: 'AWS::EC2::VPC'
     Properties:
-      CidrBlock: 10.0.42.0/16
+      CidrBlock: ${Network}/16
       Tags:
         - Key: Application
           Value:
@@ -17,16 +17,16 @@ Resources:
           Value: 4.1
         - Key: stelligent-u-lab
           Value: 4.1.1
-#  Subnet:
-#    Type: 'AWS::EC2::Subnet'
-#    Properties:
-#      VpcId:
-#        Ref: VPC
-#      CidrBlock: 10.0.42.0/24
-#      Tags:
-#        - Key: Application
-#          Value:
-#            Ref: 'AWS::StackId'
+  Subnet:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId:
+        Ref: VPC
+      CidrBlock: ${Network}/24
+      Tags:
+        - Key: Application
+          Value:
+            Ref: 'AWS::StackId'
 Outputs:
   JoelsVPC:
     Description: Joels Virtual Private Cloud.

@@ -26,7 +26,6 @@ Parameters:
       - c1.xlarge
       - cc1.4xlarge
       - cc2.8xlarge
-      - cg1.4xlarge
     ConstraintDescription: must be a valid EC2 instance type.
   KeyName:
     Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
