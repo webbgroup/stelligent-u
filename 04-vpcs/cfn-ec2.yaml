@@ -33,6 +33,6 @@ Outputs:
   JoelsInstance:
     Description: Joels Virtual Private Cloud.
     Value: !Ref JoelsInstance
-#  JoelsPrivateIPAddress:
-#    Description: Joels Subnet for the VPC
-#    Value: !Ref JoelsSubnet
+  JoelsPrivateIPAddress:
+    Description: Joels Private ip in the subnet
+    Value: !GetAtt JoelsInstance.PrivateIp
