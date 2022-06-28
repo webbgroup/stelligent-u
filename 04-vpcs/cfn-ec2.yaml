@@ -1,0 +1,32 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: CloudFormation Template for EC2 Instance
+
+Resources:
+  JoelsInstance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: !Ref {EC2-AMI-ID}
+      InstanceType: !Ref {InstanceType}
+      SubnetId: subnet-0156d42d4eb9ed5ba
+      KeyName: joels_aws_key_pair
+
+      Tags:
+        - Key: Application
+          Value:
+            Ref: 'AWS::EC2::Instance'
+        - Key: Name
+          Value: joels-instance
+        - Key: user
+          Value: joel.webb.labs
+        - Key: stelligent-u-lesson
+          Value: 4.1
+        - Key: stelligent-u-lab
+          Value: 4.1.4
+Outputs:
+  JoelsInstance:
+    Description: Joels Virtual Private Cloud.
+    Value: !Ref JoelsInstance
+#  JoelsPrivateIPAddress:
+#    Description: Joels Subnet for the VPC
+#    Value: !Ref JoelsSubnet
