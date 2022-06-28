@@ -21,12 +21,15 @@ Resources:
     Type: 'AWS::EC2::Subnet'
     Properties:
       VpcId:
-        Ref: VPC
+        Ref: JoelsVPC
       CidrBlock: ${Network}/24
       Tags:
         - Key: Application
           Value:
             Ref: 'AWS::StackId'
+Parameters:
+  Network:
+    Type: String
 Outputs:
   JoelsVPC:
     Description: Joels Virtual Private Cloud.
