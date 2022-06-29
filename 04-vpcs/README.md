@@ -514,6 +514,25 @@ no.
 _If you delete the NAT gateway, what happens to the ssh session on your private
 instance?_
 
+Nothing really..
+
+```
+[ec2-user@ip-10-0-42-8 ~]$ curl https://www.google.com
+^C
+[ec2-user@ip-10-0-42-8 ~]$ exit
+logout
+Connection to 10.0.42.8 closed.
+[ec2-user@ip-10-0-42-118 ~]$ ssh -i joels-key-pair.pem ec2-user@10.0.42.8
+Last login: Wed Jun 29 19:37:18 2022 from 10.0.42.118
+
+       __|  __|_  )
+       _|  (     /   Amazon Linux 2 AMI
+      ___|\___|___|
+
+https://aws.amazon.com/amazon-linux-2/
+[ec2-user@ip-10-0-42-8 ~]$
+
+```
 
 ##### Question: Recreating the Gateway
 
@@ -521,6 +540,8 @@ _If you recreate the NAT gateway and detach the Elastic IP from the public EC2
 instance, can you still reach the instance from the outside?_
 
 Test it out with the AWS console.
+
+No. due to the connectivity being cut off at the external facing NIC
 
 #### Lab 4.1.8: Network ACL
 
