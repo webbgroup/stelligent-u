@@ -135,16 +135,16 @@ Resources:
         Ref: JoelsVPC
       GroupDescription: Enable SSH access via port 22
       SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: '22'
-          ToPort: '22'
-          CidrIp:
-            Ref: SSHLocation
-        - IpProtocol: udp
-          FromPort: '1024'
-          ToPort: '65535'
-          CidrIp:
-            Ref: SSHLocation
+        - CidrIp: 0.0.0.0/0
+          Description: Allow icmp
+          FromPort: 8
+          IpProtocol: icmp
+          ToPort: -1
+        - CidrIp: 0.0.0.0/0
+          Description: Allow ssh
+          FromPort: 22
+          IpProtocol: tcp
+          ToPort: 22
   OutBoundResponsePortsNetworkAclEntry:
     Type: 'AWS::EC2::NetworkAclEntry'
     Properties:
@@ -173,6 +173,8 @@ Outputs:
   JoelsVPC:
     Description: Joels Virtual Private Cloud.
     Value: !Ref JoelsVPC
+    Export:
+      Name: JoelsVPC
   JoelsPrivateSubnet:
     Description: Joels Private Subnet for the VPC
     Value: !Ref JoelsPrivateSubnet
