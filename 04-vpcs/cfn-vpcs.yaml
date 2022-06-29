@@ -51,7 +51,7 @@ Resources:
         - Key: stelligent-u-lesson
           Value: 4.1
         - Key: stelligent-u-lab
-          Value: 4.1.2
+          Value: 4.1.6
   JoelsAttachGateway:
     Type: 'AWS::EC2::VPCGatewayAttachment'
     Properties:
@@ -79,6 +79,13 @@ Resources:
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId:
         Ref: JoelsInternetGateway
+  SubnetRouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId:
+        Ref: JoelsPrivateSubnet
+      RouteTableId:
+        Ref: JoelsRouteTable
   NetworkAcl:
     Type: 'AWS::EC2::NetworkAcl'
     Properties:
@@ -114,6 +121,13 @@ Resources:
       PortRange:
         From: '1024'
         To: '65535'
+  SubnetNetworkAclAssociation:
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId:
+        Ref: JoelsPrivateSubnet
+      NetworkAclId:
+        Ref: NetworkAcl
   InstanceSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
