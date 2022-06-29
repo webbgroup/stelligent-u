@@ -163,6 +163,10 @@ An error occurred (ValidationError) when calling the CreateStack operation: Para
 
 - Provide the instance ID and private IP address as stack outputs.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/04-vpcs$ aws ec2 describe-instances --profile temp --filters "Name=instance-id,Values=i-0f5784eb78a7d9969"
+```
+
 - Use the same tags you put on your VPC.
 
 Tags added.
@@ -170,6 +174,185 @@ Tags added.
 ##### Question: Post Launch
 
 _After you launch your new stack, can you ssh to the instance?_
+
+No.
+
+I don't have an external ip address.
+
+```
+{
+    "Reservations": [
+        {
+            "Groups": [],
+            "Instances": [
+                {
+                    "AmiLaunchIndex": 0,
+                    "ImageId": "ami-0cff7528ff583bf9a",
+                    "InstanceId": "i-0f5784eb78a7d9969",
+                    "InstanceType": "t2.small",
+                    "KeyName": "joels-key-pair",
+                    "LaunchTime": "2022-06-28T16:40:57+00:00",
+                    "Monitoring": {
+                        "State": "disabled"
+                    },
+                    "Placement": {
+                        "AvailabilityZone": "us-east-1c",
+                        "GroupName": "",
+                        "Tenancy": "default"
+                    },
+                    "PrivateDnsName": "ip-10-0-42-180.ec2.internal",
+                    "PrivateIpAddress": "10.0.42.180",
+                    "ProductCodes": [],
+                    "PublicDnsName": "",
+                    "State": {
+                        "Code": 16,
+                        "Name": "running"
+                    },
+                    "StateTransitionReason": "",
+                    "SubnetId": "subnet-0156d42d4eb9ed5ba",
+                    "VpcId": "vpc-068c4ff7a5700879d",
+                    "Architecture": "x86_64",
+                    "BlockDeviceMappings": [
+                        {
+                            "DeviceName": "/dev/xvda",
+                            "Ebs": {
+                                "AttachTime": "2022-06-28T16:40:58+00:00",
+                                "DeleteOnTermination": true,
+                                "Status": "attached",
+                                "VolumeId": "vol-0056cd58999d2cbbf"
+                            }
+                        }
+                    ],
+                    "ClientToken": "Joels-Joels-13ALLQ80J528K",
+                    "EbsOptimized": false,
+                    "EnaSupport": true,
+                    "Hypervisor": "xen",
+                    "NetworkInterfaces": [
+                        {
+                            "Attachment": {
+                                "AttachTime": "2022-06-28T16:40:57+00:00",
+                                "AttachmentId": "eni-attach-0e23913930bf2f23d",
+                                "DeleteOnTermination": true,
+                                "DeviceIndex": 0,
+                                "Status": "attached",
+                                "NetworkCardIndex": 0
+                            },
+                            "Description": "",
+                            "Groups": [
+                                {
+                                    "GroupName": "default",
+                                    "GroupId": "sg-09c4f0fbec1f3ba83"
+                                }
+                            ],
+                            "Ipv6Addresses": [],
+                            "MacAddress": "0a:9d:7c:42:09:37",
+                            "NetworkInterfaceId": "eni-006ee167231392c67",
+                            "OwnerId": "324320755747",
+                            "PrivateIpAddress": "10.0.42.180",
+                            "PrivateIpAddresses": [
+                                {
+                                    "Primary": true,
+                                    "PrivateIpAddress": "10.0.42.180"
+                                }
+                            ],
+                            "SourceDestCheck": true,
+                            "Status": "in-use",
+                            "SubnetId": "subnet-0156d42d4eb9ed5ba",
+                            "VpcId": "vpc-068c4ff7a5700879d",
+                            "InterfaceType": "interface"
+                        }
+                    ],
+                    "RootDeviceName": "/dev/xvda",
+                    "RootDeviceType": "ebs",
+                    "SecurityGroups": [
+                        {
+                            "GroupName": "default",
+                            "GroupId": "sg-09c4f0fbec1f3ba83"
+                        }
+                    ],
+                    "SourceDestCheck": true,
+                    "Tags": [
+                        {
+                            "Key": "Name",
+                            "Value": "joels-instance"
+                        },
+                        {
+                            "Key": "aws:cloudformation:stack-id",
+                            "Value": "arn:aws:cloudformation:us-east-1:324320755747:stack/JoelsEC2/4d35b9b0-f700-11ec-afdf-122d622f4417"
+                        },
+                        {
+                            "Key": "user",
+                            "Value": "joel.webb.labs"
+                        },
+                        {
+                            "Key": "aws:cloudformation:logical-id",
+                            "Value": "JoelsInstance"
+                        },
+                        {
+                            "Key": "stelligent-u-lab",
+                            "Value": "4.1.4"
+                        },
+                        {
+                            "Key": "stelligent-u-lesson",
+                            "Value": "4.1"
+                        },
+                        {
+                            "Key": "aws:cloudformation:stack-name",
+                            "Value": "JoelsEC2"
+                        }
+                    ],
+                    "VirtualizationType": "hvm",
+                    "CpuOptions": {
+                        "CoreCount": 1,
+                        "ThreadsPerCore": 1
+                    },
+                    "CapacityReservationSpecification": {
+                        "CapacityReservationPreference": "open"
+                    },
+                    "HibernationOptions": {
+                        "Configured": false
+                    },
+                    "MetadataOptions": {
+                        "State": "applied",
+                        "HttpTokens": "optional",
+                        "HttpPutResponseHopLimit": 1,
+                        "HttpEndpoint": "enabled",
+                        "HttpProtocolIpv6": "disabled",
+                        "InstanceMetadataTags": "disabled"
+                    },
+                    "EnclaveOptions": {
+                        "Enabled": false
+                    },
+                    "PlatformDetails": "Linux/UNIX",
+                    "UsageOperation": "RunInstances",
+                    "UsageOperationUpdateTime": "2022-06-28T16:40:57+00:00",
+                    "PrivateDnsNameOptions": {
+                        "HostnameType": "ip-name",
+                        "EnableResourceNameDnsARecord": false,
+                        "EnableResourceNameDnsAAAARecord": false
+                    },
+                    "MaintenanceOptions": {
+                        "AutoRecovery": "default"
+                    }
+                }
+            ],
+            "OwnerId": "324320755747",
+            "RequesterId": "043234062703",
+            "ReservationId": "r-08e42046479199033"
+        }
+    ]
+}
+
+```
+
+
+```
+"joels_aws_key_pair.pem" [New] 27L, 1679B written
+[cloudshell-user@ip-10-1-172-201 ~]$ ssh -i joels_aws_key_pair.pem ip-10-0-42-180.ec2.internal
+^C
+[cloudshell-user@ip-10-1-172-201 ~]$ ssh -i joels_aws_key_pair.pem ec2-user@ip-10-0-42-180.ec2.internal
+
+```
 
 ##### Question: Verify Connectivity
 
