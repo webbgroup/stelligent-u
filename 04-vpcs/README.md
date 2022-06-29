@@ -359,11 +359,15 @@ I don't have an external ip address.
 _Is there a way that you can verify Internet connectivity from the instance
 without ssh'ing to it?_
 
+I don't have any public IP addresses yet. So how could it? besides, it is a private IP address space assigned.
+
 #### Lab 4.1.5: Security Group
 
 Add a security group to your EC2 stack:
 
 - Allow ICMP (for ping) and ssh traffic into your instance.
+
+
 
 ##### Question: Connectivity
 
