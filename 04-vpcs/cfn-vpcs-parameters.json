@@ -2,5 +2,9 @@
     {
         "ParameterKey": "Network",
         "ParameterValue": "10.0.42.0"
+    },
+    {
+        "ParameterKey": "SSHLocation",
+        "ParameterValue": "66.110.242.0/24"
     }
 ]

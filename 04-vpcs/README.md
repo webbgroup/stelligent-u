@@ -361,6 +361,9 @@ without ssh'ing to it?_
 
 I don't have any public IP addresses yet. So how could it? besides, it is a private IP address space assigned.
 
+Reachability Analyser should help though
+https://us-east-1.console.aws.amazon.com/vpc/home?region=us-east-1#NetworkPath:pathId=nip-00317ff2fffb8c7fe
+
 #### Lab 4.1.5: Security Group
 
 Add a security group to your EC2 stack:

@@ -8,7 +8,8 @@ Resources:
     Properties:
       ImageId: !Sub ${EC2AmiId}
       InstanceType: !Sub ${InstanceType}
-      SubnetId: subnet-0156d42d4eb9ed5ba
+#      SubnetId: !ImportValue JoelsPrivateSubnet
+      SubnetId: subnet-0b237eb294c03fa3b
       KeyName: joels-key-pair
       Tags:
 #        - Key: Application
