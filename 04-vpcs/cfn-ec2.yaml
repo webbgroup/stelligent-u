@@ -11,12 +11,8 @@ Resources:
       SecurityGroupIds:
         - !ImportValue InstanceSecurityGroup
       SubnetId: !ImportValue JoelsPrivateSubnet
-#      SubnetId: subnet-0b237eb294c03fa3b
       KeyName: joels-key-pair
       Tags:
-#        - Key: Application
-#          Value:
-#            Ref: 'AWS::EC2::Instance'
         - Key: Name
           Value: joels-instance
         - Key: user
@@ -27,11 +23,34 @@ Resources:
           Value: 4.1.4
   IPAddress:
     Type: 'AWS::EC2::EIP'
-    #DependsOn: JoelsAttachGateway
     Properties:
       Domain: vpc
       InstanceId:
         Ref: JoelsInstance
+  JoelsPrivateInstance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: !Sub ${EC2AmiId}
+      InstanceType: !Sub ${InstanceType}
+      SecurityGroupIds:
+        - !ImportValue InstanceSecurityGroup
+      SubnetId: !ImportValue JoelsPrivateSubnet
+      KeyName: joels-key-pair
+      Tags:
+        - Key: Name
+          Value: joels-instance
+        - Key: user
+          Value: joel.webb.labs
+        - Key: stelligent-u-lesson
+          Value: 4.1
+        - Key: stelligent-u-lab
+          Value: 4.1.7
+  GWIPAddress:
+    Type: 'AWS::EC2::EIP'
+    Properties:
+      Domain: vpc
+      InstanceId:
+        Ref: JoelsPrivateInstance
 Parameters:
   EC2AmiId:
     Type: String
