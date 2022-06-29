@@ -134,6 +134,7 @@ Resources:
       VpcId:
         Ref: JoelsVPC
       GroupDescription: Enable SSH access via port 22
+      GroupName: joelsSecurityGroup-sg
       SecurityGroupIngress:
         - CidrIp: 0.0.0.0/0
           Description: Allow icmp
@@ -180,6 +181,11 @@ Outputs:
     Value: !Ref JoelsPrivateSubnet
     Export:
       Name: JoelsPrivateSubnet
+  InstanceSecurityGroup:
+    Description: Joels Scurity Group
+    Value: !Ref InstanceSecurityGroup
+    Export:
+      Name: InstanceSecurityGroup
 #  MyStacksVPCID:
 #    Value: !Ref "AWS::VpcId"
 #  MyStacksVPC:
