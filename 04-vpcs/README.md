@@ -475,6 +475,34 @@ existing instance stack.
 
 _Can you find a way to ssh to this instance?_
 
+```
+[ec2-user@ip-10-0-42-118 ~]$ ssh ec2-user@10.0.42.8
+Permission denied (publickey,gssapi-keyex,gssapi-with-mic).
+[ec2-user@ip-10-0-42-118 ~]$ vim joels-key-pair.pem
+[ec2-user@ip-10-0-42-118 ~]$ md5sum joels-key-pair.pem
+3fd253b1489678b1e8b29562ca269376  joels-key-pair.pem
+[ec2-user@ip-10-0-42-118 ~]$ ssh -i joels-key-pair.pem ec2-user@10.0.42.8
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@         WARNING: UNPROTECTED PRIVATE KEY FILE!          @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+Permissions 0664 for 'joels-key-pair.pem' are too open.
+It is required that your private key files are NOT accessible by others.
+This private key will be ignored.
+Load key "joels-key-pair.pem": bad permissions
+Permission denied (publickey,gssapi-keyex,gssapi-with-mic).
+[ec2-user@ip-10-0-42-118 ~]$ chmod 400 joels-key-pair.pem
+[ec2-user@ip-10-0-42-118 ~]$ ssh -i joels-key-pair.pem ec2-user@10.0.42.8
+
+       __|  __|_  )
+       _|  (     /   Amazon Linux 2 AMI
+      ___|\___|___|
+
+https://aws.amazon.com/amazon-linux-2/
+[ec2-user@ip-10-0-42-8 ~]$ curl https://www.google.com
+^C
+```
+
+
 ##### Question: Egress
 
 _If you can ssh to it, can you send traffic out?_

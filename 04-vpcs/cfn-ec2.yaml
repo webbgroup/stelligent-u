@@ -45,12 +45,6 @@ Resources:
           Value: 4.1
         - Key: stelligent-u-lab
           Value: 4.1.7
-  GWIPAddress:
-    Type: 'AWS::EC2::EIP'
-    Properties:
-      Domain: vpc
-      InstanceId:
-        Ref: JoelsPrivateInstance
 Parameters:
   EC2AmiId:
     Type: String

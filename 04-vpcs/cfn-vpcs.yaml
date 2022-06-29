@@ -74,6 +74,12 @@ Resources:
           Value: 4.1
         - Key: stelligent-u-lab
           Value: 4.1.7
+#  GWIPAddress:
+#    Type: 'AWS::EC2::EIP'
+#    Properties:
+#      Domain: vpc
+#      InstanceId:
+#        Ref: NatGateway
   ElasticIP:
     Type: AWS::EC2::EIP
     Properties:
@@ -210,10 +216,15 @@ Outputs:
     Export:
       Name: JoelsPrivateSubnet
   InstanceSecurityGroup:
-    Description: Joels Scurity Group
+    Description: Joels Security Group
     Value: !Ref InstanceSecurityGroup
     Export:
       Name: InstanceSecurityGroup
+  NatGateway:
+    Description: The NAT Gateway
+    Value: !Ref NatGateway
+    Export:
+      Name: NatGateway
 #  MyStacksVPCID:
 #    Value: !Ref "AWS::VpcId"
 #  MyStacksVPC:
