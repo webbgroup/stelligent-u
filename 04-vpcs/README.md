@@ -507,10 +507,13 @@ https://aws.amazon.com/amazon-linux-2/
 
 _If you can ssh to it, can you send traffic out?_
 
+no.
+
 ##### Question: Deleting the Gateway
 
 _If you delete the NAT gateway, what happens to the ssh session on your private
 instance?_
+
 
 ##### Question: Recreating the Gateway
 
