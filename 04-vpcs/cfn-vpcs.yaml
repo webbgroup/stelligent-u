@@ -127,6 +127,8 @@ Resources:
           CidrIp:
             Ref: SSHLocation
         - IpProtocol: udp
+          FromPort: '1024'
+          ToPort: '65535'
           CidrIp:
             Ref: SSHLocation
 Parameters:
