@@ -426,10 +426,29 @@ No - See above
 
 ##### Question: Traffic
 
-_If you can ssh, can you send any traffic (e.g. curl) out to the Internet?_
+_If you can ssh, can you send any traffic (e.g. curl) out to the Internet?_ No
 
 At this point, you've made your public EC2 instance an [ssh bastion](https://docs.aws.amazon.com/quickstart/latest/linux-bastion/architecture.html).
 We'll make use of that to explore your network below.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/04-vpcs$ ssh -i joels_aws_key_pair.pem ec2-user@44.208.113.230
+
+       __|  __|_  )
+       _|  (     /   Amazon Linux 2 AMI
+      ___|\___|___|
+
+https://aws.amazon.com/amazon-linux-2/
+[ec2-user@ip-10-0-42-94 ~]$
+
+```
+
+```
+[ec2-user@ip-10-0-42-94 ~]$  curl https://www.google.com
+
+
+```
+
 
 #### Lab 4.1.7: NAT Gateway
 
