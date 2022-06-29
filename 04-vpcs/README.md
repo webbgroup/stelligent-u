@@ -370,11 +370,19 @@ Add a security group to your EC2 stack:
 
 - Allow ICMP (for ping) and ssh traffic into your instance.
 
+Had to rebuild. and Rebuild in this exact order:
+```
+ 2399  aws cloudformation --profile temp create-stack --stack-name JoelsVPC --template-body file://cfn-vpcs.yaml --parameters file://cfn-vpcs-parameters.json
+ 2400  aws cloudformation --profile temp create-stack --stack-name JoelsEC2 --template-body file://cfn-ec2.yaml --parameters file://cfn-ec2instance.json
+ 2401  aws cloudformation --profile temp update-stack --stack-name JoelsEC2 --template-body file://cfn-ec2.yaml --parameters file://cfn-ec2instance.json
+```
 
 
 ##### Question: Connectivity
 
 _Can you ssh to your instance yet?_
+
+No. It doesn't have a public NIC or IP address
 
 #### Lab 4.1.6: Elastic IP
 
