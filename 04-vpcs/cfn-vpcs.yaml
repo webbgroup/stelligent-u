@@ -126,6 +126,9 @@ Resources:
           ToPort: '22'
           CidrIp:
             Ref: SSHLocation
+        - IpProtocol: udp
+          CidrIp:
+            Ref: SSHLocation
 Parameters:
   Network:
     Type: String

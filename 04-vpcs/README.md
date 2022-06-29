@@ -388,9 +388,27 @@ No. It doesn't have a public NIC or IP address
 
 Add an Elastic IP to your EC2 stack:
 
+Created.
+
 - Attach it to your EC2 resource.
 
 - Provide the public IP as a stack output.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/04-vpcs$ ssh -i joels_key_pair.pem ec2-user@44.208.113.230 -vvv
+Warning: Identity file joels_key_pair.pem not accessible: No such file or directory.
+OpenSSH_8.2p1 Ubuntu-4ubuntu0.5, OpenSSL 1.1.1f  31 Mar 2020
+debug1: Reading configuration data /etc/ssh/ssh_config
+debug1: /etc/ssh/ssh_config line 19: include /etc/ssh/ssh_config.d/*.conf matched no files
+debug1: /etc/ssh/ssh_config line 21: Applying options for *
+debug2: resolve_canonicalize: hostname 44.208.113.230 is address
+debug2: ssh_connect_direct
+debug1: Connecting to 44.208.113.230 [44.208.113.230] port 22.
+^C
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/04-vpcs$ ping 44.208.113.230
+PING 44.208.113.230 (44.208.113.230) 56(84) bytes of data.
+
+```
 
 Your EC2 was already on a network with an IGW, and now we've fully
 exposed it to the Internet by giving it a public IP address that's

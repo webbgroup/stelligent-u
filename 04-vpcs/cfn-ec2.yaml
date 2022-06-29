@@ -23,6 +23,13 @@ Resources:
           Value: 4.1
         - Key: stelligent-u-lab
           Value: 4.1.4
+  IPAddress:
+    Type: 'AWS::EC2::EIP'
+    #DependsOn: JoelsAttachGateway
+    Properties:
+      Domain: vpc
+      InstanceId:
+        Ref: JoelsInstance
 Parameters:
   EC2AmiId:
     Type: String
@@ -34,6 +41,11 @@ Outputs:
   JoelsInstance:
     Description: Joels Virtual Private Cloud.
     Value: !Ref JoelsInstance
+    Export:
+      Name: JoelsInstance
   JoelsPrivateIPAddress:
     Description: Joels Private ip in the subnet
     Value: !GetAtt JoelsInstance.PrivateIp
+  JoelsPublicIPAddress:
+    Description: Joels Public ip on the Internet
+    Value: !GetAtt JoelsInstance.PublicIp
