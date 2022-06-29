@@ -38,7 +38,7 @@ Resources:
       KeyName: joels-key-pair
       Tags:
         - Key: Name
-          Value: joels-instance
+          Value: joels-private-instance
         - Key: user
           Value: joel.webb.labs
         - Key: stelligent-u-lesson
