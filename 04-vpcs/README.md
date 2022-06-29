@@ -417,10 +417,12 @@ reachable from anywhere outside your VPC.
 ##### Question: Ping
 
 _Can you ping your instance now?_
+No - See above
 
 ##### Question: SSH
 
 _Can you ssh into your instance now?_
+No - See above
 
 ##### Question: Traffic
 
