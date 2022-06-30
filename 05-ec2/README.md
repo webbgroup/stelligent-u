@@ -103,6 +103,10 @@ Describe these instance attributes by querying the Cloud9 environment's
 
 Save your queries (but not the outputs) in your source code.
 
+```
+Skipping because we aren't using Cloud9
+```
+
 #### Lab 5.1.2: Launch Two EC2 Instances
 
 Create a CFN template that launches a simple EC2 instance when the stack
@@ -130,6 +134,92 @@ Create the stack:
 
 - Use the AWS CLI to describe the stack's resources, then use the AWS
   CLI to describe each instance that was created.
+
+```
+aws cloudformation describe-stacks --stack-name Joels05 --profile temp
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/05-ec2$ aws cloudformation describe-stacks --stack-name Joels05 --profile temp
+{
+    "Stacks": [
+        {
+            "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels05/4d8f7050-f89e-11ec-8082-12b6631a5fdd",
+            "StackName": "Joels05",
+            "CreationTime": "2022-06-30T17:58:53.193000+00:00",
+            "LastUpdatedTime": "2022-06-30T18:01:05.889000+00:00",
+            "RollbackConfiguration": {},
+            "StackStatus": "UPDATE_COMPLETE",
+            "DisableRollback": false,
+            "NotificationARNs": [],
+            "Outputs": [
+                {
+                    "OutputKey": "UbuntuEC2Id",
+                    "OutputValue": "i-0b3ce649c569c221c",
+                    "Description": "Joels Ubuntu EC2 Instance"
+                },
+                {
+                    "OutputKey": "WindowsEC2Id",
+                    "OutputValue": "i-08f7738a3d64c5997",
+                    "Description": "Joels Windows EC2 Instance"
+                }
+            ],
+            "Tags": [],
+            "EnableTerminationProtection": false,
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        }
+    ]
+}
+
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/05-ec2$ bash joels05-create.sh
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels05/dfa5f060-f8a1-11ec-82d7-120ed9d998f7"
+}
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+CREATE_COMPLETE
+Yay!!!
+
+```
 
 #### Lab 5.1.3: Update Your Stack
 
