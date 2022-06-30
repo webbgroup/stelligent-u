@@ -276,8 +276,98 @@ Replaced the Windows server as opposed to upgrading in place
 There is usually some delay between initiating an instance's termination
 and the instance being considered eliminated altogether.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/05-ec2$ aws cloudformation describe-stack-resources --profile temp --stack-name Joels05
+{
+    "StackResources": [
+        {
+            "StackName": "Joels05",
+            "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels05/dfa5f060-f8a1-11ec-82d7-120ed9d998f7",
+            "LogicalResourceId": "JoelsVPC",
+            "PhysicalResourceId": "vpc-090aa2e9b3f927a10",
+            "ResourceType": "AWS::EC2::VPC",
+            "Timestamp": "2022-06-30T18:24:46.875000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "Joels05",
+            "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels05/dfa5f060-f8a1-11ec-82d7-120ed9d998f7",
+            "LogicalResourceId": "MyLaunchTemplateLinuxJoels",
+            "PhysicalResourceId": "lt-056d0231aa448a9b8",
+            "ResourceType": "AWS::EC2::LaunchTemplate",
+            "Timestamp": "2022-06-30T18:24:39.949000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "Joels05",
+            "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels05/dfa5f060-f8a1-11ec-82d7-120ed9d998f7",
+            "LogicalResourceId": "MyLaunchTemplateWindowsJoels",
+            "PhysicalResourceId": "lt-01fdd8987853882f0",
+            "ResourceType": "AWS::EC2::LaunchTemplate",
+            "Timestamp": "2022-06-30T18:34:28.553000+00:00",
+            "ResourceStatus": "UPDATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "Joels05",
+            "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels05/dfa5f060-f8a1-11ec-82d7-120ed9d998f7",
+            "LogicalResourceId": "Subnet",
+            "PhysicalResourceId": "subnet-06203b4e37e189ce8",
+            "ResourceType": "AWS::EC2::Subnet",
+            "Timestamp": "2022-06-30T18:24:55.346000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "Joels05",
+            "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels05/dfa5f060-f8a1-11ec-82d7-120ed9d998f7",
+            "LogicalResourceId": "UbuntuEC2",
+            "PhysicalResourceId": "i-03f2b33af228f78e4",
+            "ResourceType": "AWS::EC2::Instance",
+            "Timestamp": "2022-06-30T18:25:52.672000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "Joels05",
+            "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels05/dfa5f060-f8a1-11ec-82d7-120ed9d998f7",
+            "LogicalResourceId": "WindowsEC2",
+            "PhysicalResourceId": "i-0b0aaf63c7adcb63d",
+            "ResourceType": "AWS::EC2::Instance",
+            "Timestamp": "2022-06-30T18:35:29.569000+00:00",
+            "ResourceStatus": "UPDATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        }
+    ]
+}
+(END)
+
+```
+
 - Delete your Stack. Immediately after initiating Stack deletion, see
   if you can query your instance states.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/05-ec2$ aws cloudformation describe-stack-resources --profile temp --stack-name Joels05
+
+An error occurred (ValidationError) when calling the DescribeStackResources operation: Stack with id Joels05 does not exist
+
+```
+
 
 ### Retrospective 5.1
 
