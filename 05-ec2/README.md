@@ -144,23 +144,22 @@ joel@joels-desktop:~/Documents/Stelligent/stelligent-u/05-ec2$ aws cloudformatio
 {
     "Stacks": [
         {
-            "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels05/4d8f7050-f89e-11ec-8082-12b6631a5fdd",
+            "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels05/dfa5f060-f8a1-11ec-82d7-120ed9d998f7",
             "StackName": "Joels05",
-            "CreationTime": "2022-06-30T17:58:53.193000+00:00",
-            "LastUpdatedTime": "2022-06-30T18:01:05.889000+00:00",
+            "CreationTime": "2022-06-30T18:24:26.789000+00:00",
             "RollbackConfiguration": {},
-            "StackStatus": "UPDATE_COMPLETE",
+            "StackStatus": "CREATE_COMPLETE",
             "DisableRollback": false,
             "NotificationARNs": [],
             "Outputs": [
                 {
                     "OutputKey": "UbuntuEC2Id",
-                    "OutputValue": "i-0b3ce649c569c221c",
+                    "OutputValue": "i-03f2b33af228f78e4",
                     "Description": "Joels Ubuntu EC2 Instance"
                 },
                 {
                     "OutputKey": "WindowsEC2Id",
-                    "OutputValue": "i-08f7738a3d64c5997",
+                    "OutputValue": "i-082c074d876035388",
                     "Description": "Joels Windows EC2 Instance"
                 }
             ],
@@ -227,6 +226,8 @@ Change the AMI ID for the Windows instance to instead launch an AMI for
 Windows Server 2012 R2:
 
 - Update your Stack.
+
+
 
 - Query the stack's events using the AWS CLI. What happened to your
   original EC2 Windows instance?
