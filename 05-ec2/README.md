@@ -232,6 +232,45 @@ Windows Server 2012 R2:
 - Query the stack's events using the AWS CLI. What happened to your
   original EC2 Windows instance?
 
+```
+Requested update requires the creation of a new physical resource; hence creating one.
+```
+
+```
+{
+    "Stacks": [
+        {
+            "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels05/dfa5f060-f8a1-11ec-82d7-120ed9d998f7",
+            "StackName": "Joels05",
+            "CreationTime": "2022-06-30T18:24:26.789000+00:00",
+            "LastUpdatedTime": "2022-06-30T18:34:14.764000+00:00",
+            "RollbackConfiguration": {},
+            "StackStatus": "UPDATE_COMPLETE",
+            "DisableRollback": false,
+            "NotificationARNs": [],
+            "Outputs": [
+                {
+                    "OutputKey": "UbuntuEC2Id",
+                    "OutputValue": "i-03f2b33af228f78e4",
+                    "Description": "Joels Ubuntu EC2 Instance"
+                },
+                {
+                    "OutputKey": "WindowsEC2Id",
+                    "OutputValue": "i-0b0aaf63c7adcb63d",
+                    "Description": "Joels Windows EC2 Instance"
+                }
+            ],
+            "Tags": [],
+            "EnableTerminationProtection": false,
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        }
+
+```
+
+Replaced the Windows server as opposed to upgrading in place
+
 #### Lab 5.1.4: Teardown
 
 There is usually some delay between initiating an instance's termination
