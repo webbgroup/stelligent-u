@@ -34,6 +34,7 @@ Resources:
       InstanceType: !Sub ${InstanceType}
       SecurityGroupIds:
         - !ImportValue InstanceSecurityGroup
+        - !ImportValue InstanceOutboundSecurityGroup
       SubnetId: !ImportValue JoelsPrivateSubnet
       KeyName: joels-key-pair
       Tags:
