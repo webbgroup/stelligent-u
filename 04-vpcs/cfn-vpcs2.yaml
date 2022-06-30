@@ -1,0 +1,168 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: joel.webb.labs stelligent-u-04 4.1
+
+Resources:
+  JoelsVPC2:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: !Sub ${Network}/16
+      Tags:
+        - Key: Application
+          Value:
+            Ref: 'AWS::StackId'
+        - Key: Name
+          Value: joels-vpc2
+        - Key: user
+          Value: joel.webb.labs
+        - Key: stelligent-u-lesson
+          Value: 4.1
+        - Key: stelligent-u-lab
+          Value: 4.1.2
+  JoelsPrivateSubnet2:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId:
+        Ref: JoelsVPC2
+      CidrBlock: !Sub ${Network}/24
+      Tags:
+        - Key: Application
+          Value:
+            Ref: 'AWS::StackId'
+        - Key: Name
+          Value: joels-private-subnet2
+        - Key: user
+          Value: joel.webb.labs
+        - Key: stelligent-u-lesson
+          Value: 4.1
+        - Key: stelligent-u-lab
+          Value: 4.1.2
+  JoelsRouteTable2:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId:
+        Ref: JoelsVPC2
+      Tags:
+        - Key: Application
+          Value:
+            Ref: 'AWS::StackId'
+        - Key: Name
+          Value: joels-routetable2
+  Route:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId:
+        Ref: JoelsRouteTable2
+      DestinationCidrBlock: 0.0.0.0/0
+  SubnetRouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId:
+        Ref: JoelsPrivateSubnet2
+      RouteTableId:
+        Ref: JoelsRouteTable2
+  NetworkAcl2:
+    Type: 'AWS::EC2::NetworkAcl'
+    Properties:
+      VpcId:
+        Ref: JoelsVPC2
+      Tags:
+        - Key: Application
+          Value:
+            Ref: 'AWS::StackId'
+  InboundSSHNetworkAclEntry:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      NetworkAclId:
+        Ref: NetworkAcl2
+      RuleNumber: '101'
+      Protocol: '6'
+      RuleAction: allow
+      Egress: 'false'
+      CidrBlock: !Sub ${Network}/16
+      PortRange:
+        From: '22'
+        To: '22'
+  InstanceSecurityGroup2:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      VpcId:
+        Ref: JoelsVPC2
+      GroupDescription: Enable SSH access via port 22
+      GroupName: joelsSecurityGroup2-sg
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow icmp
+          FromPort: 8
+          IpProtocol: icmp
+          ToPort: -1
+        - CidrIp: 0.0.0.0/0
+#        - CidrIp: !Sub ${SSHLocation}
+          Description: Allow ssh
+          FromPort: 22
+          IpProtocol: tcp
+          ToPort: 22
+  InstanceOutboundSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      VpcId:
+        Ref: JoelsVPC2
+      GroupDescription: Enable SSH access via port 22
+      GroupName: joelsSecurityGroupOutbound-sg
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow icmp
+          FromPort: 8
+          IpProtocol: icmp
+          ToPort: -1
+        - CidrIp: 0.0.0.0/0
+          Description: Allow web
+          FromPort: 80
+          IpProtocol: tcp
+          ToPort: 80
+        - CidrIp: 0.0.0.0/0
+          Description: Allow Secure web
+          FromPort: 443
+          IpProtocol: tcp
+          ToPort: 443
+  OutBoundResponsePortsNetworkAclEntry:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      NetworkAclId:
+        Ref: NetworkAcl2
+      RuleNumber: '102'
+      Protocol: '6'
+      RuleAction: allow
+      Egress: 'true'
+      CidrBlock: 0.0.0.0/0
+      PortRange:
+        From: '1'
+        To: '65535'
+Parameters:
+  Network:
+    Type: String
+Outputs:
+  JoelsVPC2:
+    Description: Joels Virtual Private Cloud.
+    Value: !Ref JoelsVPC2
+    Export:
+      Name: JoelsVPC
+  JoelsPrivateSubnet2:
+    Description: Joels Private Subnet for the VPC
+    Value: !Ref JoelsPrivateSubnet2
+    Export:
+      Name: JoelsPrivateSubnet2
+  InstanceSecurityGroup2:
+    Description: Joels Security Group
+    Value: !Ref InstanceSecurityGroup2
+    Export:
+      Name: InstanceSecurityGroup
+  InstanceOutboundSecurityGroup2:
+    Description: Joels Outbound Security Group
+    Value: !Ref InstanceOutboundSecurityGroup
+    Export:
+      Name: InstanceOutboundSecurityGroup2
+  MyStacksRegion:
+    Value: !Ref "AWS::Region"
+  AccountId:
+    Value: !Ref "AWS::AccountId"

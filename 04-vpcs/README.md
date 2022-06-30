@@ -545,6 +545,22 @@ No. due to the connectivity being cut off at the external facing NIC
 
 #### Lab 4.1.8: Network ACL
 
+```
+2 diff methods of control. ACLs are stateless and apply to the subnet so each transaction has to read the rules for every packet whereas SGs are stateful rules and apply directly to the instances
+```
+
+```
+in this lab since we only have a single instance its hard to see the benefits but say you had more than 1 instance and port 22 needed to go to one and 80/443 to another. you’d open both holes in the network ACL but for each instance you’d only open the needed ports.
+10:30
+think of it as another firewall in front of the instances/subnet
+10:30
+no diff really than using SGs and still having a local firewall on the OS
+```
+
+```
+packet -> network acl -> subnet access -> Security Group -> instance
+```
+
 Add Network ACLs to your VPC stack.
 
 First, add one on the public subnet:
