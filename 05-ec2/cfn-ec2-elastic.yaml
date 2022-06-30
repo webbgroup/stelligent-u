@@ -46,7 +46,7 @@ Resources:
       LaunchTemplateName: MyLaunchTemplateWindows
       LaunchTemplateData:
         DisableApiTermination: true
-        ImageId: ami-03e42a81d67097502
+        ImageId: ami-09e13647920b2ba1d
         InstanceType: t2.micro
         KeyName: joels-key-pair
 
