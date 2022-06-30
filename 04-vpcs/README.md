@@ -554,6 +554,7 @@ First, add one on the public subnet:
 - Only allows ssh traffic from your IP address.
 
 - Allows egress traffic to anything.
+I couldn't get this working
 
 ##### Question: EC2 Connection
 

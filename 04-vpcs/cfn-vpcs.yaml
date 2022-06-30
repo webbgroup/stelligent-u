@@ -139,14 +139,14 @@ Resources:
       Protocol: '6'
       RuleAction: allow
       Egress: 'false'
-      CidrBlock: 0.0.0.0/0
+      CidrBlock: !Sub ${Network}/16
       PortRange:
         From: '22'
         To: '22'
   InboundPingNetworkAclEntry:
     Type: 'AWS::EC2::NetworkAclEntry'
     Properties:
-       CidrBlock: 0.0.0.0/0
+       CidrBlock: !Sub ${Network}/16
        Egress: false
        Icmp:
          Code: -1
@@ -164,7 +164,7 @@ Resources:
       Protocol: '6'
       RuleAction: allow
       Egress: 'false'
-      CidrBlock: 0.0.0.0/0
+      CidrBlock: !Sub ${Network}/16
       PortRange:
         From: '1024'
         To: '65535'
