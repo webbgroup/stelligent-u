@@ -1,0 +1,6 @@
+[
+    {
+        "ParameterKey": "BucketName",
+        "ParameterValue": "joels-s3-bucket-o-gold"
+    }
+]

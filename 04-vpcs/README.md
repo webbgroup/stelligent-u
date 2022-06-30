@@ -102,6 +102,19 @@ on your "private" subnet.
 We can't call your subnet "private" any more. Now that it has an
 Internet Gateway, it can get traffic directly from the public Internet.
 
+See the files:
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/04-vpcs$ aws cloudformation --profile temp create-stack --stack-name JoelsVPC --template-body file://cfn-vpcs.yaml --parameters file://cfn-vpcs-parameters.json
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/04-vpcs$ aws cloudformation --profile temp update-stack --stack-name JoelsVPC --template-body file://cfn-vpcs.yaml --parameters file://cfn-vpcs-parameters.json
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/JoelsVPC/12e1ff60-f6e4-11ec-be28-0ad2b770bb63"
+}
+```
+
 #### Lab 4.1.3: EC2 Key Pair
 
 [Create an EC2 key pair](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html#having-ec2-create-your-key-pair)
@@ -110,7 +123,13 @@ AWS CLI.
 
 - Save the output as a .pem file in your project directory.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/04-vpcs$ aws ec2 create-key-pair --profile temp --key-name joels-key-pair --key-type rsa --key-format pem --query "KeyMaterial" --output text > joels_aws_key_pair.pem
+```
+
 - Be sure to create it in the same region you'll be doing your labs.
+
+Created
 
 #### Lab 4.1.4: Test Instance
 
@@ -122,21 +141,228 @@ Launch an EC2 instance into your VPC.
 
 - Use the latest Amazon Linux AMI.
 
+Use the following at your own risk. It comes back with way too many choices.
+```
+ aws ec2 describe-images --profile temp --owners self amazon | grep '"PlatformDetails": "Linux/UNIX"' -B4
+
+```
+```
+aws ec2 describe-images --profile temp --owners self amazon | grep '"PlatformDetails": "Linux/UNIX"' -B4q
+```
+
+Hitting odd error:
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/04-vpcs$ aws cloudformation --profile temp create-stack --stack-name JoelsEC2 --template-body file://cfn-ec2.yaml --parameters file://cfn-ec2instance.json
+
+An error occurred (ValidationError) when calling the CreateStack operation: Parameter values specified for a template which does not require them.
+
+```
+
 - Create a new parameter file for this template. Include the EC2 AMI
   ID, a T2 instance type, and the name of your key pair.
 
 - Provide the instance ID and private IP address as stack outputs.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/04-vpcs$ aws ec2 describe-instances --profile temp --filters "Name=instance-id,Values=i-0f5784eb78a7d9969"
+```
+
 - Use the same tags you put on your VPC.
+
+Tags added.
 
 ##### Question: Post Launch
 
 _After you launch your new stack, can you ssh to the instance?_
 
+No.
+
+I don't have an external ip address.
+
+```
+{
+    "Reservations": [
+        {
+            "Groups": [],
+            "Instances": [
+                {
+                    "AmiLaunchIndex": 0,
+                    "ImageId": "ami-0cff7528ff583bf9a",
+                    "InstanceId": "i-0f5784eb78a7d9969",
+                    "InstanceType": "t2.small",
+                    "KeyName": "joels-key-pair",
+                    "LaunchTime": "2022-06-28T16:40:57+00:00",
+                    "Monitoring": {
+                        "State": "disabled"
+                    },
+                    "Placement": {
+                        "AvailabilityZone": "us-east-1c",
+                        "GroupName": "",
+                        "Tenancy": "default"
+                    },
+                    "PrivateDnsName": "ip-10-0-42-180.ec2.internal",
+                    "PrivateIpAddress": "10.0.42.180",
+                    "ProductCodes": [],
+                    "PublicDnsName": "",
+                    "State": {
+                        "Code": 16,
+                        "Name": "running"
+                    },
+                    "StateTransitionReason": "",
+                    "SubnetId": "subnet-0156d42d4eb9ed5ba",
+                    "VpcId": "vpc-068c4ff7a5700879d",
+                    "Architecture": "x86_64",
+                    "BlockDeviceMappings": [
+                        {
+                            "DeviceName": "/dev/xvda",
+                            "Ebs": {
+                                "AttachTime": "2022-06-28T16:40:58+00:00",
+                                "DeleteOnTermination": true,
+                                "Status": "attached",
+                                "VolumeId": "vol-0056cd58999d2cbbf"
+                            }
+                        }
+                    ],
+                    "ClientToken": "Joels-Joels-13ALLQ80J528K",
+                    "EbsOptimized": false,
+                    "EnaSupport": true,
+                    "Hypervisor": "xen",
+                    "NetworkInterfaces": [
+                        {
+                            "Attachment": {
+                                "AttachTime": "2022-06-28T16:40:57+00:00",
+                                "AttachmentId": "eni-attach-0e23913930bf2f23d",
+                                "DeleteOnTermination": true,
+                                "DeviceIndex": 0,
+                                "Status": "attached",
+                                "NetworkCardIndex": 0
+                            },
+                            "Description": "",
+                            "Groups": [
+                                {
+                                    "GroupName": "default",
+                                    "GroupId": "sg-09c4f0fbec1f3ba83"
+                                }
+                            ],
+                            "Ipv6Addresses": [],
+                            "MacAddress": "0a:9d:7c:42:09:37",
+                            "NetworkInterfaceId": "eni-006ee167231392c67",
+                            "OwnerId": "324320755747",
+                            "PrivateIpAddress": "10.0.42.180",
+                            "PrivateIpAddresses": [
+                                {
+                                    "Primary": true,
+                                    "PrivateIpAddress": "10.0.42.180"
+                                }
+                            ],
+                            "SourceDestCheck": true,
+                            "Status": "in-use",
+                            "SubnetId": "subnet-0156d42d4eb9ed5ba",
+                            "VpcId": "vpc-068c4ff7a5700879d",
+                            "InterfaceType": "interface"
+                        }
+                    ],
+                    "RootDeviceName": "/dev/xvda",
+                    "RootDeviceType": "ebs",
+                    "SecurityGroups": [
+                        {
+                            "GroupName": "default",
+                            "GroupId": "sg-09c4f0fbec1f3ba83"
+                        }
+                    ],
+                    "SourceDestCheck": true,
+                    "Tags": [
+                        {
+                            "Key": "Name",
+                            "Value": "joels-instance"
+                        },
+                        {
+                            "Key": "aws:cloudformation:stack-id",
+                            "Value": "arn:aws:cloudformation:us-east-1:324320755747:stack/JoelsEC2/4d35b9b0-f700-11ec-afdf-122d622f4417"
+                        },
+                        {
+                            "Key": "user",
+                            "Value": "joel.webb.labs"
+                        },
+                        {
+                            "Key": "aws:cloudformation:logical-id",
+                            "Value": "JoelsInstance"
+                        },
+                        {
+                            "Key": "stelligent-u-lab",
+                            "Value": "4.1.4"
+                        },
+                        {
+                            "Key": "stelligent-u-lesson",
+                            "Value": "4.1"
+                        },
+                        {
+                            "Key": "aws:cloudformation:stack-name",
+                            "Value": "JoelsEC2"
+                        }
+                    ],
+                    "VirtualizationType": "hvm",
+                    "CpuOptions": {
+                        "CoreCount": 1,
+                        "ThreadsPerCore": 1
+                    },
+                    "CapacityReservationSpecification": {
+                        "CapacityReservationPreference": "open"
+                    },
+                    "HibernationOptions": {
+                        "Configured": false
+                    },
+                    "MetadataOptions": {
+                        "State": "applied",
+                        "HttpTokens": "optional",
+                        "HttpPutResponseHopLimit": 1,
+                        "HttpEndpoint": "enabled",
+                        "HttpProtocolIpv6": "disabled",
+                        "InstanceMetadataTags": "disabled"
+                    },
+                    "EnclaveOptions": {
+                        "Enabled": false
+                    },
+                    "PlatformDetails": "Linux/UNIX",
+                    "UsageOperation": "RunInstances",
+                    "UsageOperationUpdateTime": "2022-06-28T16:40:57+00:00",
+                    "PrivateDnsNameOptions": {
+                        "HostnameType": "ip-name",
+                        "EnableResourceNameDnsARecord": false,
+                        "EnableResourceNameDnsAAAARecord": false
+                    },
+                    "MaintenanceOptions": {
+                        "AutoRecovery": "default"
+                    }
+                }
+            ],
+            "OwnerId": "324320755747",
+            "RequesterId": "043234062703",
+            "ReservationId": "r-08e42046479199033"
+        }
+    ]
+}
+
+```
+
+
+```
+"joels_aws_key_pair.pem" [New] 27L, 1679B written
+[cloudshell-user@ip-10-1-172-201 ~]$ ssh -i joels_aws_key_pair.pem ip-10-0-42-180.ec2.internal
+^C
+[cloudshell-user@ip-10-1-172-201 ~]$ ssh -i joels_aws_key_pair.pem ec2-user@ip-10-0-42-180.ec2.internal
+
+```
+
 ##### Question: Verify Connectivity
 
 _Is there a way that you can verify Internet connectivity from the instance
 without ssh'ing to it?_
+
+I don't have any public IP addresses yet. So how could it? besides, it is a private IP address space assigned.
+
+Reachability Analyser should help though
+https://us-east-1.console.aws.amazon.com/vpc/home?region=us-east-1#NetworkPath:pathId=nip-00317ff2fffb8c7fe
 
 #### Lab 4.1.5: Security Group
 
@@ -144,17 +370,45 @@ Add a security group to your EC2 stack:
 
 - Allow ICMP (for ping) and ssh traffic into your instance.
 
+Had to rebuild. and Rebuild in this exact order:
+```
+ 2399  aws cloudformation --profile temp create-stack --stack-name JoelsVPC --template-body file://cfn-vpcs.yaml --parameters file://cfn-vpcs-parameters.json
+ 2400  aws cloudformation --profile temp create-stack --stack-name JoelsEC2 --template-body file://cfn-ec2.yaml --parameters file://cfn-ec2instance.json
+ 2401  aws cloudformation --profile temp update-stack --stack-name JoelsEC2 --template-body file://cfn-ec2.yaml --parameters file://cfn-ec2instance.json
+```
+
+
 ##### Question: Connectivity
 
 _Can you ssh to your instance yet?_
+
+No. It doesn't have a public NIC or IP address
 
 #### Lab 4.1.6: Elastic IP
 
 Add an Elastic IP to your EC2 stack:
 
+Created.
+
 - Attach it to your EC2 resource.
 
 - Provide the public IP as a stack output.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/04-vpcs$ ssh -i joels_key_pair.pem ec2-user@44.208.113.230 -vvv
+Warning: Identity file joels_key_pair.pem not accessible: No such file or directory.
+OpenSSH_8.2p1 Ubuntu-4ubuntu0.5, OpenSSL 1.1.1f  31 Mar 2020
+debug1: Reading configuration data /etc/ssh/ssh_config
+debug1: /etc/ssh/ssh_config line 19: include /etc/ssh/ssh_config.d/*.conf matched no files
+debug1: /etc/ssh/ssh_config line 21: Applying options for *
+debug2: resolve_canonicalize: hostname 44.208.113.230 is address
+debug2: ssh_connect_direct
+debug1: Connecting to 44.208.113.230 [44.208.113.230] port 22.
+^C
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/04-vpcs$ ping 44.208.113.230
+PING 44.208.113.230 (44.208.113.230) 56(84) bytes of data.
+
+```
 
 Your EC2 was already on a network with an IGW, and now we've fully
 exposed it to the Internet by giving it a public IP address that's
@@ -163,17 +417,38 @@ reachable from anywhere outside your VPC.
 ##### Question: Ping
 
 _Can you ping your instance now?_
+No - See above
 
 ##### Question: SSH
 
 _Can you ssh into your instance now?_
+No - See above
 
 ##### Question: Traffic
 
-_If you can ssh, can you send any traffic (e.g. curl) out to the Internet?_
+_If you can ssh, can you send any traffic (e.g. curl) out to the Internet?_ No
 
 At this point, you've made your public EC2 instance an [ssh bastion](https://docs.aws.amazon.com/quickstart/latest/linux-bastion/architecture.html).
 We'll make use of that to explore your network below.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/04-vpcs$ ssh -i joels_aws_key_pair.pem ec2-user@44.208.113.230
+
+       __|  __|_  )
+       _|  (     /   Amazon Linux 2 AMI
+      ___|\___|___|
+
+https://aws.amazon.com/amazon-linux-2/
+[ec2-user@ip-10-0-42-94 ~]$
+
+```
+
+```
+[ec2-user@ip-10-0-42-94 ~]$  curl https://www.google.com
+
+
+```
+
 
 #### Lab 4.1.7: NAT Gateway
 
@@ -200,14 +475,64 @@ existing instance stack.
 
 _Can you find a way to ssh to this instance?_
 
+```
+[ec2-user@ip-10-0-42-118 ~]$ ssh ec2-user@10.0.42.8
+Permission denied (publickey,gssapi-keyex,gssapi-with-mic).
+[ec2-user@ip-10-0-42-118 ~]$ vim joels-key-pair.pem
+[ec2-user@ip-10-0-42-118 ~]$ md5sum joels-key-pair.pem
+3fd253b1489678b1e8b29562ca269376  joels-key-pair.pem
+[ec2-user@ip-10-0-42-118 ~]$ ssh -i joels-key-pair.pem ec2-user@10.0.42.8
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@         WARNING: UNPROTECTED PRIVATE KEY FILE!          @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+Permissions 0664 for 'joels-key-pair.pem' are too open.
+It is required that your private key files are NOT accessible by others.
+This private key will be ignored.
+Load key "joels-key-pair.pem": bad permissions
+Permission denied (publickey,gssapi-keyex,gssapi-with-mic).
+[ec2-user@ip-10-0-42-118 ~]$ chmod 400 joels-key-pair.pem
+[ec2-user@ip-10-0-42-118 ~]$ ssh -i joels-key-pair.pem ec2-user@10.0.42.8
+
+       __|  __|_  )
+       _|  (     /   Amazon Linux 2 AMI
+      ___|\___|___|
+
+https://aws.amazon.com/amazon-linux-2/
+[ec2-user@ip-10-0-42-8 ~]$ curl https://www.google.com
+^C
+```
+
+
 ##### Question: Egress
 
 _If you can ssh to it, can you send traffic out?_
+
+no.
 
 ##### Question: Deleting the Gateway
 
 _If you delete the NAT gateway, what happens to the ssh session on your private
 instance?_
+
+Nothing really..
+
+```
+[ec2-user@ip-10-0-42-8 ~]$ curl https://www.google.com
+^C
+[ec2-user@ip-10-0-42-8 ~]$ exit
+logout
+Connection to 10.0.42.8 closed.
+[ec2-user@ip-10-0-42-118 ~]$ ssh -i joels-key-pair.pem ec2-user@10.0.42.8
+Last login: Wed Jun 29 19:37:18 2022 from 10.0.42.118
+
+       __|  __|_  )
+       _|  (     /   Amazon Linux 2 AMI
+      ___|\___|___|
+
+https://aws.amazon.com/amazon-linux-2/
+[ec2-user@ip-10-0-42-8 ~]$
+
+```
 
 ##### Question: Recreating the Gateway
 
@@ -215,6 +540,8 @@ _If you recreate the NAT gateway and detach the Elastic IP from the public EC2
 instance, can you still reach the instance from the outside?_
 
 Test it out with the AWS console.
+
+No. due to the connectivity being cut off at the external facing NIC
 
 #### Lab 4.1.8: Network ACL
 
@@ -227,6 +554,7 @@ First, add one on the public subnet:
 - Only allows ssh traffic from your IP address.
 
 - Allows egress traffic to anything.
+I couldn't get this working
 
 ##### Question: EC2 Connection
 
