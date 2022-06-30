@@ -1,0 +1,85 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+#  MyIamInstanceProfile:
+#    Type: AWS::IAM::InstanceProfile
+#    Properties:
+#      InstanceProfileName: MyIamInstanceProfile
+#      Path: "/"
+#      Roles:
+#      - MyAdminRole
+
+  JoelsVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.42.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      InstanceTenancy: default
+      Tags:
+        - Key: Name
+          Value: joels-vpc
+
+  Subnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.42.0/16
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: joels-subnet
+      VpcId: !Ref JoelsVPC
+
+  MyLaunchTemplateLinuxJoels:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateName: MyLaunchTemplateLinux
+      LaunchTemplateData:
+        DisableApiTermination: true
+        ImageId: ami-0cff7528ff583bf9a
+        InstanceType: t2.micro
+        KeyName: joels-key-pair
+
+  MyLaunchTemplateWindowsJoels:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateName: MyLaunchTemplateWindows
+      LaunchTemplateData:
+        DisableApiTermination: true
+        ImageId: ami-03e42a81d67097502
+        InstanceType: t2.micro
+        KeyName: joels-key-pair
+
+  UbuntuEC2:
+    Type: AWS::EC2::Instance
+    Properties:
+      LaunchTemplate:
+        LaunchTemplateId: !Ref MyLaunchTemplateLinuxJoels
+        Version: !GetAtt MyLaunchTemplateLinuxJoels.LatestVersionNumber
+      SubnetId: !Ref Subnet
+      Tags:
+        - Key: Name
+          Value: joels-ubuntu
+
+  WindowsEC2:
+    Type: AWS::EC2::Instance
+    Properties:
+      LaunchTemplate:
+        LaunchTemplateId: !Ref MyLaunchTemplateWindowsJoels
+        Version: !GetAtt MyLaunchTemplateWindowsJoels.LatestVersionNumber
+      SubnetId: !Ref Subnet
+      Tags:
+        - Key: Name
+          Value: joels-windows
+
+Outputs:
+  WindowsEC2Id:
+    Description: Joels Windows EC2 Instance
+    Value: !Ref WindowsEC2
+
+  UbuntuEC2Id:
+    Description: Joels Ubuntu EC2 Instance
+    Value: !Ref UbuntuEC2
+
+
+
