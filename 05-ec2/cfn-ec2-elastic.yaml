@@ -36,7 +36,7 @@ Resources:
       LaunchTemplateName: MyLaunchTemplateLinux
       LaunchTemplateData:
         DisableApiTermination: true
-        ImageId: ami-0cff7528ff583bf9a
+        ImageId: !Ref ami-0cff7528ff583bf9a
         InstanceType: t2.micro
         KeyName: joels-key-pair
 
@@ -71,6 +71,15 @@ Resources:
       Tags:
         - Key: Name
           Value: joels-windows
+Parameters:
+  LinuxEC2AmiId:
+    Type: String
+    Description: What Linux VM Image ID
+  WindowsEC2AmiId:
+    Type: String
+    Description: What Windows VM Image ID
+  InstanceType:
+    Description: What Instance Type
 
 Outputs:
   WindowsEC2Id:

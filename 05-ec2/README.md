@@ -379,6 +379,16 @@ back and change your lab's code and repeat that lab: parameterize the
 CFN template to accept both Linux and Windows AMI IDs, and provide the
 values via a scripted mechanism.
 
+Looked them up in the WebSite GUI and chose what was the latest
+
+stopped here because I couldn't find a programmatic way to retreive results and come back with specific image ID
+`
+aws ec2 describe-images --profile temp --owners self amazon
+`
+Comes back with 16k results ^
+
+
+
 #### Question: Resource Replacement
 
 _When updating a Stack containing an EC2 instance,

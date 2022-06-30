@@ -50,7 +50,7 @@ Parameters:
   EC2AmiId:
     Type: String
     Description: What VM Image ID
-  InstanceType:
+  WindowsEC2AmiId:
     Type: String
     Description: What Instance Type
 Outputs:
