@@ -54,6 +54,13 @@ and then run some simple commands to confirm access using your keys:
 - [list-buckets](https://docs.aws.amazon.com/cli/latest/reference/s3api/list-buckets.html)
 - [describe-instances](https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-instances.html)
 
+type this to start off with after you create your key
+```
+aws configure
+```
+
+the access id and secreate access key needs to be stored locally
+
 Remember that the combination of an access key and a secret key are
 the same as user credentials and should not be given out or stored
 in a public location like a GitHub repository, nor should they be
