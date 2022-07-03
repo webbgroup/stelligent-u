@@ -443,7 +443,7 @@ joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws sts assume-ro
     "Credentials": {
         "AccessKeyId": "ASIAUXAYGAARQXOESZ5G",
         "SecretAccessKey": "BhjHIkrLKqguM/n1Xp7ydSAwfJgo+8e3zav8pKjz",
-        "SessionToken": "IQoJb3JpZ2luX2VjEH0aCXVzLWVhc3QtMSJIMEYCIQD89m3d8SF5rjAUrAzmH+pscOwl3ll+ks6MT36WhTx92AIhAON9eTq0GpuPVzxyAewbzM+T6YJtD1H1ZRkqwCYEVQ6gKqwCCJb//////////wEQABoMMzI0MzIwNzU1NzQ3IgxHZhi5QYK30izbUUMqgAIvy7Mglqt94Zb08ugY6InUzqN72lZ7w9A8K6eBouIQClfl5qAGsBUNufmWltNtNxQ+yOFE7ehuN/tXvek5YctsKpkemrEsKZXDTvAd6ktgR1yArrsZAj8AxT1igK2/nPYeT+7P0pwCvxOva1QurrOdIFUMRNMpBNcW3rGJwJP/84e4F0KhwBQcCotARY/HCq4nYy3SzZxNvi/FHQvH7dymelTS+17xxTVFKigXy/rRsaIQoW1CYj5unLVqnf/kO3FORcg2xFQx3JNJp+q/6vgJLc0X+8WLDdcBjm0XOEBLpCzHlEBHb8KBZr7ZdFpqycddPuNL9g4qyDw5F7TZUI/PMLLK2JUGOpwBtWmeq7TTeQIEoPH4vVjHOwwF2zsSxuEnEDztDavvk60tCmtAVdzDBjJw/Q2zfMr3vntQrt+X6oXvkh+LBTkjgH/4+Kmi4ch4OF+tZVPG7h3vZ/7AjHmDr3kKfsdtZbGflVfJ5klcGhyS869eNh4tLml5OX2kMjTZIdsfCEbZUkv8SL2IpNRvjzHME2QD60tY7Rcs112X4b9RPSHN",
+        "SessionToken": "<redacted>",
         "Expiration": "2022-06-24T21:57:22+00:00"
     },
     "AssumedRoleUser": {
