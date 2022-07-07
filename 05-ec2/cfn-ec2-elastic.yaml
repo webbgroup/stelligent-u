@@ -36,8 +36,8 @@ Resources:
       LaunchTemplateName: MyLaunchTemplateLinux
       LaunchTemplateData:
         DisableApiTermination: true
-        ImageId: !Ref ami-0cff7528ff583bf9a
-        InstanceType: t2.micro
+        ImageId: !Sub ${LinuxEC2AmiId}
+        InstanceType: !Sub ${InstanceType}
         KeyName: joels-key-pair
 
   MyLaunchTemplateWindowsJoels:
@@ -46,8 +46,8 @@ Resources:
       LaunchTemplateName: MyLaunchTemplateWindows
       LaunchTemplateData:
         DisableApiTermination: true
-        ImageId: ami-09e13647920b2ba1d
-        InstanceType: t2.micro
+        ImageId: !Sub ${WindowsEC2AmiId}
+        InstanceType: !Sub ${InstanceType}
         KeyName: joels-key-pair
 
   UbuntuEC2:
@@ -79,6 +79,7 @@ Parameters:
     Type: String
     Description: What Windows VM Image ID
   InstanceType:
+    Type: String
     Description: What Instance Type
 
 Outputs:
