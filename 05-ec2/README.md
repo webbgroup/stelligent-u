@@ -616,6 +616,10 @@ Can you SSH into the instance?
 Now can you SSH into your instance? If not, troubleshoot and fix the
 issue using your CFN template.
 
+```
+Had to include SSH from 5.2.1 so I could troubleshoot the connectivity
+```
+
 ### Retrospective 5.2
 
 For more information on resolving connection issues, see the
