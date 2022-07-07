@@ -721,6 +721,8 @@ Userdata docs to debug.
   - Is it necessary to [apply monitoring scripts](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/mon-scripts.html)
     to send data to CloudWatch?
 
+    The agent should do it for you.
+
 - Create a new role that trusts the EC2 Service to assume it, and that
   has the privileges to perform whatever actions are necessary to
   provide the additional metrics to CloudWatch.
@@ -734,6 +736,27 @@ Userdata docs to debug.
 
 Compare those same metrics with the values received from Lab 5.3.1.
 Record your results.
+
+```
+amazon-cloudwatch-agent/ cwagent-otel-collector/  ssm/
+[ec2-user@ip-10-0-42-129 ~]$ sudo tail -f /var/log/amazon/amazon-cloudwatch-agent/amazon-cloudwatch-agent.log
+
+2022/07/07 18:23:16 I! Return exit error: exit code=99
+2022/07/07 18:23:16 I! there is no json configuration when running translator
+2022/07/07 18:23:33 I! I! Detected the instance is EC2
+2022/07/07 18:23:33 Reading json config file path: /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json ...
+/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json does not exist or cannot read. Skipping it.
+No json config files found, please provide config, exit now
+
+2022/07/07 18:23:33 I! Return exit error: exit code=99
+2022/07/07 18:23:33 I! there is no json configuration when running translator
+
+```
+
+Once I added the new line, it will create the default configuration file and start up as usual. Very odd that it isn't systemctl compatible
+```
+/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a start
+```
 
 ##### Task: Private Subnet
 

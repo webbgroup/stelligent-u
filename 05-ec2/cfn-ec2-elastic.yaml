@@ -152,7 +152,7 @@ Resources:
           #!/bin/bash
           yum install amazon-cloudwatch-agent
           systemctl enable amazon-cloudwatch-agent.service
-          systemctl start amazon-cloudwatch-agent.service
+          sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a start
 
 Outputs:
   ElasticIP:
