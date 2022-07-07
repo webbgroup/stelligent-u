@@ -616,14 +616,53 @@ Can you SSH into the instance?
 Now can you SSH into your instance? If not, troubleshoot and fix the
 issue using your CFN template.
 
-```
 Had to include SSH from 5.2.1 so I could troubleshoot the connectivity
+
 ```
+ 2358  aws ec2-instance-connect send-ssh-public-key --instance-id i-0f5784eb78a7d9969
+ 2359  aws ec2-instance-connect send-ssh-public-key --instance-id i-0f5784eb78a7d9969  --instance-os-user ec2-user
+ 2360  aws ec2-instance-connect send-ssh-public-key --instance-id i-0f5784eb78a7d9969  --instance-os-user ec2-user --ssh-public-key joels_aws_key_pair.pem
+```
+
+This makes more sense now... as it was the Security Group that wasn't connected to the instance from the start
+
+```
+{
+  "direction": "ingress",
+  "explanationCode": "ENI_SG_RULES_MISMATCH",
+  "networkInterface": {
+    "arn": "arn:aws:ec2:us-east-1:324320755747:network-interface/eni-083b82fb7ba15ab15",
+    "id": "eni-083b82fb7ba15ab15"
+  },
+  "securityGroups": [
+    {
+      "arn": "arn:aws:ec2:us-east-1:324320755747:security-group/sg-0bb49c97f23d3efa5",
+      "id": "sg-0bb49c97f23d3efa5"
+    }
+  ],
+  "subnet": {
+    "arn": "arn:aws:ec2:us-east-1:324320755747:subnet/subnet-0d67f5b2521bdad3f",
+    "id": "subnet-0d67f5b2521bdad3f"
+  },
+  "vpc": {
+    "arn": "arn:aws:ec2:us-east-1:324320755747:vpc/vpc-097768741fb1a93f5",
+    "id": "vpc-097768741fb1a93f5"
+  }
+}
+```
+
+More Notes on ssh key generation:
+```
+aws ec2 create-key-pair --profile temp --key-name joels-key-pair --key-type rsa --key-format pem --query "KeyMaterial" --output text > ~/.ssh/joels_key_pair.pem
+```
+
 
 ### Retrospective 5.2
 
 For more information on resolving connection issues, see the
 [Troubleshooting Guide](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/TroubleshootingInstancesConnecting.html)
+
+
 
 ## Lesson 5.3: Monitoring EC2 Instances
 
