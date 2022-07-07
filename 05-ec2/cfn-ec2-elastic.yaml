@@ -78,7 +78,7 @@ Resources:
         DisableApiTermination: true
         ImageId: !Sub ${LinuxEC2AmiId}
         InstanceType: !Sub ${InstanceType}
-        KeyName: joels-key-pair
+        KeyName: joels-key-pair-ubuntu
         SecurityGroupIds:
           - !Ref JoelsSecurityGroup
 
@@ -152,7 +152,7 @@ Resources:
           #!/bin/bash
           yum install amazon-cloudwatch-agent
           systemctl enable amazon-cloudwatch-agent.service
-          sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a start
+          /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a start
 
 Outputs:
   ElasticIP:
