@@ -73,6 +73,8 @@ Resources:
     Properties:
       LaunchTemplateName: MyLaunchTemplateLinux
       LaunchTemplateData:
+        IamInstanceProfile:
+          Name: !Ref JoelsCloudWatchInstanceProfile
         DisableApiTermination: true
         ImageId: !Sub ${LinuxEC2AmiId}
         InstanceType: !Sub ${InstanceType}
@@ -112,6 +114,29 @@ Resources:
           CidrIp: 0.0.0.0/0
       VpcId: !Ref JoelsVPC
 
+  CloudWatchRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchFullAccess
+      RoleName: joels-cloudwatch-role
+
+  JoelsCloudWatchInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref CloudWatchRole
+
+
   UbuntuEC2:
     Type: AWS::EC2::Instance
     Properties:
@@ -122,6 +147,12 @@ Resources:
       Tags:
         - Key: Name
           Value: joels-ubuntu
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash
+          yum install amazon-cloudwatch-agent
+          systemctl enable amazon-cloudwatch-agent.service
+          systemctl start amazon-cloudwatch-agent.service
 
 Outputs:
   ElasticIP:
