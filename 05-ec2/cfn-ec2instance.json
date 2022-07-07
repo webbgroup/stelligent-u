@@ -5,11 +5,6 @@
         "UsePreviousValue": false
     },
     {
-        "ParameterKey": "WindowsEC2AmiId",
-        "ParameterValue": "ami-09e13647920b2ba1d",
-        "UsePreviousValue": false
-    },
-    {
         "ParameterKey": "InstanceType",
         "ParameterValue": "t2.small",
         "UsePreviousValue": false
