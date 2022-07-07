@@ -9,7 +9,7 @@ default_mfa_serial=`cat ~/.aws/config | grep mfa_serial | head -n 1 | cut -d '='
 echo "Running: aws sts get-session-token --serial-number $default_mfa_serial --token-code $tokencode"
 aws sts get-session-token --serial-number $default_mfa_serial --token-code $tokencode > /tmp/tokencode_data_dump.txt
 cat /tmp/tokencode_data_dump.txt
-head -n4 ~/.aws/credentials > ~/.aws/credentials_new
+head -n12 ~/.aws/credentials > ~/.aws/credentials_new
 temp_aws_access_key_id=`cat /tmp/tokencode_data_dump.txt | grep AccessKeyId | cut -d : -f 2 | tr -cd [:alnum:]`
 temp_aws_secret_access_key=`cat /tmp/tokencode_data_dump.txt | grep SecretAccessKey | cut -d : -f 2 | sed 's/[^a-zA-Z0-9/+]//g'`
 temp_aws_session_token=`cat /tmp/tokencode_data_dump.txt | grep SessionToken | cut -d : -f 2 | sed 's/[^a-zA-Z0-9/+]//g'`
