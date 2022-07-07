@@ -767,6 +767,9 @@ metrics to CloudWatch from the instance in the private subnet.
 
 #### Lab 5.3.3: cfn-init
 
+At this point I see that I have been using the AWS Linux, not Ubuntu. So I am moving this over to Ubuntu.
+
+
 User data itself is immensely useful for provisioning instances as
 they're being instantiated, but maintaining long scripts detailing a
 series of complex actions can be messy. One way to improve on the
@@ -782,6 +785,11 @@ the Metadata attribute and the [cfn-init capability](https://docs.aws.amazon.com
 - Recreate your stack
 
 Verify that the metrics you expect to see (based on Lab 5.2.2) are still being collected.
+
+SSL Certificate is not working on the Ubuntu instance, converted over from the Amazon Linux.
+
+Forging on.
+
 
 ### Retrospective 5.3
 
