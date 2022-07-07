@@ -662,6 +662,8 @@ aws ec2 create-key-pair --profile temp --key-name joels-key-pair --key-type rsa 
 For more information on resolving connection issues, see the
 [Troubleshooting Guide](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/TroubleshootingInstancesConnecting.html)
 
+I also prefer using the Reachability Analyser Tool:
+https://us-east-1.console.aws.amazon.com/vpc/home?region=us-east-1#ReachabilityAnalyzer:
 
 
 ## Lesson 5.3: Monitoring EC2 Instances
