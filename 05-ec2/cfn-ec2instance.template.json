@@ -1,0 +1,17 @@
+[
+    {
+        "ParameterKey": "LinuxEC2AmiId",
+        "ParameterValue": "LINUXAMI",
+        "UsePreviousValue": false
+    },
+    {
+        "ParameterKey": "WindowsEC2AmiId",
+        "ParameterValue": "WINDOWSAMI",
+        "UsePreviousValue": false
+    },
+    {
+        "ParameterKey": "InstanceType",
+        "ParameterValue": "t2.small",
+        "UsePreviousValue": false
+    }
+]

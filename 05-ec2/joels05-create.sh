@@ -1,7 +1,31 @@
 #/bin/bash
 
-aws cloudformation --profile temp create-stack --stack-name Joels05 --template-body file://cfn-ec2-elastic.yaml
+#Defaults
+linuxAMI='ami-0cff7528ff583bf9a'
+windowsAMI='ami-09e13647920b2ba1d'
 
+while getopts "h:l:w" arg; do
+  case $arg in
+    h)
+      echo "joels05-create.sh -l linuxAMI -w windowsAMI"
+      ;;
+    l)
+      linuxAMI=$OPTARG
+      echo $linuxAMI
+      ;;
+    w)
+      windowsAMI=$OPTARG
+      echo $windowsAMI
+      ;;
+  esac
+done
+
+echo "LinuxAMI is $linuxAMI and WindowsAMI is $windowsAMI"
+
+cat cfn-ec2instance.template.json | sed s/LINUXAMI/$linuxAMI/g | sed s/WINDOWSAMI/$windowsAMI/g > cfn-ec2instance.json
+
+#run the command
+aws cloudformation --profile temp create-stack --stack-name Joels05 --template-body file://cfn-ec2-elastic.yaml --parameters file://cfn-ec2instance.json
 
 while true
 do
