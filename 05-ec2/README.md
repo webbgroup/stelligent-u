@@ -381,11 +381,60 @@ values via a scripted mechanism.
 
 Looked them up in the WebSite GUI and chose what was the latest
 
-stopped here because I couldn't find a programmatic way to retreive results and come back with specific image ID
+stopped here because I couldn't find a programmatic way to retrieve results and come back with specific image ID
 `
 aws ec2 describe-images --profile temp --owners self amazon
 `
 Comes back with 16k results ^
+
+However built a programmatic way of changing them via:
+```
+{
+    "Stacks": [
+        {
+            "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels05/5e845d60-fe04-11ec-82f7-1208f75ebfef",
+            "StackName": "Joels05",
+            "Parameters": [
+                {
+                    "ParameterKey": "LinuxEC2AmiId",
+                    "ParameterValue": "ami-0cff7528ff583bf9a"
+                },
+                {
+                    "ParameterKey": "WindowsEC2AmiId",
+                    "ParameterValue": "ami-09e13647920b2ba1d"
+                },
+                {
+                    "ParameterKey": "InstanceType",
+                    "ParameterValue": "t2.small"
+                }
+            ],
+            "CreationTime": "2022-07-07T14:52:06.154000+00:00",
+            "RollbackConfiguration": {},
+            "StackStatus": "CREATE_COMPLETE",
+            "DisableRollback": false,
+            "NotificationARNs": [],
+            "Outputs": [
+                {
+                    "OutputKey": "UbuntuEC2Id",
+                    "OutputValue": "i-0766a305090f9d373",
+                    "Description": "Joels Ubuntu EC2 Instance"
+                },
+                {
+                    "OutputKey": "WindowsEC2Id",
+                    "OutputValue": "i-0c39e8b9fc9c342f4",
+                    "Description": "Joels Windows EC2 Instance"
+                }
+            ],
+            "Tags": [],
+            "EnableTerminationProtection": false,
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        }
+    ]
+}
+
+```
 
 
 
