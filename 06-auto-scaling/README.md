@@ -339,9 +339,129 @@ type to t2.medium. Update your stack.
 _After updating, what did you see change? Did your running instance get
 replaced this time?_
 
+looks like I have one micro instance as well as one medium instance.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ ssh -i ~/.ssh/joels-key-pair.pem admin@3.89.60.185
+Linux ip-10-0-42-204 5.10.0-14-cloud-amd64 #1 SMP Debian 5.10.113-1 (2022-04-29) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Fri Jul  8 15:05:19 2022 from 66.110.242.65
+admin@ip-10-0-42-204:~$ uptime
+ 15:07:47 up  1:18,  1 user,  load average: 0.00, 0.00, 0.00
+admin@ip-10-0-42-204:~$ exit
+logout
+Connection to 3.89.60.185 closed.
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ ssh -i ~/.ssh/joels-key-pair.pem admin@3.231.110.221
+Linux ip-10-0-42-230 5.10.0-14-cloud-amd64 #1 SMP Debian 5.10.113-1 (2022-04-29) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Fri Jul  8 15:07:32 2022 from 66.110.242.65
+admin@ip-10-0-42-230:~$ uptime
+ 15:07:57 up 5 min,  1 user,  load average: 0.00, 0.08, 0.05
+admin@ip-10-0-42-230:~$ exit
+logout
+Connection to 3.231.110.221 closed.
+
+```
+
 ##### Question: Launch Config
 
 _Did the launch config change or was it replaced?_
+
+It was replaced
+
+```
+{
+    "AutoScalingGroups": [
+        {
+            "AutoScalingGroupName": "Joels06-JoelsAutoScalingGroup-YAFGUXFITMEZ",
+            "AutoScalingGroupARN": "arn:aws:autoscaling:us-east-1:324320755747:autoScalingGroup:0a492e0f-6147-439f-91ab-ed5576f034a5:autoScalingGroupName/Joels06-JoelsAutoScalingGroup-YAFGUXFITMEZ",
+            "LaunchTemplate": {
+                "LaunchTemplateId": "lt-0f2863136e3361e57",
+                "LaunchTemplateName": "MyLaunchTemplateLinux",
+                "Version": "3"
+            },
+            "MinSize": 1,
+            "MaxSize": 1,
+            "DesiredCapacity": 1,
+            "DefaultCooldown": 300,
+            "AvailabilityZones": [
+                "us-east-1c"
+            ],
+            "LoadBalancerNames": [],
+            "TargetGroupARNs": [],
+            "HealthCheckType": "EC2",
+            "HealthCheckGracePeriod": 0,
+            "Instances": [
+                {
+                    "InstanceId": "i-03c12670bf9ede734",
+                    "InstanceType": "t2.medium",
+                    "AvailabilityZone": "us-east-1c",
+                    "LifecycleState": "InService",
+                    "HealthStatus": "Healthy",
+                    "LaunchTemplate": {
+                        "LaunchTemplateId": "lt-0f2863136e3361e57",
+                        "LaunchTemplateName": "MyLaunchTemplateLinux",
+                        "Version": "3"
+                    },
+                    "ProtectedFromScaleIn": false
+                }
+            ],
+            "CreatedTime": "2022-07-08T15:02:21.820000+00:00",
+            "SuspendedProcesses": [],
+            "VPCZoneIdentifier": "subnet-0655360568dfb9401",
+            "EnabledMetrics": [],
+            "Tags": [
+                {
+                    "ResourceId": "Joels06-JoelsAutoScalingGroup-YAFGUXFITMEZ",
+                    "ResourceType": "auto-scaling-group",
+                    "Key": "Name",
+                    "Value": "joels-debian-asg",
+                    "PropagateAtLaunch": true
+                },
+                {
+                    "ResourceId": "Joels06-JoelsAutoScalingGroup-YAFGUXFITMEZ",
+                    "ResourceType": "auto-scaling-group",
+                    "Key": "aws:cloudformation:logical-id",
+                    "Value": "JoelsAutoScalingGroup",
+                    "PropagateAtLaunch": true
+                },
+                {
+                    "ResourceId": "Joels06-JoelsAutoScalingGroup-YAFGUXFITMEZ",
+                    "ResourceType": "auto-scaling-group",
+                    "Key": "aws:cloudformation:stack-id",
+                    "Value": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels06/60f285e0-fec2-11ec-aacf-0e78cf112269",
+                    "PropagateAtLaunch": true
+                },
+                {
+                    "ResourceId": "Joels06-JoelsAutoScalingGroup-YAFGUXFITMEZ",
+                    "ResourceType": "auto-scaling-group",
+                    "Key": "aws:cloudformation:stack-name",
+                    "Value": "Joels06",
+                    "PropagateAtLaunch": true
+                }
+            ],
+            "TerminationPolicies": [
+                "Default"
+            ],
+            "NewInstancesProtectedFromScaleIn": false,
+            "ServiceLinkedRoleARN": "arn:aws:iam::324320755747:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling"
+        }
+    ]
+}
+
+```
 
 #### Lab 6.1.5: Launch Template
 
