@@ -1,0 +1,67 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFormation Template for EC2 Instance
+
+Resources:
+  JoelsInstance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: !Sub ${EC2AmiId}
+      InstanceType: !Sub ${InstanceType}
+      SecurityGroupIds:
+        - !ImportValue InstanceSecurityGroup
+      SubnetId: !ImportValue JoelsPrivateSubnet
+      KeyName: joels-key-pair
+      Tags:
+        - Key: Name
+          Value: joels-instance
+        - Key: user
+          Value: joel.webb.labs
+        - Key: stelligent-u-lesson
+          Value: 4.1
+        - Key: stelligent-u-lab
+          Value: 4.1.4
+  IPAddress:
+    Type: 'AWS::EC2::EIP'
+    Properties:
+      Domain: vpc
+      InstanceId:
+        Ref: JoelsInstance
+  JoelsPrivateInstance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: !Sub ${EC2AmiId}
+      InstanceType: !Sub ${InstanceType}
+      SecurityGroupIds:
+        - !ImportValue InstanceSecurityGroup
+        - !ImportValue InstanceOutboundSecurityGroup
+      SubnetId: !ImportValue JoelsPrivateSubnet
+      KeyName: joels-key-pair
+      Tags:
+        - Key: Name
+          Value: joels-private-instance
+        - Key: user
+          Value: joel.webb.labs
+        - Key: stelligent-u-lesson
+          Value: 4.1
+        - Key: stelligent-u-lab
+          Value: 4.1.7
+Parameters:
+  EC2AmiId:
+    Type: String
+    Description: What VM Image ID
+  WindowsEC2AmiId:
+    Type: String
+    Description: What Instance Type
+Outputs:
+  JoelsInstance:
+    Description: Joels Virtual Private Cloud.
+    Value: !Ref JoelsInstance
+    Export:
+      Name: JoelsInstance
+  JoelsPrivateIPAddress:
+    Description: Joels Private ip in the subnet
+    Value: !GetAtt JoelsInstance.PrivateIp
+  JoelsPublicIPAddress:
+    Description: Joels Public ip on the Internet
+    Value: !GetAtt JoelsInstance.PublicIp

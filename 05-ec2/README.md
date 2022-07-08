@@ -103,6 +103,10 @@ Describe these instance attributes by querying the Cloud9 environment's
 
 Save your queries (but not the outputs) in your source code.
 
+```
+Skipping because we aren't using Cloud9
+```
+
 #### Lab 5.1.2: Launch Two EC2 Instances
 
 Create a CFN template that launches a simple EC2 instance when the stack
@@ -131,6 +135,91 @@ Create the stack:
 - Use the AWS CLI to describe the stack's resources, then use the AWS
   CLI to describe each instance that was created.
 
+```
+aws cloudformation describe-stacks --stack-name Joels05 --profile temp
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/05-ec2$ aws cloudformation describe-stacks --stack-name Joels05 --profile temp
+{
+    "Stacks": [
+        {
+            "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels05/dfa5f060-f8a1-11ec-82d7-120ed9d998f7",
+            "StackName": "Joels05",
+            "CreationTime": "2022-06-30T18:24:26.789000+00:00",
+            "RollbackConfiguration": {},
+            "StackStatus": "CREATE_COMPLETE",
+            "DisableRollback": false,
+            "NotificationARNs": [],
+            "Outputs": [
+                {
+                    "OutputKey": "UbuntuEC2Id",
+                    "OutputValue": "i-03f2b33af228f78e4",
+                    "Description": "Joels Ubuntu EC2 Instance"
+                },
+                {
+                    "OutputKey": "WindowsEC2Id",
+                    "OutputValue": "i-082c074d876035388",
+                    "Description": "Joels Windows EC2 Instance"
+                }
+            ],
+            "Tags": [],
+            "EnableTerminationProtection": false,
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        }
+    ]
+}
+
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/05-ec2$ bash joels05-create.sh
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels05/dfa5f060-f8a1-11ec-82d7-120ed9d998f7"
+}
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+Not Completed Yet. Sleeping 1 second
+CREATE_COMPLETE
+Yay!!!
+
+```
+
 #### Lab 5.1.3: Update Your Stack
 
 Change the AMI ID for the Windows instance to instead launch an AMI for
@@ -138,16 +227,147 @@ Windows Server 2012 R2:
 
 - Update your Stack.
 
+
+
 - Query the stack's events using the AWS CLI. What happened to your
   original EC2 Windows instance?
+
+```
+Requested update requires the creation of a new physical resource; hence creating one.
+```
+
+```
+{
+    "Stacks": [
+        {
+            "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels05/dfa5f060-f8a1-11ec-82d7-120ed9d998f7",
+            "StackName": "Joels05",
+            "CreationTime": "2022-06-30T18:24:26.789000+00:00",
+            "LastUpdatedTime": "2022-06-30T18:34:14.764000+00:00",
+            "RollbackConfiguration": {},
+            "StackStatus": "UPDATE_COMPLETE",
+            "DisableRollback": false,
+            "NotificationARNs": [],
+            "Outputs": [
+                {
+                    "OutputKey": "UbuntuEC2Id",
+                    "OutputValue": "i-03f2b33af228f78e4",
+                    "Description": "Joels Ubuntu EC2 Instance"
+                },
+                {
+                    "OutputKey": "WindowsEC2Id",
+                    "OutputValue": "i-0b0aaf63c7adcb63d",
+                    "Description": "Joels Windows EC2 Instance"
+                }
+            ],
+            "Tags": [],
+            "EnableTerminationProtection": false,
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        }
+
+```
+
+Replaced the Windows server as opposed to upgrading in place
 
 #### Lab 5.1.4: Teardown
 
 There is usually some delay between initiating an instance's termination
 and the instance being considered eliminated altogether.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/05-ec2$ aws cloudformation describe-stack-resources --profile temp --stack-name Joels05
+{
+    "StackResources": [
+        {
+            "StackName": "Joels05",
+            "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels05/dfa5f060-f8a1-11ec-82d7-120ed9d998f7",
+            "LogicalResourceId": "JoelsVPC",
+            "PhysicalResourceId": "vpc-090aa2e9b3f927a10",
+            "ResourceType": "AWS::EC2::VPC",
+            "Timestamp": "2022-06-30T18:24:46.875000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "Joels05",
+            "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels05/dfa5f060-f8a1-11ec-82d7-120ed9d998f7",
+            "LogicalResourceId": "MyLaunchTemplateLinuxJoels",
+            "PhysicalResourceId": "lt-056d0231aa448a9b8",
+            "ResourceType": "AWS::EC2::LaunchTemplate",
+            "Timestamp": "2022-06-30T18:24:39.949000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "Joels05",
+            "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels05/dfa5f060-f8a1-11ec-82d7-120ed9d998f7",
+            "LogicalResourceId": "MyLaunchTemplateWindowsJoels",
+            "PhysicalResourceId": "lt-01fdd8987853882f0",
+            "ResourceType": "AWS::EC2::LaunchTemplate",
+            "Timestamp": "2022-06-30T18:34:28.553000+00:00",
+            "ResourceStatus": "UPDATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "Joels05",
+            "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels05/dfa5f060-f8a1-11ec-82d7-120ed9d998f7",
+            "LogicalResourceId": "Subnet",
+            "PhysicalResourceId": "subnet-06203b4e37e189ce8",
+            "ResourceType": "AWS::EC2::Subnet",
+            "Timestamp": "2022-06-30T18:24:55.346000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "Joels05",
+            "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels05/dfa5f060-f8a1-11ec-82d7-120ed9d998f7",
+            "LogicalResourceId": "UbuntuEC2",
+            "PhysicalResourceId": "i-03f2b33af228f78e4",
+            "ResourceType": "AWS::EC2::Instance",
+            "Timestamp": "2022-06-30T18:25:52.672000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "Joels05",
+            "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels05/dfa5f060-f8a1-11ec-82d7-120ed9d998f7",
+            "LogicalResourceId": "WindowsEC2",
+            "PhysicalResourceId": "i-0b0aaf63c7adcb63d",
+            "ResourceType": "AWS::EC2::Instance",
+            "Timestamp": "2022-06-30T18:35:29.569000+00:00",
+            "ResourceStatus": "UPDATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        }
+    ]
+}
+(END)
+
+```
+
 - Delete your Stack. Immediately after initiating Stack deletion, see
   if you can query your instance states.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/05-ec2$ aws cloudformation describe-stack-resources --profile temp --stack-name Joels05
+
+An error occurred (ValidationError) when calling the DescribeStackResources operation: Stack with id Joels05 does not exist
+
+```
+
 
 ### Retrospective 5.1
 
@@ -159,11 +379,71 @@ back and change your lab's code and repeat that lab: parameterize the
 CFN template to accept both Linux and Windows AMI IDs, and provide the
 values via a scripted mechanism.
 
+Looked them up in the WebSite GUI and chose what was the latest
+
+stopped here because I couldn't find a programmatic way to retrieve results and come back with specific image ID
+`
+aws ec2 describe-images --profile temp --owners self amazon
+`
+Comes back with 16k results ^
+
+However built a programmatic way of changing them script:
+```
+{
+    "Stacks": [
+        {
+            "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels05/5e845d60-fe04-11ec-82f7-1208f75ebfef",
+            "StackName": "Joels05",
+            "Parameters": [
+                {
+                    "ParameterKey": "LinuxEC2AmiId",
+                    "ParameterValue": "ami-0cff7528ff583bf9a"
+                },
+                {
+                    "ParameterKey": "WindowsEC2AmiId",
+                    "ParameterValue": "ami-09e13647920b2ba1d"
+                },
+                {
+                    "ParameterKey": "InstanceType",
+                    "ParameterValue": "t2.small"
+                }
+            ],
+            "CreationTime": "2022-07-07T14:52:06.154000+00:00",
+            "RollbackConfiguration": {},
+            "StackStatus": "CREATE_COMPLETE",
+            "DisableRollback": false,
+            "NotificationARNs": [],
+            "Outputs": [
+                {
+                    "OutputKey": "UbuntuEC2Id",
+                    "OutputValue": "i-0766a305090f9d373",
+                    "Description": "Joels Ubuntu EC2 Instance"
+                },
+                {
+                    "OutputKey": "WindowsEC2Id",
+                    "OutputValue": "i-0c39e8b9fc9c342f4",
+                    "Description": "Joels Windows EC2 Instance"
+                }
+            ],
+            "Tags": [],
+            "EnableTerminationProtection": false,
+            "DriftInformation": {
+                "StackDriftStatus": "NOT_CHECKED"
+            }
+        }
+    ]
+}
+
+```
+
+
 #### Question: Resource Replacement
 
 _When updating a Stack containing an EC2 instance,
 [what other changes](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html)
 will cause the same thing to occur as in Lab 5.1.3?_
+
+Server will be rebuilt, not replaced.
 
 ## Lesson 5.2: Instance Access
 
@@ -198,7 +478,79 @@ function.
 - Using the AWS CLI, retrieve the Stack's outputs to fetch the EIP's
   IPV4 address.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/05-ec2$ aws ec2 describe-addresses --profile temp --filters "Name=tag-key,Values=stelligent-u-lab"
+{
+    "Addresses": [
+        {
+            "InstanceId": "i-073cdc595c6895d4c",
+            "PublicIp": "34.192.108.37",
+            "AllocationId": "eipalloc-025fb8522df755ea2",
+            "AssociationId": "eipassoc-01d660c7125a05c42",
+            "Domain": "vpc",
+            "NetworkInterfaceId": "eni-0d9b8ec0850e4b663",
+            "NetworkInterfaceOwnerId": "324320755747",
+            "PrivateIpAddress": "10.0.127.214",
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "joels-eip"
+                },
+                {
+                    "Key": "aws:cloudformation:stack-name",
+                    "Value": "Joels05"
+                },
+                {
+                    "Key": "aws:cloudformation:logical-id",
+{
+    "Addresses": [
+        {
+            "InstanceId": "i-073cdc595c6895d4c",
+            "PublicIp": "34.192.108.37",
+            "AllocationId": "eipalloc-025fb8522df755ea2",
+            "AssociationId": "eipassoc-01d660c7125a05c42",
+            "Domain": "vpc",
+            "NetworkInterfaceId": "eni-0d9b8ec0850e4b663",
+            "NetworkInterfaceOwnerId": "324320755747",
+            "PrivateIpAddress": "10.0.127.214",
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "joels-eip"
+                },
+                {
+                    "Key": "aws:cloudformation:stack-name",
+                    "Value": "Joels05"
+                },
+                {
+                    "Key": "aws:cloudformation:logical-id",
+                    "Value": "ElasticIP"
+                },
+                {
+                    "Key": "aws:cloudformation:stack-id",
+                    "Value": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels05/58f286a0-fe0a-11ec-b071-0ef6448eef4d"
+                },
+                {
+                    "Key": "stelligent-u-lesson",
+                    "Value": "5.2"
+                },
+                {
+                    "Key": "stelligent-u-lab",
+                    "Value": "5.2.1"
+                },
+                {
+                    "Key": "user",
+                    "Value": "joel.webb.labs"
+                }
+            ],
+            "PublicIpv4Pool": "amazon",
+            "NetworkBorderGroup": "us-east-1"
+        },
+
+```
+
 Try pinging that IP address. Does it work?
+No.
 
 - Using the CFN template, create a Security Group enabling
   [ICMP](https://en.wikipedia.org/wiki/Internet_Control_Message_Protocol).
@@ -209,6 +561,31 @@ Try pinging that IP address. Does it work?
 
 Can you ping your instance now? If not, troubleshoot and fix the issue
 using your CFN template.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/05-ec2$ ssh -i ~/.ssh/joels_key_pair.pem ec2-user@52.22.158.43
+The authenticity of host '52.22.158.43 (52.22.158.43)' can't be established.
+ECDSA key fingerprint is SHA256:gJMSI5HEoi8m7Jyk6ADbGE6YrRcULq2gd9VM4Xx6QHY.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '52.22.158.43' (ECDSA) to the list of known hosts.
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@         WARNING: UNPROTECTED PRIVATE KEY FILE!          @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+Permissions 0664 for '/home/joel/.ssh/joels_key_pair.pem' are too open.
+It is required that your private key files are NOT accessible by others.
+This private key will be ignored.
+Load key "/home/joel/.ssh/joels_key_pair.pem": bad permissions
+ec2-user@52.22.158.43: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/05-ec2$ chmod 400 ~/.ssh/joels_key_pair.pem
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/05-ec2$ ssh -i ~/.ssh/joels_key_pair.pem ec2-user@52.22.158.43
+
+       __|  __|_  )
+       _|  (     /   Amazon Linux 2 AMI
+      ___|\___|___|
+
+https://aws.amazon.com/amazon-linux-2/
+[ec2-user@ip-10-0-42-76 ~]$
+```
 
 #### Lab 5.2.2: SSH Keys
 
@@ -239,10 +616,55 @@ Can you SSH into the instance?
 Now can you SSH into your instance? If not, troubleshoot and fix the
 issue using your CFN template.
 
+Had to include SSH from 5.2.1 so I could troubleshoot the connectivity
+
+```
+ 2358  aws ec2-instance-connect send-ssh-public-key --instance-id i-0f5784eb78a7d9969
+ 2359  aws ec2-instance-connect send-ssh-public-key --instance-id i-0f5784eb78a7d9969  --instance-os-user ec2-user
+ 2360  aws ec2-instance-connect send-ssh-public-key --instance-id i-0f5784eb78a7d9969  --instance-os-user ec2-user --ssh-public-key joels_aws_key_pair.pem
+```
+
+This makes more sense now... as it was the Security Group that wasn't connected to the instance from the start
+
+```
+{
+  "direction": "ingress",
+  "explanationCode": "ENI_SG_RULES_MISMATCH",
+  "networkInterface": {
+    "arn": "arn:aws:ec2:us-east-1:324320755747:network-interface/eni-083b82fb7ba15ab15",
+    "id": "eni-083b82fb7ba15ab15"
+  },
+  "securityGroups": [
+    {
+      "arn": "arn:aws:ec2:us-east-1:324320755747:security-group/sg-0bb49c97f23d3efa5",
+      "id": "sg-0bb49c97f23d3efa5"
+    }
+  ],
+  "subnet": {
+    "arn": "arn:aws:ec2:us-east-1:324320755747:subnet/subnet-0d67f5b2521bdad3f",
+    "id": "subnet-0d67f5b2521bdad3f"
+  },
+  "vpc": {
+    "arn": "arn:aws:ec2:us-east-1:324320755747:vpc/vpc-097768741fb1a93f5",
+    "id": "vpc-097768741fb1a93f5"
+  }
+}
+```
+
+More Notes on ssh key generation:
+```
+aws ec2 create-key-pair --profile temp --key-name joels-key-pair --key-type rsa --key-format pem --query "KeyMaterial" --output text > ~/.ssh/joels_key_pair.pem
+```
+
+
 ### Retrospective 5.2
 
 For more information on resolving connection issues, see the
 [Troubleshooting Guide](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/TroubleshootingInstancesConnecting.html)
+
+I also prefer using the Reachability Analyser Tool:
+https://us-east-1.console.aws.amazon.com/vpc/home?region=us-east-1#ReachabilityAnalyzer:
+
 
 ## Lesson 5.3: Monitoring EC2 Instances
 
@@ -299,6 +721,8 @@ Userdata docs to debug.
   - Is it necessary to [apply monitoring scripts](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/mon-scripts.html)
     to send data to CloudWatch?
 
+    The agent should do it for you.
+
 - Create a new role that trusts the EC2 Service to assume it, and that
   has the privileges to perform whatever actions are necessary to
   provide the additional metrics to CloudWatch.
@@ -313,6 +737,27 @@ Userdata docs to debug.
 Compare those same metrics with the values received from Lab 5.3.1.
 Record your results.
 
+```
+amazon-cloudwatch-agent/ cwagent-otel-collector/  ssm/
+[ec2-user@ip-10-0-42-129 ~]$ sudo tail -f /var/log/amazon/amazon-cloudwatch-agent/amazon-cloudwatch-agent.log
+
+2022/07/07 18:23:16 I! Return exit error: exit code=99
+2022/07/07 18:23:16 I! there is no json configuration when running translator
+2022/07/07 18:23:33 I! I! Detected the instance is EC2
+2022/07/07 18:23:33 Reading json config file path: /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json ...
+/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json does not exist or cannot read. Skipping it.
+No json config files found, please provide config, exit now
+
+2022/07/07 18:23:33 I! Return exit error: exit code=99
+2022/07/07 18:23:33 I! there is no json configuration when running translator
+
+```
+
+Once I added the new line, it will create the default configuration file and start up as usual. Very odd that it isn't systemctl compatible
+```
+/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a start
+```
+
 ##### Task: Private Subnet
 
 The default VPC has only public subnets that you launched into. Copy
@@ -321,6 +766,10 @@ this private subnet. Add any other services you need to be able to send
 metrics to CloudWatch from the instance in the private subnet.
 
 #### Lab 5.3.3: cfn-init
+
+At this point I see that I have been using the AWS Linux, not Ubuntu. So I am moving this over to Ubuntu.
+
+However, the same ssl-cert does not work on the Ubuntu instance. Sean Pert had the same issue.
 
 User data itself is immensely useful for provisioning instances as
 they're being instantiated, but maintaining long scripts detailing a
@@ -337,6 +786,11 @@ the Metadata attribute and the [cfn-init capability](https://docs.aws.amazon.com
 - Recreate your stack
 
 Verify that the metrics you expect to see (based on Lab 5.2.2) are still being collected.
+
+SSL Certificate is not working on the Ubuntu instance, converted over from the Amazon Linux.
+
+Forging on.
+
 
 ### Retrospective 5.3
 
