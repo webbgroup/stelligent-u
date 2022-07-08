@@ -769,6 +769,7 @@ metrics to CloudWatch from the instance in the private subnet.
 
 At this point I see that I have been using the AWS Linux, not Ubuntu. So I am moving this over to Ubuntu.
 
+However, the same ssl-cert does not work on the Ubuntu instance. Sean Pert had the same issue.
 
 User data itself is immensely useful for provisioning instances as
 they're being instantiated, but maintaining long scripts detailing a
