@@ -162,6 +162,7 @@ Resources:
   JoelsAutoScalingGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
+      AutoScalingGroupName: joels-debian-asg
       DesiredCapacity: 2
       LaunchTemplate:
         LaunchTemplateId: !Ref MyLaunchTemplateLinuxJoels

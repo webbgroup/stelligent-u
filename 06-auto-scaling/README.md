@@ -800,6 +800,51 @@ have to do some debugging, the ASG system offers a few options,
 including [placing a server on standby](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-enter-exit-standby.html#standby-instance-health-status)
 or [suspending auto-scaling](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-suspend-resume-processes.html).
 
+
+To put it into standby:
+```
+aws autoscaling enter-standby --instance-ids i-0ec6e6e60bfe91558 --auto-scaling-group-name joels-debian-asg --should-decrement-desired-capacity
+```
+To remove from standby:
+```
+aws autoscaling exit-standby --instance-ids i-0ec6e6e60bfe91558 --auto-scaling-group-name joels-debian-asg
+```
+Lifecycles went from `InService` -> `Standby` -> `Pending` -> `InService`
+
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws autoscaling enter-standby --instance-ids i-0ec6e6e60bfe91558 --auto-scaling-group-name joels-debian-asg --profile temp --should-decrement-desired-capacity
+{
+    "Activities": [
+        {
+            "ActivityId": "b106077c-7770-6fd5-83eb-1738b2ed6b32",
+            "AutoScalingGroupName": "joels-debian-asg",
+            "Description": "Moving EC2 instance to Standby: i-0ec6e6e60bfe91558",
+            "Cause": "At 2022-07-08T18:41:25Z instance i-0ec6e6e60bfe91558 was moved to standby in response to a user request, shrinking the capacity from 2 to 1.",
+            "StartTime": "2022-07-08T18:41:25.019000+00:00",
+            "StatusCode": "InProgress",
+            "Progress": 50,
+            "Details": "{\"Subnet ID\":\"subnet-077c61029c81729e5\",\"Availability Zone\":\"us-east-1e\"}"
+        }
+    ]
+}
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws autoscaling exit-standby --instance-ids i-0ec6e6e60bfe91558 --auto-scaling-group-name joels-debian-asg --profile temp
+{
+    "Activities": [
+        {
+            "ActivityId": "e796077c-7afc-457e-2825-e25af95f9032",
+            "AutoScalingGroupName": "joels-debian-asg",
+            "Description": "Moving EC2 instance out of Standby: i-0ec6e6e60bfe91558",
+            "Cause": "At 2022-07-08T18:42:23Z instance i-0ec6e6e60bfe91558 was moved out of standby in response to a user request, increasing the capacity from 1 to 2.",
+            "StartTime": "2022-07-08T18:42:23.121000+00:00",
+            "StatusCode": "PreInService",
+            "Progress": 30,
+            "Details": "{\"Subnet ID\":\"subnet-077c61029c81729e5\",\"Availability Zone\":\"us-east-1e\"}"
+        }
+    ]
+}
+```
+
 Standby allows you to take an instance out of action without changing
 anything else: no new instance is created, the standby one isn't
 terminated, even its health check remains as it was before standby.
@@ -820,6 +865,54 @@ now, so we can't exercise AddToLoadBalancer, but let's take a look at
 another. Disable Launch, then put an instance on standby and back in
 action again. Note the process you have to go through, including any
 commands you run.
+
+Suspending launch:
+```
+aws autoscaling suspend-processes --auto-scaling-group-name joels-debian-asg --scaling-processes Launch --profile temp
+```
+Placing an instance into standby:
+```
+aws autoscaling enter-standby --instance-ids i-08e295ee91d2ad920 --auto-scaling-group-name joels-debian-asg --should-decrement-desired-capacity
+```
+When attempting to bring an instance back out of standby, I ran the following command and came across the following error:
+```
+ aws autoscaling exit-standby --instance-ids i-08e295ee91d2ad920 --auto-scaling-group-name joels-debian-asg
+```
+```
+An error occurred (ValidationError) when calling the ExitStandby operation: Cannot move instances out of Standby for AutoScalingGroup joels-debian-asg while the Launch process is suspended
+```
+I brought the `Launch` process out of being suspended and then was able to bring the instance back out of `Standby`
+```
+aws autoscaling resume-processes --auto-scaling-group-name joels-debian-asg --scaling-processes Launch
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws autoscaling suspend-processes --auto-scaling-group-name joels-debian-asg --scaling-processes Launch --profile temp
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws autoscaling enter-standby --instance-ids i-0ec6e6e60bfe91558 --auto-scaling-group-name joels-debian-asg --profile temp --should-decrement-desired-capacity
+{
+    "Activities": [
+        {
+            "ActivityId": "7886077c-839e-14d2-2840-f25f8762042a",
+            "AutoScalingGroupName": "joels-debian-asg",
+            "Description": "Moving EC2 instance to Standby: i-0ec6e6e60bfe91558",
+            "Cause": "At 2022-07-08T18:44:44Z instance i-0ec6e6e60bfe91558 was moved to standby in response to a user request, shrinking the capacity from 2 to 1.",
+            "StartTime": "2022-07-08T18:44:44.549000+00:00",
+            "StatusCode": "InProgress",
+            "Progress": 50,
+            "Details": "{\"Subnet ID\":\"subnet-077c61029c81729e5\",\"Availability Zone\":\"us-east-1e\"}"
+        }
+    ]
+}
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws autoscaling exit-standby --instance-ids i-0ec6e6e60bfe91558 --auto-scaling-group-name joels-debian-asg --profile temp
+
+An error occurred (ValidationError) when calling the ExitStandby operation: Cannot move instances out of Standby for AutoScalingGroup joels-debian-asg while the Launch process is suspended
+
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws autoscaling resume-processes --auto-scaling-group-name joels-debian-asg --scaling-processes Launch --profile temp
+
+
+```
+
+
 
 ### Retrospective 6.2
 
