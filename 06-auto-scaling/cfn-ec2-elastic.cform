@@ -1,0 +1,168 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Module 6 Stack
+
+Parameters:
+  LinuxEC2AmiId:
+    Type: String
+    Description: What Linux VM Image ID
+  InstanceType:
+    Type: String
+    Description: What Instance Type
+
+Resources:
+  JoelsVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      InstanceTenancy: default
+      Tags:
+        - Key: Name
+          Value: joels-vpc
+        - Key: "stelligent-u-lesson"
+          Value: "6"
+
+  Subnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.42.0/24
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: joels-subnet
+      VpcId: !Ref JoelsVPC
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: joels-ig
+
+  VPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref JoelsVPC
+
+  RouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      Tags:
+        - Key: Name
+          Value: joels-rt
+      VpcId: !Ref JoelsVPC
+
+  Route:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+      RouteTableId: !Ref RouteTable
+
+  SubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref RouteTable
+      SubnetId: !Ref Subnet
+
+  MyLaunchTemplateLinuxJoels:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateName: MyLaunchTemplateLinux
+      LaunchTemplateData:
+        IamInstanceProfile:
+          Name: !Ref JoelsCloudWatchInstanceProfile
+        DisableApiTermination: true
+        ImageId: !Sub ${LinuxEC2AmiId}
+        InstanceType: !Sub ${InstanceType}
+        KeyName: joels-key-pair
+        SecurityGroupIds:
+          - !Ref JoelsSecurityGroup
+
+  ElasticIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      InstanceId: !Ref DebianEC2
+      Tags:
+        - Key: Name
+          Value: joels-eip
+        - Key: user
+          Value: joel.webb.labs
+        - Key: stelligent-u-lesson
+          Value: 6.1
+        - Key: stelligent-u-lab
+          Value: 6.1.1
+
+  JoelsSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow ICMP
+      GroupName: joels-sg
+      SecurityGroupIngress:
+        - IpProtocol: icmp
+          CidrIp: 0.0.0.0/0
+          Description: Allow ICMP
+          FromPort: 8
+          ToPort: -1
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref JoelsVPC
+
+  CloudWatchRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchFullAccess
+      RoleName: joels-cloudwatch-role
+
+  JoelsCloudWatchInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref CloudWatchRole
+
+
+  DebianEC2:
+    Type: AWS::EC2::Instance
+    # Note to Joel: Login with 'admin' for Debian Instances
+    Properties:
+      LaunchTemplate:
+        LaunchTemplateId: !Ref MyLaunchTemplateLinuxJoels
+        Version: !GetAtt MyLaunchTemplateLinuxJoels.LatestVersionNumber
+      SubnetId: !Ref Subnet
+      Tags:
+        - Key: Name
+          Value: joels-debian
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash
+          yum install amazon-cloudwatch-agent
+          systemctl enable amazon-cloudwatch-agent.service
+          sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a start
+
+Outputs:
+  ElasticIP:
+    Description: Joels Debian Elastic IP
+    Value: !Ref ElasticIP
+
+  UbuntuEC2Id:
+    Description: Joels Debian EC2 Instance
+    Value: !Ref DebianEC2
+
+
+
