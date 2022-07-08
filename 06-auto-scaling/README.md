@@ -170,7 +170,7 @@ an additional host
 
 _What parameters did Amazon record in the resources it created for you?_
 
-
+See above snippet.
 
 #### Lab 6.1.2: Launch Config and ASG in CFN
 
