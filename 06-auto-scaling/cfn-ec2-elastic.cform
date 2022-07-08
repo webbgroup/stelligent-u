@@ -136,7 +136,6 @@ Resources:
       Roles:
         - !Ref CloudWatchRole
 
-
   DebianEC2:
     Type: AWS::EC2::Instance
     # Note to Joel: Login with 'admin' for Debian Instances
@@ -155,6 +154,22 @@ Resources:
           dpkg -i -E ./amazon-cloudwatch-agent.deb
           systemctl enable amazon-cloudwatch-agent.service
           sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a start
+
+  JoelsAutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      DesiredCapacity: 1
+      LaunchTemplate:
+        LaunchTemplateId: !Ref MyLaunchTemplateLinuxJoels
+        Version: !GetAtt MyLaunchTemplateLinuxJoels.LatestVersionNumber
+      MaxSize: 1
+      MinSize: 1
+      Tags:
+        - Key: Name
+          PropagateAtLaunch: true
+          Value: joels-debian-asg
+      VPCZoneIdentifier:
+        - !Ref Subnet
 
 Outputs:
   ElasticIP:
