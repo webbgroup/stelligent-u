@@ -95,7 +95,7 @@ Resources:
         - Key: stelligent-u-lesson
           Value: 6.1
         - Key: stelligent-u-lab
-          Value: 6.1.1
+          Value: 6.1.2
 
   JoelsSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -147,6 +147,10 @@ Resources:
       Tags:
         - Key: Name
           Value: joels-debian
+        - Key: stelligent-u-lesson
+          Value: 6.1
+        - Key: stelligent-u-lab
+          Value: 6.1.2
       UserData:
         Fn::Base64: |
           #!/bin/bash
