@@ -160,7 +160,7 @@ Outputs:
     Description: Joels Debian Elastic IP
     Value: !Ref ElasticIP
 
-  UbuntuEC2Id:
+  DebianEC2Id:
     Description: Joels Debian EC2 Instance
     Value: !Ref DebianEC2
 
