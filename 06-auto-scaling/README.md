@@ -201,6 +201,90 @@ created for you when launching an ASG from an existing instance?_
 LaunchTemplate
 VPCZoneIdentifier
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws autoscaling describe-auto-scaling-groups --auto-scaling-group-name Joels06-JoelsAutoScalingGroup-1T485Q73GAQS9 --profile temp
+{
+    "AutoScalingGroups": [
+        {
+            "AutoScalingGroupName": "Joels06-JoelsAutoScalingGroup-1T485Q73GAQS9",
+            "AutoScalingGroupARN": "arn:aws:autoscaling:us-east-1:324320755747:autoScalingGroup:3afb397a-6db5-4d6e-a552-8d4d741852ae:autoScalingGroupName/Joels06-JoelsAutoScalingGroup-1T485Q73GAQS9",
+            "LaunchTemplate": {
+                "LaunchTemplateId": "lt-0f2863136e3361e57",
+                "LaunchTemplateName": "MyLaunchTemplateLinux",
+                "Version": "1"
+            },
+            "MinSize": 1,
+            "MaxSize": 1,
+            "DesiredCapacity": 1,
+            "DefaultCooldown": 300,
+            "AvailabilityZones": [
+                "us-east-1c"
+            ],
+            "LoadBalancerNames": [],
+            "TargetGroupARNs": [],
+            "HealthCheckType": "EC2",
+            "HealthCheckGracePeriod": 0,
+            "Instances": [
+                {
+                    "InstanceId": "i-007ef12e68c71a056",
+                    "InstanceType": "t2.micro",
+                    "AvailabilityZone": "us-east-1c",
+                    "LifecycleState": "InService",
+                    "HealthStatus": "Healthy",
+                    "LaunchTemplate": {
+                        "LaunchTemplateId": "lt-0f2863136e3361e57",
+                        "LaunchTemplateName": "MyLaunchTemplateLinux",
+                        "Version": "1"
+                    },
+                    "ProtectedFromScaleIn": false
+                }
+            ],
+            "CreatedTime": "2022-07-08T14:27:39.224000+00:00",
+            "SuspendedProcesses": [],
+            "VPCZoneIdentifier": "subnet-0655360568dfb9401",
+            "EnabledMetrics": [],
+            "Tags": [
+                {
+                    "ResourceId": "Joels06-JoelsAutoScalingGroup-1T485Q73GAQS9",
+                    "ResourceType": "auto-scaling-group",
+                    "Key": "Name",
+                    "Value": "joels-debian-asg",
+                    "PropagateAtLaunch": true
+                },
+                {
+                    "ResourceId": "Joels06-JoelsAutoScalingGroup-1T485Q73GAQS9",
+                    "ResourceType": "auto-scaling-group",
+                    "Key": "aws:cloudformation:logical-id",
+                    "Value": "JoelsAutoScalingGroup",
+                    "PropagateAtLaunch": true
+                },
+                {
+                    "ResourceId": "Joels06-JoelsAutoScalingGroup-1T485Q73GAQS9",
+                    "ResourceType": "auto-scaling-group",
+                    "Key": "aws:cloudformation:stack-id",
+                    "Value": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels06/60f285e0-fec2-11ec-aacf-0e78cf112269",
+                    "PropagateAtLaunch": true
+                },
+                {
+                    "ResourceId": "Joels06-JoelsAutoScalingGroup-1T485Q73GAQS9",
+                    "ResourceType": "auto-scaling-group",
+                    "Key": "aws:cloudformation:stack-name",
+                    "Value": "Joels06",
+                    "PropagateAtLaunch": true
+                }
+            ],
+            "TerminationPolicies": [
+                "Default"
+            ],
+            "NewInstancesProtectedFromScaleIn": false,
+            "ServiceLinkedRoleARN": "arn:aws:iam::324320755747:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling"
+        }
+    ]
+}
+(END)
+
+```
+
 #### Lab 6.1.3: Launch Config Changes
 
 Modify your launch config by increasing your instances from t2.micro to
