@@ -99,18 +99,78 @@ Group (ASG): [ask Amazon to create one for us from a running instance](https://d
 
 - Launch the stack and get the instance ID.
 
+```
+i-039b24d02d393dfe9
+```
+
 - Use the AWS CLI to create an Auto Scaling Group from that instance
   ID.
 
+```
+aws autoscaling create-auto-scaling-group --auto-scaling-group-name joels-debian-asg   --instance-id i-039b24d02d393dfe9 --min-size 1 --max-size 1 --desired-capacity 1 --profile temp
+```
+
 - Limit the ASG to a single instance at all times.
+```
+aws autoscaling describe-auto-scaling-groups --auto-scaling-group-name joels-debian-asg --profile temp
+```
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws autoscaling describe-auto-scaling-groups --auto-scaling-group-name joels-debian-asg --profile temp
+{
+    "AutoScalingGroups": [
+        {
+            "AutoScalingGroupName": "joels-debian-asg",
+            "AutoScalingGroupARN": "arn:aws:autoscaling:us-east-1:324320755747:autoScalingGroup:6a443403-fbff-41d5-8fa1-b1ba01d1720f:autoScalingGroupName/joels-debian-asg",
+            "LaunchConfigurationName": "joels-debian-asg",
+            "MinSize": 1,
+            "MaxSize": 1,
+            "DesiredCapacity": 1,
+            "DefaultCooldown": 300,
+            "AvailabilityZones": [
+                "us-east-1c"
+            ],
+            "LoadBalancerNames": [],
+            "TargetGroupARNs": [],
+            "HealthCheckType": "EC2",
+            "HealthCheckGracePeriod": 0,
+            "Instances": [
+                {
+                    "InstanceId": "i-0e6dd6f2fdc3265a8",
+                    "InstanceType": "t2.micro",
+                    "AvailabilityZone": "us-east-1c",
+                    "LifecycleState": "InService",
+                    "HealthStatus": "Healthy",
+                    "LaunchConfigurationName": "joels-debian-asg",
+                    "ProtectedFromScaleIn": false
+                }
+            ],
+            "CreatedTime": "2022-07-08T13:48:42.966000+00:00",
+            "SuspendedProcesses": [],
+            "VPCZoneIdentifier": "subnet-0655360568dfb9401",
+            "EnabledMetrics": [],
+            "Tags": [],
+            "TerminationPolicies": [
+                "Default"
+            ],
+            "NewInstancesProtectedFromScaleIn": false,
+            "ServiceLinkedRoleARN": "arn:aws:iam::324320755747:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling"
+        }
+    ]
+}
+```
+
 
 ##### Question: Resources
 
 _What was created in addition to the new Auto Scaling Group?_
 
+an additional host
+
 ##### Question: Parameters
 
 _What parameters did Amazon record in the resources it created for you?_
+
+
 
 #### Lab 6.1.2: Launch Config and ASG in CFN
 
