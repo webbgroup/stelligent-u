@@ -190,10 +190,16 @@ Then update the stack.
 Your Launch Config will look a little different than the one Amazon
 created for you in Lab 6.1.1.
 
+Very different.
+
+
 ##### Question: ASG From Existing Instance
 
 _What config info or resources did you have to create explicitly that Amazon
 created for you when launching an ASG from an existing instance?_
+
+LaunchTemplate
+VPCZoneIdentifier
 
 #### Lab 6.1.3: Launch Config Changes
 
