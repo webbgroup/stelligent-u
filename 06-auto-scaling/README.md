@@ -490,10 +490,73 @@ they are versioned instead of replaced with each change.
 Trace out all the resources created by your stack, and the resources
 associated with those. Then tear your stack down.
 
+Seems the manually added autoscaling group isn't being removed, so an instance is lingering 30 seconds into the stack deletion
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws autoscaling describe-auto-scaling-groups --auto-scaling-group-name joels-debian-asg --profile temp
+{
+    "AutoScalingGroups": [
+        {
+            "AutoScalingGroupName": "joels-debian-asg",
+            "AutoScalingGroupARN": "arn:aws:autoscaling:us-east-1:324320755747:autoScalingGroup:6a443403-fbff-41d5-8fa1-b1ba01d1720f:autoScalingGroupName/joels-debian-asg",
+            "LaunchConfigurationName": "joels-debian-asg",
+            "MinSize": 1,
+            "MaxSize": 1,
+            "DesiredCapacity": 1,
+            "DefaultCooldown": 300,
+            "AvailabilityZones": [
+                "us-east-1c"
+            ],
+            "LoadBalancerNames": [],
+            "TargetGroupARNs": [],
+            "HealthCheckType": "EC2",
+            "HealthCheckGracePeriod": 0,
+            "Instances": [
+                {
+                    "InstanceId": "i-0e6dd6f2fdc3265a8",
+                    "InstanceType": "t2.micro",
+                    "AvailabilityZone": "us-east-1c",
+                    "LifecycleState": "InService",
+                    "HealthStatus": "Healthy",
+                    "LaunchConfigurationName": "joels-debian-asg",
+                    "ProtectedFromScaleIn": false
+                }
+            ],
+            "CreatedTime": "2022-07-08T13:48:42.966000+00:00",
+            "SuspendedProcesses": [],
+            "VPCZoneIdentifier": "subnet-0655360568dfb9401",
+            "EnabledMetrics": [],
+            "Tags": [],
+            "TerminationPolicies": [
+                "Default"
+            ],
+            "NewInstancesProtectedFromScaleIn": false,
+            "ServiceLinkedRoleARN": "arn:aws:iam::324320755747:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling"
+        }
+    ]
+}
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws autoscaling delete-auto-scaling-group --auto-scaling-group-name joels-debian-asg --profile temp
+
+An error occurred (ResourceInUse) when calling the DeleteAutoScalingGroup operation: You cannot delete an AutoScalingGroup while there are instances or pending Spot instance request(s) still in the group.
+
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws autoscaling delete-auto-scaling-group --auto-scaling-group-name joels-debian-asg --profile temp --force-delete
+
+```
+Looks like the force delete worked. However that being said... the VPC, Gateway, Subnet had to be deleted manually also for the clean up.
+
 ##### Question: Stack Tear Down
 
 _After you tear down the stack, do all the associated resources go away?
 What's left?_
+
+No, looks like VPC, Gateway, Subnet failed to be deleted using the delete-stack
+
+```
+Resource handler returned message: "The subnet 'subnet-0655360568dfb9401' has dependencies and cannot be deleted. (Service: Ec2, Status Code: 400, Request ID: 2038b163-3abb-447c-bed7-19611f26aebf, Extended Request ID: null)" (RequestToken: 77a967f9-9ca5-fd80-915a-da507d6cef6c, HandlerErrorCode: InvalidRequest)
+```
 
 ### Retrospective 6.1
 
