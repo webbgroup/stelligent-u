@@ -99,18 +99,78 @@ Group (ASG): [ask Amazon to create one for us from a running instance](https://d
 
 - Launch the stack and get the instance ID.
 
+```
+i-039b24d02d393dfe9
+```
+
 - Use the AWS CLI to create an Auto Scaling Group from that instance
   ID.
 
+```
+aws autoscaling create-auto-scaling-group --auto-scaling-group-name joels-debian-asg   --instance-id i-039b24d02d393dfe9 --min-size 1 --max-size 1 --desired-capacity 1 --profile temp
+```
+
 - Limit the ASG to a single instance at all times.
+```
+aws autoscaling describe-auto-scaling-groups --auto-scaling-group-name joels-debian-asg --profile temp
+```
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws autoscaling describe-auto-scaling-groups --auto-scaling-group-name joels-debian-asg --profile temp
+{
+    "AutoScalingGroups": [
+        {
+            "AutoScalingGroupName": "joels-debian-asg",
+            "AutoScalingGroupARN": "arn:aws:autoscaling:us-east-1:324320755747:autoScalingGroup:6a443403-fbff-41d5-8fa1-b1ba01d1720f:autoScalingGroupName/joels-debian-asg",
+            "LaunchConfigurationName": "joels-debian-asg",
+            "MinSize": 1,
+            "MaxSize": 1,
+            "DesiredCapacity": 1,
+            "DefaultCooldown": 300,
+            "AvailabilityZones": [
+                "us-east-1c"
+            ],
+            "LoadBalancerNames": [],
+            "TargetGroupARNs": [],
+            "HealthCheckType": "EC2",
+            "HealthCheckGracePeriod": 0,
+            "Instances": [
+                {
+                    "InstanceId": "i-0e6dd6f2fdc3265a8",
+                    "InstanceType": "t2.micro",
+                    "AvailabilityZone": "us-east-1c",
+                    "LifecycleState": "InService",
+                    "HealthStatus": "Healthy",
+                    "LaunchConfigurationName": "joels-debian-asg",
+                    "ProtectedFromScaleIn": false
+                }
+            ],
+            "CreatedTime": "2022-07-08T13:48:42.966000+00:00",
+            "SuspendedProcesses": [],
+            "VPCZoneIdentifier": "subnet-0655360568dfb9401",
+            "EnabledMetrics": [],
+            "Tags": [],
+            "TerminationPolicies": [
+                "Default"
+            ],
+            "NewInstancesProtectedFromScaleIn": false,
+            "ServiceLinkedRoleARN": "arn:aws:iam::324320755747:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling"
+        }
+    ]
+}
+```
+
 
 ##### Question: Resources
 
 _What was created in addition to the new Auto Scaling Group?_
 
+an additional host
+
 ##### Question: Parameters
 
 _What parameters did Amazon record in the resources it created for you?_
+
+See above snippet.
 
 #### Lab 6.1.2: Launch Config and ASG in CFN
 
@@ -130,15 +190,107 @@ Then update the stack.
 Your Launch Config will look a little different than the one Amazon
 created for you in Lab 6.1.1.
 
+Very different.
+
+
 ##### Question: ASG From Existing Instance
 
 _What config info or resources did you have to create explicitly that Amazon
 created for you when launching an ASG from an existing instance?_
 
+LaunchTemplate
+VPCZoneIdentifier
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws autoscaling describe-auto-scaling-groups --auto-scaling-group-name Joels06-JoelsAutoScalingGroup-1T485Q73GAQS9 --profile temp
+{
+    "AutoScalingGroups": [
+        {
+            "AutoScalingGroupName": "Joels06-JoelsAutoScalingGroup-1T485Q73GAQS9",
+            "AutoScalingGroupARN": "arn:aws:autoscaling:us-east-1:324320755747:autoScalingGroup:3afb397a-6db5-4d6e-a552-8d4d741852ae:autoScalingGroupName/Joels06-JoelsAutoScalingGroup-1T485Q73GAQS9",
+            "LaunchTemplate": {
+                "LaunchTemplateId": "lt-0f2863136e3361e57",
+                "LaunchTemplateName": "MyLaunchTemplateLinux",
+                "Version": "1"
+            },
+            "MinSize": 1,
+            "MaxSize": 1,
+            "DesiredCapacity": 1,
+            "DefaultCooldown": 300,
+            "AvailabilityZones": [
+                "us-east-1c"
+            ],
+            "LoadBalancerNames": [],
+            "TargetGroupARNs": [],
+            "HealthCheckType": "EC2",
+            "HealthCheckGracePeriod": 0,
+            "Instances": [
+                {
+                    "InstanceId": "i-007ef12e68c71a056",
+                    "InstanceType": "t2.micro",
+                    "AvailabilityZone": "us-east-1c",
+                    "LifecycleState": "InService",
+                    "HealthStatus": "Healthy",
+                    "LaunchTemplate": {
+                        "LaunchTemplateId": "lt-0f2863136e3361e57",
+                        "LaunchTemplateName": "MyLaunchTemplateLinux",
+                        "Version": "1"
+                    },
+                    "ProtectedFromScaleIn": false
+                }
+            ],
+            "CreatedTime": "2022-07-08T14:27:39.224000+00:00",
+            "SuspendedProcesses": [],
+            "VPCZoneIdentifier": "subnet-0655360568dfb9401",
+            "EnabledMetrics": [],
+            "Tags": [
+                {
+                    "ResourceId": "Joels06-JoelsAutoScalingGroup-1T485Q73GAQS9",
+                    "ResourceType": "auto-scaling-group",
+                    "Key": "Name",
+                    "Value": "joels-debian-asg",
+                    "PropagateAtLaunch": true
+                },
+                {
+                    "ResourceId": "Joels06-JoelsAutoScalingGroup-1T485Q73GAQS9",
+                    "ResourceType": "auto-scaling-group",
+                    "Key": "aws:cloudformation:logical-id",
+                    "Value": "JoelsAutoScalingGroup",
+                    "PropagateAtLaunch": true
+                },
+                {
+                    "ResourceId": "Joels06-JoelsAutoScalingGroup-1T485Q73GAQS9",
+                    "ResourceType": "auto-scaling-group",
+                    "Key": "aws:cloudformation:stack-id",
+                    "Value": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels06/60f285e0-fec2-11ec-aacf-0e78cf112269",
+                    "PropagateAtLaunch": true
+                },
+                {
+                    "ResourceId": "Joels06-JoelsAutoScalingGroup-1T485Q73GAQS9",
+                    "ResourceType": "auto-scaling-group",
+                    "Key": "aws:cloudformation:stack-name",
+                    "Value": "Joels06",
+                    "PropagateAtLaunch": true
+                }
+            ],
+            "TerminationPolicies": [
+                "Default"
+            ],
+            "NewInstancesProtectedFromScaleIn": false,
+            "ServiceLinkedRoleARN": "arn:aws:iam::324320755747:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling"
+        }
+    ]
+}
+(END)
+
+```
+
 #### Lab 6.1.3: Launch Config Changes
 
 Modify your launch config by increasing your instances from t2.micro to
 t2.small. Update your stack.
+
+Instance got replaced with a new t2.small
 
 ##### Question: Stack Updates
 
@@ -146,9 +298,33 @@ _After updating your stack, did your running instance get replaced or resized?_
 
 Terminate the instance in your ASG.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws ec2 terminate-instances --profile temp --instance-ids i-0f5750993c319bef0 --dry-run
+
+An error occurred (DryRunOperation) when calling the TerminateInstances operation: Request would have succeeded, but DryRun flag is set.
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws ec2 terminate-instances --profile temp --instance-ids i-0f5750993c319bef0
+{
+    "TerminatingInstances": [
+        {
+            "CurrentState": {
+                "Code": 32,
+                "Name": "shutting-down"
+            },
+            "InstanceId": "i-0f5750993c319bef0",
+            "PreviousState": {
+                "Code": 16,
+                "Name": "running"
+            }
+        }
+    ]
+}
+```
+
 ##### Question: Replacement Instance
 
 _Is the replacement instance the new size or the old?_
+
+New Size
 
 #### Lab 6.1.4: ASG Update Policy
 
@@ -163,9 +339,129 @@ type to t2.medium. Update your stack.
 _After updating, what did you see change? Did your running instance get
 replaced this time?_
 
+looks like I have one micro instance as well as one medium instance.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ ssh -i ~/.ssh/joels-key-pair.pem admin@3.89.60.185
+Linux ip-10-0-42-204 5.10.0-14-cloud-amd64 #1 SMP Debian 5.10.113-1 (2022-04-29) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Fri Jul  8 15:05:19 2022 from 66.110.242.65
+admin@ip-10-0-42-204:~$ uptime
+ 15:07:47 up  1:18,  1 user,  load average: 0.00, 0.00, 0.00
+admin@ip-10-0-42-204:~$ exit
+logout
+Connection to 3.89.60.185 closed.
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ ssh -i ~/.ssh/joels-key-pair.pem admin@3.231.110.221
+Linux ip-10-0-42-230 5.10.0-14-cloud-amd64 #1 SMP Debian 5.10.113-1 (2022-04-29) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Fri Jul  8 15:07:32 2022 from 66.110.242.65
+admin@ip-10-0-42-230:~$ uptime
+ 15:07:57 up 5 min,  1 user,  load average: 0.00, 0.08, 0.05
+admin@ip-10-0-42-230:~$ exit
+logout
+Connection to 3.231.110.221 closed.
+
+```
+
 ##### Question: Launch Config
 
 _Did the launch config change or was it replaced?_
+
+It was replaced
+
+```
+{
+    "AutoScalingGroups": [
+        {
+            "AutoScalingGroupName": "Joels06-JoelsAutoScalingGroup-YAFGUXFITMEZ",
+            "AutoScalingGroupARN": "arn:aws:autoscaling:us-east-1:324320755747:autoScalingGroup:0a492e0f-6147-439f-91ab-ed5576f034a5:autoScalingGroupName/Joels06-JoelsAutoScalingGroup-YAFGUXFITMEZ",
+            "LaunchTemplate": {
+                "LaunchTemplateId": "lt-0f2863136e3361e57",
+                "LaunchTemplateName": "MyLaunchTemplateLinux",
+                "Version": "3"
+            },
+            "MinSize": 1,
+            "MaxSize": 1,
+            "DesiredCapacity": 1,
+            "DefaultCooldown": 300,
+            "AvailabilityZones": [
+                "us-east-1c"
+            ],
+            "LoadBalancerNames": [],
+            "TargetGroupARNs": [],
+            "HealthCheckType": "EC2",
+            "HealthCheckGracePeriod": 0,
+            "Instances": [
+                {
+                    "InstanceId": "i-03c12670bf9ede734",
+                    "InstanceType": "t2.medium",
+                    "AvailabilityZone": "us-east-1c",
+                    "LifecycleState": "InService",
+                    "HealthStatus": "Healthy",
+                    "LaunchTemplate": {
+                        "LaunchTemplateId": "lt-0f2863136e3361e57",
+                        "LaunchTemplateName": "MyLaunchTemplateLinux",
+                        "Version": "3"
+                    },
+                    "ProtectedFromScaleIn": false
+                }
+            ],
+            "CreatedTime": "2022-07-08T15:02:21.820000+00:00",
+            "SuspendedProcesses": [],
+            "VPCZoneIdentifier": "subnet-0655360568dfb9401",
+            "EnabledMetrics": [],
+            "Tags": [
+                {
+                    "ResourceId": "Joels06-JoelsAutoScalingGroup-YAFGUXFITMEZ",
+                    "ResourceType": "auto-scaling-group",
+                    "Key": "Name",
+                    "Value": "joels-debian-asg",
+                    "PropagateAtLaunch": true
+                },
+                {
+                    "ResourceId": "Joels06-JoelsAutoScalingGroup-YAFGUXFITMEZ",
+                    "ResourceType": "auto-scaling-group",
+                    "Key": "aws:cloudformation:logical-id",
+                    "Value": "JoelsAutoScalingGroup",
+                    "PropagateAtLaunch": true
+                },
+                {
+                    "ResourceId": "Joels06-JoelsAutoScalingGroup-YAFGUXFITMEZ",
+                    "ResourceType": "auto-scaling-group",
+                    "Key": "aws:cloudformation:stack-id",
+                    "Value": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels06/60f285e0-fec2-11ec-aacf-0e78cf112269",
+                    "PropagateAtLaunch": true
+                },
+                {
+                    "ResourceId": "Joels06-JoelsAutoScalingGroup-YAFGUXFITMEZ",
+                    "ResourceType": "auto-scaling-group",
+                    "Key": "aws:cloudformation:stack-name",
+                    "Value": "Joels06",
+                    "PropagateAtLaunch": true
+                }
+            ],
+            "TerminationPolicies": [
+                "Default"
+            ],
+            "NewInstancesProtectedFromScaleIn": false,
+            "ServiceLinkedRoleARN": "arn:aws:iam::324320755747:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling"
+        }
+    ]
+}
+
+```
 
 #### Lab 6.1.5: Launch Template
 
@@ -173,10 +469,14 @@ Finally, replace your launch config with a [Launch Template](https://docs.aws.am
 then update your stack again. Specify only the minimum number of
 parameters you need to.
 
+Already did this? Was using Parameters the entire time.
+
 ##### Question: Required Info
 
 _What config info or resources do you have to provide in addition to what
 Launch Configurations require?_
+
+Seems like the Launch Template is more pragmatic approach as the Launch Config is more granular.
 
 You'll see both launch configs and launch templates in your client
 engagements. Templates were [introduced in Nov 2017](https://aws.amazon.com/about-aws/whats-new/2017/11/introducing-launch-templates-for-amazon-ec2-instances/)
@@ -190,15 +490,80 @@ they are versioned instead of replaced with each change.
 Trace out all the resources created by your stack, and the resources
 associated with those. Then tear your stack down.
 
+Seems the manually added autoscaling group isn't being removed, so an instance is lingering 30 seconds into the stack deletion
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws autoscaling describe-auto-scaling-groups --auto-scaling-group-name joels-debian-asg --profile temp
+{
+    "AutoScalingGroups": [
+        {
+            "AutoScalingGroupName": "joels-debian-asg",
+            "AutoScalingGroupARN": "arn:aws:autoscaling:us-east-1:324320755747:autoScalingGroup:6a443403-fbff-41d5-8fa1-b1ba01d1720f:autoScalingGroupName/joels-debian-asg",
+            "LaunchConfigurationName": "joels-debian-asg",
+            "MinSize": 1,
+            "MaxSize": 1,
+            "DesiredCapacity": 1,
+            "DefaultCooldown": 300,
+            "AvailabilityZones": [
+                "us-east-1c"
+            ],
+            "LoadBalancerNames": [],
+            "TargetGroupARNs": [],
+            "HealthCheckType": "EC2",
+            "HealthCheckGracePeriod": 0,
+            "Instances": [
+                {
+                    "InstanceId": "i-0e6dd6f2fdc3265a8",
+                    "InstanceType": "t2.micro",
+                    "AvailabilityZone": "us-east-1c",
+                    "LifecycleState": "InService",
+                    "HealthStatus": "Healthy",
+                    "LaunchConfigurationName": "joels-debian-asg",
+                    "ProtectedFromScaleIn": false
+                }
+            ],
+            "CreatedTime": "2022-07-08T13:48:42.966000+00:00",
+            "SuspendedProcesses": [],
+            "VPCZoneIdentifier": "subnet-0655360568dfb9401",
+            "EnabledMetrics": [],
+            "Tags": [],
+            "TerminationPolicies": [
+                "Default"
+            ],
+            "NewInstancesProtectedFromScaleIn": false,
+            "ServiceLinkedRoleARN": "arn:aws:iam::324320755747:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling"
+        }
+    ]
+}
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws autoscaling delete-auto-scaling-group --auto-scaling-group-name joels-debian-asg --profile temp
+
+An error occurred (ResourceInUse) when calling the DeleteAutoScalingGroup operation: You cannot delete an AutoScalingGroup while there are instances or pending Spot instance request(s) still in the group.
+
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws autoscaling delete-auto-scaling-group --auto-scaling-group-name joels-debian-asg --profile temp --force-delete
+
+```
+Looks like the force delete worked. However that being said... the VPC, Gateway, Subnet had to be deleted manually also for the clean up.
+
 ##### Question: Stack Tear Down
 
 _After you tear down the stack, do all the associated resources go away?
 What's left?_
 
+No, looks like VPC, Gateway, Subnet failed to be deleted using the delete-stack
+
+```
+Resource handler returned message: "The subnet 'subnet-0655360568dfb9401' has dependencies and cannot be deleted. (Service: Ec2, Status Code: 400, Request ID: 2038b163-3abb-447c-bed7-19611f26aebf, Extended Request ID: null)" (RequestToken: 77a967f9-9ca5-fd80-915a-da507d6cef6c, HandlerErrorCode: InvalidRequest)
+```
+
 ### Retrospective 6.1
 
 Read more about the [benefits and when to use](https://docs.aws.amazon.com/autoscaling/ec2/userguide/auto-scaling-benefits.html)
 an ASG.
+
+Very cool with Availability Zone Rebalancing and Capacity Rebalancing
 
 ## Lesson 6.2: Health Checks
 
@@ -214,6 +579,8 @@ to know when to replace an instance. It can also use the health checks
 that load balancers monitor to know whether or not applications are
 healthy, but we'll cover that in a future lesson.
 
+Ok.
+
 #### Lab 6.2.1: Use awscli to Describe an ASG
 
 Use the AWS CLI for this process. As you work, compare what you see in
@@ -223,12 +590,159 @@ using the CLI.
 Re-launch your stack, then [describe the resources](https://docs.aws.amazon.com/cli/latest/reference/cloudformation/describe-stack-resources.html).
 From that output, find the name of your ASG.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws autoscaling describe-auto-scaling-groups --profile temp
+{
+    "AutoScalingGroups": [
+        {
+            "AutoScalingGroupName": "Joels06-JoelsAutoScalingGroup-1K1P1X50F0BSC",
+            "AutoScalingGroupARN": "arn:aws:autoscaling:us-east-1:324320755747:autoScalingGroup:75549103-74a4-4387-8565-87d8520322ea:autoScalingGroupName/Joels06-JoelsAutoScalingGroup-1K1P1X50F0BSC",
+            "LaunchTemplate": {
+                "LaunchTemplateId": "lt-0f802435b10a2817c",
+                "LaunchTemplateName": "MyLaunchTemplateLinux",
+                "Version": "1"
+            },
+            "MinSize": 1,
+            "MaxSize": 1,
+            "DesiredCapacity": 1,
+            "DefaultCooldown": 300,
+            "AvailabilityZones": [
+                "us-east-1e"
+            ],
+            "LoadBalancerNames": [],
+            "TargetGroupARNs": [],
+            "HealthCheckType": "EC2",
+            "HealthCheckGracePeriod": 0,
+            "Instances": [
+                {
+                    "InstanceId": "i-0f15546a4e890255a",
+                    "InstanceType": "t2.medium",
+                    "AvailabilityZone": "us-east-1e",
+                    "LifecycleState": "InService",
+                    "HealthStatus": "Healthy",
+                    "LaunchTemplate": {
+                        "LaunchTemplateId": "lt-0f802435b10a2817c",
+                        "LaunchTemplateName": "MyLaunchTemplateLinux",
+                        "Version": "1"
+                    },
+                    "ProtectedFromScaleIn": false
+                }
+            ],
+            "CreatedTime": "2022-07-08T16:51:35.131000+00:00",
+            "SuspendedProcesses": [],
+            "VPCZoneIdentifier": "subnet-077c61029c81729e5",
+            "EnabledMetrics": [],
+            "Tags": [
+                {
+                    "ResourceId": "Joels06-JoelsAutoScalingGroup-1K1P1X50F0BSC",
+                    "ResourceType": "auto-scaling-group",
+                    "Key": "Name",
+                    "Value": "joels-debian-asg",
+                    "PropagateAtLaunch": true
+                },
+
+```
+
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws autoscaling describe-auto-scaling-groups --auto-scaling-group-name Joels06-JoelsAutoScalingGroup-1K1P1X50F0BSC --profile temp
+{
+    "AutoScalingGroups": [
+        {
+            "AutoScalingGroupName": "Joels06-JoelsAutoScalingGroup-1K1P1X50F0BSC",
+            "AutoScalingGroupARN": "arn:aws:autoscaling:us-east-1:324320755747:autoScalingGroup:75549103-74a4-4387-8565-87d8520322ea:autoScalingGroupName/Joels06-JoelsAutoScalingGroup-1K1P1X50F0BSC",
+            "LaunchTemplate": {
+                "LaunchTemplateId": "lt-0f802435b10a2817c",
+                "LaunchTemplateName": "MyLaunchTemplateLinux",
+                "Version": "1"
+            },
+            "MinSize": 1,
+            "MaxSize": 1,
+            "DesiredCapacity": 1,
+            "DefaultCooldown": 300,
+            "AvailabilityZones": [
+                "us-east-1e"
+            ],
+            "LoadBalancerNames": [],
+            "TargetGroupARNs": [],
+            "HealthCheckType": "EC2",
+            "HealthCheckGracePeriod": 0,
+            "Instances": [
+                {
+                    "InstanceId": "i-0f15546a4e890255a",
+                    "InstanceType": "t2.medium",
+                    "AvailabilityZone": "us-east-1e",
+                    "LifecycleState": "InService",
+                    "HealthStatus": "Healthy",
+                    "LaunchTemplate": {
+                        "LaunchTemplateId": "lt-0f802435b10a2817c",
+                        "LaunchTemplateName": "MyLaunchTemplateLinux",
+                        "Version": "1"
+                    },
+                    "ProtectedFromScaleIn": false
+                }
+            ],
+            "CreatedTime": "2022-07-08T16:51:35.131000+00:00",
+            "SuspendedProcesses": [],
+            "VPCZoneIdentifier": "subnet-077c61029c81729e5",
+            "EnabledMetrics": [],
+            "Tags": [
+                {
+                    "ResourceId": "Joels06-JoelsAutoScalingGroup-1K1P1X50F0BSC",
+                    "ResourceType": "auto-scaling-group",
+                    "Key": "Name",
+                    "Value": "joels-debian-asg",
+                    "PropagateAtLaunch": true
+                },
+                {
+                    "ResourceId": "Joels06-JoelsAutoScalingGroup-1K1P1X50F0BSC",
+                    "ResourceType": "auto-scaling-group",
+                    "Key": "aws:cloudformation:logical-id",
+                    "Value": "JoelsAutoScalingGroup",
+                    "PropagateAtLaunch": true
+                },
+                {
+                    "ResourceId": "Joels06-JoelsAutoScalingGroup-1K1P1X50F0BSC",
+                    "ResourceType": "auto-scaling-group",
+                    "Key": "aws:cloudformation:stack-id",
+                    "Value": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels06/d6f487a0-fedd-11ec-ba23-0ae8ea5f4003",
+                    "PropagateAtLaunch": true
+                },
+                {
+                    "ResourceId": "Joels06-JoelsAutoScalingGroup-1K1P1X50F0BSC",
+                    "ResourceType": "auto-scaling-group",
+                    "Key": "aws:cloudformation:stack-name",
+                    "Value": "Joels06",
+                    "PropagateAtLaunch": true
+                }
+            ],
+            "TerminationPolicies": [
+                "Default"
+            ],
+            "NewInstancesProtectedFromScaleIn": false,
+            "ServiceLinkedRoleARN": "arn:aws:iam::324320755747:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling"
+        }
+    ]
+}
+(END)
+
+```
+
 ##### Question: Filtering Output
 
 _Can you filter your output with "\--query" to print only your ASGs
 resource ID? Given that name, [describe your ASG](https://docs.aws.amazon.com/cli/latest/reference/autoscaling/describe-auto-scaling-groups.html).
 Find the Instance ID. Can you filter the output to print only the Instance ID
 value?_
+
+```
+aws autoscaling describe-auto-scaling-groups help --profile temp --filters "Name=name,Value=joels-debian-asg"
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws autoscaling describe-auto-scaling-groups --profile temp | grep -A 22 Joel | grep InstanceId | cut -d : -f 2 | sed 's/[^a-zA-Z0-9/+-]//g'
+i-0f15546a4e890255a
+```
 
 (You can use the `--query` option, but you can also use
 [jq](https://stedolan.github.io/jq/). Both are useful in different scenarios.)
@@ -237,10 +751,18 @@ value?_
 Describe your ASG again. Run the awscli command repeatedly until you see
 the new instance launch.
 
+In theory this should work, but grepping for the name was much faster.
+
+
 ##### Question: Instance Timing
 
 _How long did it take for the new instance to spin up? How long before it was
 marked as healthy?_
+
+A new instance never came up??
+
+I show an instance with joels-debian-asg, but no new instance.
+
 
 #### Lab 6.2.2: Scale Out
 
@@ -253,9 +775,13 @@ then update the stack.
 
 _Did it work? If it didn't, what else do you have to increase?_
 
+Yes it worked.. but the Elastic IP address never switched instances.
+
 ##### Question: Update Delay
 
 _How quickly after your stack update did you see the ASG change?_
+
+fairly quickly  - about 3 minutes
 
 #### Lab 6.2.3: Manual Interference
 
@@ -273,6 +799,51 @@ It's usually helpful to know why something failed, though, and when you
 have to do some debugging, the ASG system offers a few options,
 including [placing a server on standby](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-enter-exit-standby.html#standby-instance-health-status)
 or [suspending auto-scaling](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-suspend-resume-processes.html).
+
+
+To put it into standby:
+```
+aws autoscaling enter-standby --instance-ids i-0ec6e6e60bfe91558 --auto-scaling-group-name joels-debian-asg --should-decrement-desired-capacity
+```
+To remove from standby:
+```
+aws autoscaling exit-standby --instance-ids i-0ec6e6e60bfe91558 --auto-scaling-group-name joels-debian-asg
+```
+Lifecycles went from `InService` -> `Standby` -> `Pending` -> `InService`
+
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws autoscaling enter-standby --instance-ids i-0ec6e6e60bfe91558 --auto-scaling-group-name joels-debian-asg --profile temp --should-decrement-desired-capacity
+{
+    "Activities": [
+        {
+            "ActivityId": "b106077c-7770-6fd5-83eb-1738b2ed6b32",
+            "AutoScalingGroupName": "joels-debian-asg",
+            "Description": "Moving EC2 instance to Standby: i-0ec6e6e60bfe91558",
+            "Cause": "At 2022-07-08T18:41:25Z instance i-0ec6e6e60bfe91558 was moved to standby in response to a user request, shrinking the capacity from 2 to 1.",
+            "StartTime": "2022-07-08T18:41:25.019000+00:00",
+            "StatusCode": "InProgress",
+            "Progress": 50,
+            "Details": "{\"Subnet ID\":\"subnet-077c61029c81729e5\",\"Availability Zone\":\"us-east-1e\"}"
+        }
+    ]
+}
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws autoscaling exit-standby --instance-ids i-0ec6e6e60bfe91558 --auto-scaling-group-name joels-debian-asg --profile temp
+{
+    "Activities": [
+        {
+            "ActivityId": "e796077c-7afc-457e-2825-e25af95f9032",
+            "AutoScalingGroupName": "joels-debian-asg",
+            "Description": "Moving EC2 instance out of Standby: i-0ec6e6e60bfe91558",
+            "Cause": "At 2022-07-08T18:42:23Z instance i-0ec6e6e60bfe91558 was moved out of standby in response to a user request, increasing the capacity from 1 to 2.",
+            "StartTime": "2022-07-08T18:42:23.121000+00:00",
+            "StatusCode": "PreInService",
+            "Progress": 30,
+            "Details": "{\"Subnet ID\":\"subnet-077c61029c81729e5\",\"Availability Zone\":\"us-east-1e\"}"
+        }
+    ]
+}
+```
 
 Standby allows you to take an instance out of action without changing
 anything else: no new instance is created, the standby one isn't
@@ -295,7 +866,57 @@ another. Disable Launch, then put an instance on standby and back in
 action again. Note the process you have to go through, including any
 commands you run.
 
+Suspending launch:
+```
+aws autoscaling suspend-processes --auto-scaling-group-name joels-debian-asg --scaling-processes Launch --profile temp
+```
+Placing an instance into standby:
+```
+aws autoscaling enter-standby --instance-ids i-08e295ee91d2ad920 --auto-scaling-group-name joels-debian-asg --should-decrement-desired-capacity
+```
+When attempting to bring an instance back out of standby, I ran the following command and came across the following error:
+```
+ aws autoscaling exit-standby --instance-ids i-08e295ee91d2ad920 --auto-scaling-group-name joels-debian-asg
+```
+```
+An error occurred (ValidationError) when calling the ExitStandby operation: Cannot move instances out of Standby for AutoScalingGroup joels-debian-asg while the Launch process is suspended
+```
+I brought the `Launch` process out of being suspended and then was able to bring the instance back out of `Standby`
+```
+aws autoscaling resume-processes --auto-scaling-group-name joels-debian-asg --scaling-processes Launch
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws autoscaling suspend-processes --auto-scaling-group-name joels-debian-asg --scaling-processes Launch --profile temp
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws autoscaling enter-standby --instance-ids i-0ec6e6e60bfe91558 --auto-scaling-group-name joels-debian-asg --profile temp --should-decrement-desired-capacity
+{
+    "Activities": [
+        {
+            "ActivityId": "7886077c-839e-14d2-2840-f25f8762042a",
+            "AutoScalingGroupName": "joels-debian-asg",
+            "Description": "Moving EC2 instance to Standby: i-0ec6e6e60bfe91558",
+            "Cause": "At 2022-07-08T18:44:44Z instance i-0ec6e6e60bfe91558 was moved to standby in response to a user request, shrinking the capacity from 2 to 1.",
+            "StartTime": "2022-07-08T18:44:44.549000+00:00",
+            "StatusCode": "InProgress",
+            "Progress": 50,
+            "Details": "{\"Subnet ID\":\"subnet-077c61029c81729e5\",\"Availability Zone\":\"us-east-1e\"}"
+        }
+    ]
+}
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws autoscaling exit-standby --instance-ids i-0ec6e6e60bfe91558 --auto-scaling-group-name joels-debian-asg --profile temp
+
+An error occurred (ValidationError) when calling the ExitStandby operation: Cannot move instances out of Standby for AutoScalingGroup joels-debian-asg while the Launch process is suspended
+
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws autoscaling resume-processes --auto-scaling-group-name joels-debian-asg --scaling-processes Launch --profile temp
+
+
+```
+
+
+
 ### Retrospective 6.2
+
+========== Stop here Joel =========
 
 #### Question: CloudWatch
 

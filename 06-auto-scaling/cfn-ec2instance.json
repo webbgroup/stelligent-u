@@ -1,0 +1,12 @@
+[
+    {
+        "ParameterKey": "LinuxEC2AmiId",
+        "ParameterValue": "ami-09a41e26df464c548",
+        "UsePreviousValue": false
+    },
+    {
+        "ParameterKey": "InstanceType",
+        "ParameterValue": "t2.medium",
+        "UsePreviousValue": false
+    }
+]
