@@ -469,10 +469,14 @@ Finally, replace your launch config with a [Launch Template](https://docs.aws.am
 then update your stack again. Specify only the minimum number of
 parameters you need to.
 
+Already did this? Was using Parameters the entire time.
+
 ##### Question: Required Info
 
 _What config info or resources do you have to provide in addition to what
 Launch Configurations require?_
+
+Seems like the Launch Template is more pragmatic approach as the Launch Config is more granular.
 
 You'll see both launch configs and launch templates in your client
 engagements. Templates were [introduced in Nov 2017](https://aws.amazon.com/about-aws/whats-new/2017/11/introducing-launch-templates-for-amazon-ec2-instances/)
