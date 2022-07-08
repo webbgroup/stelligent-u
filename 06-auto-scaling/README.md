@@ -290,15 +290,41 @@ joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws auto
 Modify your launch config by increasing your instances from t2.micro to
 t2.small. Update your stack.
 
+Instance got replaced with a new t2.small
+
 ##### Question: Stack Updates
 
 _After updating your stack, did your running instance get replaced or resized?_
 
 Terminate the instance in your ASG.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws ec2 terminate-instances --profile temp --instance-ids i-0f5750993c319bef0 --dry-run
+
+An error occurred (DryRunOperation) when calling the TerminateInstances operation: Request would have succeeded, but DryRun flag is set.
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws ec2 terminate-instances --profile temp --instance-ids i-0f5750993c319bef0
+{
+    "TerminatingInstances": [
+        {
+            "CurrentState": {
+                "Code": 32,
+                "Name": "shutting-down"
+            },
+            "InstanceId": "i-0f5750993c319bef0",
+            "PreviousState": {
+                "Code": 16,
+                "Name": "running"
+            }
+        }
+    ]
+}
+```
+
 ##### Question: Replacement Instance
 
 _Is the replacement instance the new size or the old?_
+
+New Size
 
 #### Lab 6.1.4: ASG Update Policy
 
