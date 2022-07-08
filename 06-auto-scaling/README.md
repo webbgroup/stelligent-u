@@ -563,6 +563,8 @@ Resource handler returned message: "The subnet 'subnet-0655360568dfb9401' has de
 Read more about the [benefits and when to use](https://docs.aws.amazon.com/autoscaling/ec2/userguide/auto-scaling-benefits.html)
 an ASG.
 
+Very cool with Availability Zone Rebalancing and Capacity Rebalancing
+
 ## Lesson 6.2: Health Checks
 
 ### Principle 6.2
@@ -577,6 +579,8 @@ to know when to replace an instance. It can also use the health checks
 that load balancers monitor to know whether or not applications are
 healthy, but we'll cover that in a future lesson.
 
+Ok.
+
 #### Lab 6.2.1: Use awscli to Describe an ASG
 
 Use the AWS CLI for this process. As you work, compare what you see in
@@ -586,12 +590,159 @@ using the CLI.
 Re-launch your stack, then [describe the resources](https://docs.aws.amazon.com/cli/latest/reference/cloudformation/describe-stack-resources.html).
 From that output, find the name of your ASG.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws autoscaling describe-auto-scaling-groups --profile temp
+{
+    "AutoScalingGroups": [
+        {
+            "AutoScalingGroupName": "Joels06-JoelsAutoScalingGroup-1K1P1X50F0BSC",
+            "AutoScalingGroupARN": "arn:aws:autoscaling:us-east-1:324320755747:autoScalingGroup:75549103-74a4-4387-8565-87d8520322ea:autoScalingGroupName/Joels06-JoelsAutoScalingGroup-1K1P1X50F0BSC",
+            "LaunchTemplate": {
+                "LaunchTemplateId": "lt-0f802435b10a2817c",
+                "LaunchTemplateName": "MyLaunchTemplateLinux",
+                "Version": "1"
+            },
+            "MinSize": 1,
+            "MaxSize": 1,
+            "DesiredCapacity": 1,
+            "DefaultCooldown": 300,
+            "AvailabilityZones": [
+                "us-east-1e"
+            ],
+            "LoadBalancerNames": [],
+            "TargetGroupARNs": [],
+            "HealthCheckType": "EC2",
+            "HealthCheckGracePeriod": 0,
+            "Instances": [
+                {
+                    "InstanceId": "i-0f15546a4e890255a",
+                    "InstanceType": "t2.medium",
+                    "AvailabilityZone": "us-east-1e",
+                    "LifecycleState": "InService",
+                    "HealthStatus": "Healthy",
+                    "LaunchTemplate": {
+                        "LaunchTemplateId": "lt-0f802435b10a2817c",
+                        "LaunchTemplateName": "MyLaunchTemplateLinux",
+                        "Version": "1"
+                    },
+                    "ProtectedFromScaleIn": false
+                }
+            ],
+            "CreatedTime": "2022-07-08T16:51:35.131000+00:00",
+            "SuspendedProcesses": [],
+            "VPCZoneIdentifier": "subnet-077c61029c81729e5",
+            "EnabledMetrics": [],
+            "Tags": [
+                {
+                    "ResourceId": "Joels06-JoelsAutoScalingGroup-1K1P1X50F0BSC",
+                    "ResourceType": "auto-scaling-group",
+                    "Key": "Name",
+                    "Value": "joels-debian-asg",
+                    "PropagateAtLaunch": true
+                },
+
+```
+
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws autoscaling describe-auto-scaling-groups --auto-scaling-group-name Joels06-JoelsAutoScalingGroup-1K1P1X50F0BSC --profile temp
+{
+    "AutoScalingGroups": [
+        {
+            "AutoScalingGroupName": "Joels06-JoelsAutoScalingGroup-1K1P1X50F0BSC",
+            "AutoScalingGroupARN": "arn:aws:autoscaling:us-east-1:324320755747:autoScalingGroup:75549103-74a4-4387-8565-87d8520322ea:autoScalingGroupName/Joels06-JoelsAutoScalingGroup-1K1P1X50F0BSC",
+            "LaunchTemplate": {
+                "LaunchTemplateId": "lt-0f802435b10a2817c",
+                "LaunchTemplateName": "MyLaunchTemplateLinux",
+                "Version": "1"
+            },
+            "MinSize": 1,
+            "MaxSize": 1,
+            "DesiredCapacity": 1,
+            "DefaultCooldown": 300,
+            "AvailabilityZones": [
+                "us-east-1e"
+            ],
+            "LoadBalancerNames": [],
+            "TargetGroupARNs": [],
+            "HealthCheckType": "EC2",
+            "HealthCheckGracePeriod": 0,
+            "Instances": [
+                {
+                    "InstanceId": "i-0f15546a4e890255a",
+                    "InstanceType": "t2.medium",
+                    "AvailabilityZone": "us-east-1e",
+                    "LifecycleState": "InService",
+                    "HealthStatus": "Healthy",
+                    "LaunchTemplate": {
+                        "LaunchTemplateId": "lt-0f802435b10a2817c",
+                        "LaunchTemplateName": "MyLaunchTemplateLinux",
+                        "Version": "1"
+                    },
+                    "ProtectedFromScaleIn": false
+                }
+            ],
+            "CreatedTime": "2022-07-08T16:51:35.131000+00:00",
+            "SuspendedProcesses": [],
+            "VPCZoneIdentifier": "subnet-077c61029c81729e5",
+            "EnabledMetrics": [],
+            "Tags": [
+                {
+                    "ResourceId": "Joels06-JoelsAutoScalingGroup-1K1P1X50F0BSC",
+                    "ResourceType": "auto-scaling-group",
+                    "Key": "Name",
+                    "Value": "joels-debian-asg",
+                    "PropagateAtLaunch": true
+                },
+                {
+                    "ResourceId": "Joels06-JoelsAutoScalingGroup-1K1P1X50F0BSC",
+                    "ResourceType": "auto-scaling-group",
+                    "Key": "aws:cloudformation:logical-id",
+                    "Value": "JoelsAutoScalingGroup",
+                    "PropagateAtLaunch": true
+                },
+                {
+                    "ResourceId": "Joels06-JoelsAutoScalingGroup-1K1P1X50F0BSC",
+                    "ResourceType": "auto-scaling-group",
+                    "Key": "aws:cloudformation:stack-id",
+                    "Value": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels06/d6f487a0-fedd-11ec-ba23-0ae8ea5f4003",
+                    "PropagateAtLaunch": true
+                },
+                {
+                    "ResourceId": "Joels06-JoelsAutoScalingGroup-1K1P1X50F0BSC",
+                    "ResourceType": "auto-scaling-group",
+                    "Key": "aws:cloudformation:stack-name",
+                    "Value": "Joels06",
+                    "PropagateAtLaunch": true
+                }
+            ],
+            "TerminationPolicies": [
+                "Default"
+            ],
+            "NewInstancesProtectedFromScaleIn": false,
+            "ServiceLinkedRoleARN": "arn:aws:iam::324320755747:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling"
+        }
+    ]
+}
+(END)
+
+```
+
 ##### Question: Filtering Output
 
 _Can you filter your output with "\--query" to print only your ASGs
 resource ID? Given that name, [describe your ASG](https://docs.aws.amazon.com/cli/latest/reference/autoscaling/describe-auto-scaling-groups.html).
 Find the Instance ID. Can you filter the output to print only the Instance ID
 value?_
+
+```
+aws autoscaling describe-auto-scaling-groups help --profile temp --filters "Name=name,Value=joels-debian-asg"
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/06-auto-scaling$ aws autoscaling describe-auto-scaling-groups --profile temp | grep -A 22 Joel | grep InstanceId | cut -d : -f 2 | sed 's/[^a-zA-Z0-9/+-]//g'
+i-0f15546a4e890255a
+```
 
 (You can use the `--query` option, but you can also use
 [jq](https://stedolan.github.io/jq/). Both are useful in different scenarios.)
@@ -600,10 +751,18 @@ value?_
 Describe your ASG again. Run the awscli command repeatedly until you see
 the new instance launch.
 
+In theory this should work, but grepping for the name was much faster.
+
+
 ##### Question: Instance Timing
 
 _How long did it take for the new instance to spin up? How long before it was
 marked as healthy?_
+
+A new instance never came up??
+
+I show an instance with joels-debian-asg, but no new instance.
+
 
 #### Lab 6.2.2: Scale Out
 
@@ -616,9 +775,13 @@ then update the stack.
 
 _Did it work? If it didn't, what else do you have to increase?_
 
+Yes it worked.. but the Elastic IP address never switched instances.
+
 ##### Question: Update Delay
 
 _How quickly after your stack update did you see the ASG change?_
+
+fairly quickly  - about 3 minutes
 
 #### Lab 6.2.3: Manual Interference
 
@@ -659,6 +822,8 @@ action again. Note the process you have to go through, including any
 commands you run.
 
 ### Retrospective 6.2
+
+========== Stop here Joel =========
 
 #### Question: CloudWatch
 

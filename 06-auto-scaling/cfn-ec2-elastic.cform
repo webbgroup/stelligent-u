@@ -162,11 +162,11 @@ Resources:
   JoelsAutoScalingGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
-      DesiredCapacity: 1
+      DesiredCapacity: 2
       LaunchTemplate:
         LaunchTemplateId: !Ref MyLaunchTemplateLinuxJoels
         Version: !GetAtt MyLaunchTemplateLinuxJoels.LatestVersionNumber
-      MaxSize: 1
+      MaxSize: 2
       MinSize: 1
       Tags:
         - Key: Name
