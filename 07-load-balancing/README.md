@@ -68,6 +68,12 @@ and target groups?_
 
 Layer of abstraction between the two. Target Group focuses on the health checks etc. and the Listener focuses on the forwarding.
 
+```
+aws cloudformation --profile temp create-stack --stack-name Joels07-1 --template-body file://vpc.yaml
+aws cloudformation --profile temp create-stack --stack-name Joels07-2 --template-body file://load-balancer.yaml
+aws cloudformation --profile temp create-stack --stack-name Joels07-3 --template-body file://autoscalinggroup.yaml
+```
+
 #### Lab 7.1.2: Health Checks
 
 Now, let's update our health check to see what happens when things go

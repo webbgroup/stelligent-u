@@ -19,7 +19,7 @@ Resources:
       AvailabilityZone:
         us-east-1b
       CidrBlock: 10.0.41.0/24
-      MapPublicIpOnLaunch: false
+      MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
           Value: joels-subnet1
@@ -31,7 +31,7 @@ Resources:
       AvailabilityZone:
         us-east-1c
       CidrBlock: 10.0.42.0/24
-      MapPublicIpOnLaunch: false
+      MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
           Value: joels-subnet2
@@ -64,6 +64,34 @@ Resources:
     Properties:
       InternetGatewayId: !Ref IGW
       VpcId: !Ref VPC
+
+  RouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      Tags:
+        - Key: Name
+          Value: joels-routeTable-1
+      VpcId: !Ref VPC
+
+  Route1:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref IGW
+      RouteTableId: !Ref RouteTable
+
+  Subnet1RouteTable:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref RouteTable
+      SubnetId: !Ref Subnet1
+
+  Subnet2RouteTable:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref RouteTable
+      SubnetId: !Ref Subnet2
+
 
 Outputs:
   VPCId:

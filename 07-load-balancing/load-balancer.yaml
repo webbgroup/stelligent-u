@@ -20,8 +20,8 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       HealthCheckEnabled: true
-      HealthCheckIntervalSeconds: 30
-      HealthCheckPath: '/index.html'
+      HealthCheckIntervalSeconds: 20
+      HealthCheckPath: '/BADindex.html'
       HealthCheckPort: traffic-port
       HealthCheckProtocol: HTTP
       HealthCheckTimeoutSeconds: 5
@@ -31,6 +31,10 @@ Resources:
       Tags:
         - Key: Name
           Value: joels-elb
+      TargetGroupAttributes:
+        - Key: deregistration_delay.timeout_seconds
+          Value: 20
+      UnhealthyThresholdCount: 2
       VpcId: !ImportValue joels-vpc
 
   ELBListener:
