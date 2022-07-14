@@ -1,0 +1,91 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      InstanceTenancy: default
+      Tags:
+        - Key: Name
+          Value: joels-vpc
+
+  Subnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone:
+        us-east-1b
+      CidrBlock: 10.0.41.0/24
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: joels-subnet1
+      VpcId: !Ref VPC
+
+  Subnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone:
+        us-east-1c
+      CidrBlock: 10.0.42.0/24
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: joels-subnet2
+      VpcId: !Ref VPC
+
+  SG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow HTTP
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow port 80
+          FromPort: 80
+          IpProtocol: 6
+          ToPort: 80
+      Tags:
+        - Key: Name
+          Value: joels-sg-http
+      VpcId: !Ref VPC
+
+  IGW:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: joels-igw
+
+  VPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref IGW
+      VpcId: !Ref VPC
+
+Outputs:
+  VPCId:
+    Description: Id of the VPC
+    Value: !Ref VPC
+    Export:
+      Name: joels-vpc
+
+  Subnet1Id:
+    Description: Id of the subnet
+    Value: !Ref Subnet1
+    Export:
+      Name: joels-subnet1
+
+  Subnet2Id:
+    Description: Id of the subnet
+    Value: !Ref Subnet2
+    Export:
+      Name: joels-subnet2
+
+  SGId:
+    Description: Id of the security group
+    Value: !Ref SG
+    Export:
+      Name: joels-sg-http

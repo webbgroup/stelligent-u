@@ -1,0 +1,51 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+
+Resources:
+  ALB:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      IpAddressType: ipv4
+      SecurityGroups:
+        - !ImportValue joels-sg-http
+      Subnets:
+        - !ImportValue joels-subnet1
+        - !ImportValue joels-subnet2
+      Tags:
+        - Key: Name
+          Value: joels-alb
+      Type: application
+
+  ELBTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckEnabled: true
+      HealthCheckIntervalSeconds: 30
+      HealthCheckPath: '/index.html'
+      HealthCheckPort: traffic-port
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 3
+      Port: 80
+      Protocol: HTTP
+      Tags:
+        - Key: Name
+          Value: joels-elb
+      VpcId: !ImportValue joels-vpc
+
+  ELBListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - TargetGroupArn: !Ref ELBTargetGroup
+          type: forward
+      LoadBalancerArn: !Ref ALB
+      Port: 80
+      Protocol: HTTP
+
+Outputs:
+  TargetGroup:
+    Description: Id of the target group
+    Value: !Ref ELBTargetGroup
+    Export:
+      Name: joels-target-group
