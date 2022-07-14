@@ -137,7 +137,9 @@ ARN
 - Add a new listener to your previously created load balancer using
   HTTPS on port 443 and referencing your newly uploaded certificate.
 
-
+```
+joel@joels-desktop:~$ watch -n1 curl -k https://joels07-alb-1q4mqr8kuhld3-1593324614.us-east-1.elb.amazonaws.com
+```
 
 - Let's be extra secure and specify a [security policy](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html#describe-ssl-policies)
   on that listener which requires Forward Secrecy (has FS in its
@@ -174,6 +176,9 @@ Command line. Import -> uniqueIdentifier > ARN link
 
 Discuss with your mentor: *What are some of the common cloud architectures
 where you would want to implement an ALB?*
+
+Need to do an ALB for pretty much any service to be honest. Availability Zones in front of any microservice.
+
 
 ## Further reading
 
