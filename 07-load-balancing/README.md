@@ -168,6 +168,15 @@ Command line. Import -> uniqueIdentifier > ARN link
 
 - Delete your imported self-signed cert.
 
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/07-load-balancing$ aws cloudformation --profile temp delete-stack --stack-name Joels07-3
+(takes about 5 minutes to cleanup)
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/07-load-balancing$ aws cloudformation --profile temp delete-stack --stack-name Joels07-2
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/07-load-balancing$ aws cloudformation --profile temp delete-stack --stack-name Joels07-1
+
+```
+
 ### Retrospective 7.1
 
 Discuss with your mentor: *What are some of the common cloud architectures
