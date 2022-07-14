@@ -27,7 +27,7 @@ Resources:
       HealthCheckProtocol: HTTP
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 3
-      Port: 80
+      Port: 443
       Protocol: HTTP
       Tags:
         - Key: Name

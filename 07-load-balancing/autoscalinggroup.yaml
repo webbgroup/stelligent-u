@@ -1,7 +1,9 @@
 ---
 AWSTemplateFormatVersion: '2010-09-09'
 Resources:
+
   WebServerAsg:
+    #AWS-DOC http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-group.html
     Type: 'AWS::AutoScaling::AutoScalingGroup'
     Properties:
       AutoScalingGroupName: 'AutomationBoxes'
@@ -16,8 +18,13 @@ Resources:
       MinSize: '3'
       TargetGroupARNs:
         - !ImportValue joels-target-group
+      Tags:
+        - Key: Name
+          PropagateAtLaunch: true
+          Value: joels-aws-linux-asg
 
   WebServersLC:
+    #AWS-DOC http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-launchconfig.html
     Type: 'AWS::AutoScaling::LaunchConfiguration'
     Properties:
       ImageId: ami-0cff7528ff583bf9a

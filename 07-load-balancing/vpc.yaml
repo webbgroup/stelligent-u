@@ -38,15 +38,21 @@ Resources:
       VpcId: !Ref VPC
 
   SG:
+    # AWS-DOC http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Allow HTTP
       SecurityGroupIngress:
-        - CidrIp: 0.0.0.0/0
-          Description: Allow port 80
+        - Description: Allow port 80
+          CidrIp: 0.0.0.0/0
           FromPort: 80
           IpProtocol: 6
           ToPort: 80
+        - Description: Allow port 443
+          CidrIp: 0.0.0.0/0
+          FromPort: 443
+          IpProtocol: 6
+          ToPort: 443
       Tags:
         - Key: Name
           Value: joels-sg-http
