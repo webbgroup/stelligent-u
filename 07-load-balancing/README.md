@@ -49,10 +49,7 @@ many instances with an ALB.
 - Working from the [ASG Template](https://github.com/stelligent/stelligent-u/blob/master/07-load-balancing/asg_example.yaml),
   associate a [target group](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-targetgroup.html)
   with the autoscaling group, giving it a health check on `/index.html`.
-  - Be sure to use the Amazon Linux AMI, and not the Amazon Linux 2 AMI. If you
-    use the Amazon Linux 2 AMI (this is untested...), you'll have to use
-    `amazon-linux-extras` instead of `yum` and install `nginx1.12`
-    instead of `nginx`
+- Use  Amazon Linux 2 AMI. 
 
 - Create an internet-facing ALB
 
@@ -68,6 +65,14 @@ many instances with an ALB.
 
 _What is the benefit of breaking up the load balancer into specific listeners
 and target groups?_
+
+Layer of abstraction between the two. Target Group focuses on the health checks etc. and the Listener focuses on the forwarding.
+
+```
+aws cloudformation --profile temp create-stack --stack-name Joels07-1 --template-body file://vpc.yaml
+aws cloudformation --profile temp create-stack --stack-name Joels07-2 --template-body file://load-balancer.yaml
+aws cloudformation --profile temp create-stack --stack-name Joels07-3 --template-body file://autoscalinggroup.yaml
+```
 
 #### Lab 7.1.2: Health Checks
 
@@ -92,9 +97,17 @@ haywire!
 _What can be controlled with the interval/healthy threshold/unhealthy threshold
 settings?_
 
+The monitoring cadence
+
 ##### Question: ASG Behavior
 
 _What's happening to the instances in the ASG? How do you know?_
+
+Instances get recreated.
+
+```
+https://us-east-1.console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:v=3;search=:joels;sort=instanceState
+```
 
 #### Lab 7.1.3: Secure Sockets
 
@@ -103,10 +116,23 @@ Let's fix that bad health check endpoint and add an https listener.
 - First, fix your health check and verify everything is working
   smoothly.
 
+Working
+
 - [Create a self-signed certificate locally](https://www.ibm.com/support/knowledgecenter/SSMNED_5.0.0/com.ibm.apic.cmc.doc/task_apionprem_gernerate_self_signed_openSSL.html)
+
+Created it:
+```
+openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out certificate.pem
+```
 
 - Via the aws acm CLI or AWS Certificate Manager console, import your
   newly created certificate, make note of its ARN.
+
+Imported via AWS Certificate Manager
+ARN
+```
+ arn:aws:acm:us-east-1:324320755747:certificate/3f56efe6-4c24-41dd-b2cb-764df839f4d6
+```
 
 - Add a new listener to your previously created load balancer using
   HTTPS on port 443 and referencing your newly uploaded certificate.
@@ -115,6 +141,10 @@ Let's fix that bad health check endpoint and add an https listener.
   on that listener which requires Forward Secrecy (has FS in its
   name).
 
+Used TLS 1.2
+
+https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html#describe-ssl-policies
+
 - Visit your ALB endpoint, add the security exception and enjoy your
   encrypted session.
 
@@ -122,10 +152,14 @@ Let's fix that bad health check endpoint and add an https listener.
 
 _What is the trade off of going with a more secure SSL policy?_
 
+Less Supported devices. But ultimately it is worth while. TLS 1.3 is more difficult to add.
+
 ##### Question: Certificate Management
 
 _We imported a local certificate into ACM, what other options do you have? How
 do those processes work?_
+
+Command line. Import -> uniqueIdentifier > ARN link
 
 #### Lab 7.1.4: Cleanup
 
@@ -134,10 +168,27 @@ do those processes work?_
 
 - Delete your imported self-signed cert.
 
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/07-load-balancing$ aws cloudformation --profile temp delete-stack --stack-name Joels07-3
+(takes about 5 minutes to cleanup)
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/07-load-balancing$ aws cloudformation --profile temp delete-stack --stack-name Joels07-2
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/07-load-balancing$ aws cloudformation --profile temp delete-stack --stack-name Joels07-1
+
+```
+
 ### Retrospective 7.1
 
 Discuss with your mentor: *What are some of the common cloud architectures
 where you would want to implement an ALB?*
+
+Need to do an ALB for pretty much any service to be honest. Availability Zones in front of any microservice.
+
+```
+joel@joels-desktop:~$ watch -n1 curl -k https://joels07-alb-1q4mqr8kuhld3-1593324614.us-east-1.elb.amazonaws.com
+```
+
+
 
 ## Further reading
 
