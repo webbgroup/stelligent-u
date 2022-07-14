@@ -54,7 +54,7 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
       Certificates:
-        - CertificateArn:  arn:aws:acm:us-east-1:324320755747:certificate/3f56efe6-4c24-41dd-b2cb-764df839f4d6
+        - CertificateArn: arn:aws:acm:us-east-1:324320755747:certificate/c15ea374-472e-436c-b351-4634a55da812
       DefaultActions:
         - TargetGroupArn: !Ref ELBTargetGroup
           Type: forward
