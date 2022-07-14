@@ -20,8 +20,8 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       HealthCheckEnabled: true
-      HealthCheckIntervalSeconds: 20
-      HealthCheckPath: '/BADindex.html'
+      HealthCheckIntervalSeconds: 30
+      HealthCheckPath: '/index.html'
       HealthCheckPort: traffic-port
       HealthCheckProtocol: HTTP
       HealthCheckTimeoutSeconds: 5
