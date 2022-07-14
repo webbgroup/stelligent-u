@@ -97,9 +97,17 @@ haywire!
 _What can be controlled with the interval/healthy threshold/unhealthy threshold
 settings?_
 
+The monitoring cadence
+
 ##### Question: ASG Behavior
 
 _What's happening to the instances in the ASG? How do you know?_
+
+Instances get recreated.
+
+```
+https://us-east-1.console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:v=3;search=:joels;sort=instanceState
+```
 
 #### Lab 7.1.3: Secure Sockets
 
@@ -108,17 +116,36 @@ Let's fix that bad health check endpoint and add an https listener.
 - First, fix your health check and verify everything is working
   smoothly.
 
+Working
+
 - [Create a self-signed certificate locally](https://www.ibm.com/support/knowledgecenter/SSMNED_5.0.0/com.ibm.apic.cmc.doc/task_apionprem_gernerate_self_signed_openSSL.html)
+
+Created it:
+```
+openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out certificate.pem
+```
 
 - Via the aws acm CLI or AWS Certificate Manager console, import your
   newly created certificate, make note of its ARN.
 
+Imported via AWS Certificate Manager
+ARN
+```
+ arn:aws:acm:us-east-1:324320755747:certificate/3f56efe6-4c24-41dd-b2cb-764df839f4d6
+```
+
 - Add a new listener to your previously created load balancer using
   HTTPS on port 443 and referencing your newly uploaded certificate.
+
+
 
 - Let's be extra secure and specify a [security policy](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html#describe-ssl-policies)
   on that listener which requires Forward Secrecy (has FS in its
   name).
+
+Used TLS 1.2
+
+https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html#describe-ssl-policies
 
 - Visit your ALB endpoint, add the security exception and enjoy your
   encrypted session.
@@ -127,10 +154,14 @@ Let's fix that bad health check endpoint and add an https listener.
 
 _What is the trade off of going with a more secure SSL policy?_
 
+Less Supported devices. But ultimately it is worth while. TLS 1.3 is more difficult to add.
+
 ##### Question: Certificate Management
 
 _We imported a local certificate into ACM, what other options do you have? How
 do those processes work?_
+
+Command line. Import -> uniqueIdentifier > ARN link
 
 #### Lab 7.1.4: Cleanup
 

@@ -17,6 +17,7 @@ Resources:
       Type: application
 
   ELBTargetGroup:
+    #AWS-DOC http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-targetgroup.html
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       HealthCheckEnabled: true
@@ -38,14 +39,30 @@ Resources:
       VpcId: !ImportValue joels-vpc
 
   ELBListener:
+    #AWS-DOC http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-listener.html
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
       DefaultActions:
         - TargetGroupArn: !Ref ELBTargetGroup
-          type: forward
+          Type: forward
       LoadBalancerArn: !Ref ALB
       Port: 80
       Protocol: HTTP
+
+  ELBListenerHTTPS:
+    #AWS-DOC http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-listener.html
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      Certificates:
+        - CertificateArn:  arn:aws:acm:us-east-1:324320755747:certificate/3f56efe6-4c24-41dd-b2cb-764df839f4d6
+      DefaultActions:
+        - TargetGroupArn: !Ref ELBTargetGroup
+          Type: forward
+      LoadBalancerArn: !Ref ALB
+      Port: 443
+      Protocol: HTTPS
+      # https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html#describe-ssl-policies
+      SslPolicy: ELBSecurityPolicy-TLS-1-2-Ext-2018-06
 
 Outputs:
   TargetGroup:
