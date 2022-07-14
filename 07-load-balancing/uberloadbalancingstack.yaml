@@ -1,0 +1,206 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      InstanceTenancy: default
+      Tags:
+        - Key: Name
+          Value: joels-vpc
+
+  Subnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone:
+        us-east-1b
+      CidrBlock: 10.0.41.0/24
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: joels-subnet1
+
+
+      VpcId: !Ref VPC
+
+  Subnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone:
+        us-east-1c
+      CidrBlock: 10.0.42.0/24
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: joels-subnet2
+      VpcId: !Ref VPC
+
+  SG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow HTTP
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow port 80
+          FromPort: 80
+          IpProtocol: 6
+          ToPort: 80
+      Tags:
+        - Key: Name
+          Value: joels-sg-http
+      VpcId: !Ref VPC
+
+  IGW:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: joels-igw
+
+  VPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref IGW
+      VpcId: !Ref VPC
+
+  WebServerAsg:
+    Type: 'AWS::AutoScaling::AutoScalingGroup'
+    Properties:
+      AutoScalingGroupName: 'AutomationBoxes'
+      VPCZoneIdentifier:
+        - !ImportValue joels-subnet1
+        - !ImportValue joels-subnet2
+      DesiredCapacity: '3'
+      HealthCheckType: 'ELB'
+      HealthCheckGracePeriod: 30
+      LaunchConfigurationName: !Ref WebServersLC
+      MaxSize: '3'
+      MinSize: '3'
+      TargetGroupARNs:
+        - !ImportValue joels-target-group
+
+  WebServersLC:
+    Type: 'AWS::AutoScaling::LaunchConfiguration'
+    Properties:
+      ImageId: ami-0cff7528ff583bf9a
+      InstanceType: 't2.micro'
+      LaunchConfigurationName: 'SimpleWebServerLC'
+      SecurityGroups:
+        - !ImportValue joels-sg-http
+      UserData:
+        Fn::Base64:
+          Fn::Sub: |
+            #!/bin/bash -xe
+
+            amazon-linux-extras install nginx1.12
+
+            # Install the files and packages from the metadata
+            /opt/aws/bin/cfn-init -v \
+              --stack ${AWS::StackName} \
+              --resource WebServersLC \
+              --configsets All \
+              --region ${AWS::Region}
+
+            # Signal the status from cfn-init
+            /opt/aws/bin/cfn-signal -e $? \
+              --stack ${AWS::StackName} \
+              --resource WebServersLC \
+              --region ${AWS::Region}
+
+    Metadata:
+      'AWS::CloudFormation::Init':
+        configSets:
+          All:
+            - ConfigureStelligentProject
+        ConfigureStelligentProject:
+          packages:
+            yum:
+              nginx: []
+          files:
+            /usr/share/nginx/html/index.html:
+              content: '<p>Automation for the People</p>'
+              mode: '000644'
+              owner: root
+              group: root
+          services:
+            sysvinit:
+              nginx:
+                enabled: 'true'
+                ensureRunning: 'true'
+
+  ALB:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      IpAddressType: ipv4
+      SecurityGroups:
+        - !ImportValue joels-sg-http
+      Subnets:
+        - !ImportValue joels-subnet1
+        - !ImportValue joels-subnet2
+      Tags:
+        - Key: Name
+          Value: joels-alb
+      Type: application
+
+  ELBTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckEnabled: true
+      HealthCheckIntervalSeconds: 30
+      HealthCheckPath: '/index.html'
+      HealthCheckPort: traffic-port
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 3
+      Port: 80
+      Protocol: HTTP
+      Tags:
+        - Key: Name
+          Value: joels-elb
+      VpcId: !ImportValue joels-vpc
+
+  ELBListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - TargetGroupArn: !Ref ELBTargetGroup
+          type: forward
+      LoadBalancerArn: !Ref ALB
+      Port: 80
+      Protocol: HTTP
+
+
+Outputs:
+  VPCId:
+    Description: Id of the VPC
+    Value: !Ref VPC
+    Export:
+      Name: joels-vpc
+
+  Subnet1Id:
+    Description: Id of the subnet
+    Value: !Ref Subnet1
+    Export:
+      Name: joels-subnet1
+
+  Subnet2Id:
+    Description: Id of the subnet
+    Value: !Ref Subnet2
+    Export:
+      Name: joels-subnet2
+
+  SGId:
+    Description: Id of the security group
+    Value: !Ref SG
+    Export:
+      Name: joels-sg-http
+
+  TargetGroup:
+    Description: Id of the target group
+    Value: !Ref ELBTargetGroup
+    Export:
+      Name: joels-target-group

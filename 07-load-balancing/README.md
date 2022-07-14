@@ -66,6 +66,8 @@ many instances with an ALB.
 _What is the benefit of breaking up the load balancer into specific listeners
 and target groups?_
 
+Layer of abstraction between the two. Target Group focuses on the health checks etc. and the Listener focuses on the forwarding.
+
 #### Lab 7.1.2: Health Checks
 
 Now, let's update our health check to see what happens when things go
