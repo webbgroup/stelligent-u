@@ -435,8 +435,72 @@ lifecycle of the logs.
 
 - Use the CLI to review the policy in your log group.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/08-cloudwatch-logs$ aws logs put-retention-policy --retention-in-days 60 --log-group-name joel.webb.c9logs --profile temp
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/08-cloudwatch-logs$ aws logs describe-log-groups --profile temp
+{
+    "logGroups": [
+        {
+            "logGroupName": "/aws/codebuild/AwsNuke",
+            "creationTime": 1559331598899,
+            "metricFilterCount": 0,
+            "arn": "arn:aws:logs:us-east-1:324320755747:log-group:/aws/codebuild/AwsNuke:*",
+            "storedBytes": 125789081
+        },
+        {
+            "logGroupName": "/aws/codebuild/SeanTestModule12",
+            "creationTime": 1657569293773,
+            "metricFilterCount": 0,
+            "arn": "arn:aws:logs:us-east-1:324320755747:log-group:/aws/codebuild/SeanTestModule12:*",
+            "storedBytes": 55646
+        },
+        {
+            "logGroupName": "joel.webb.c9logs",
+            "creationTime": 1657887654779,
+            "retentionInDays": 60,
+            "metricFilterCount": 0,
+            "arn": "arn:aws:logs:us-east-1:324320755747:log-group:joel.webb.c9logs:*",
+            "storedBytes": 0
+        }
+    ]
+}
+
+```
+
 - Set the retention policy to the maximum allowed time, and review the
   change again to double-check.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/08-cloudwatch-logs$ aws logs put-retention-policy --retention-in-days 3653 --log-group-name joel.webb.c9logs --profile temp
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/08-cloudwatch-logs$ aws logs describe-log-groups --profile temp
+{
+    "logGroups": [
+        {
+            "logGroupName": "/aws/codebuild/AwsNuke",
+            "creationTime": 1559331598899,
+            "metricFilterCount": 0,
+            "arn": "arn:aws:logs:us-east-1:324320755747:log-group:/aws/codebuild/AwsNuke:*",
+            "storedBytes": 125789081
+        },
+        {
+            "logGroupName": "/aws/codebuild/SeanTestModule12",
+            "creationTime": 1657569293773,
+            "metricFilterCount": 0,
+            "arn": "arn:aws:logs:us-east-1:324320755747:log-group:/aws/codebuild/SeanTestModule12:*",
+            "storedBytes": 55646
+        },
+        {
+            "logGroupName": "joel.webb.c9logs",
+            "creationTime": 1657887654779,
+            "retentionInDays": 3653,
+            "metricFilterCount": 0,
+            "arn": "arn:aws:logs:us-east-1:324320755747:log-group:joel.webb.c9logs:*",
+            "storedBytes": 0
+        }
+    ]
+}
+
+```
 
 #### Lab 8.1.5: Clean up
 
