@@ -107,6 +107,269 @@ repo:
   for installing the Cloud Watch agent, for reference.
   The example template installs the agent.
 
+Had to create an instance manually, and an ssh-key-pair, attach it to the VPC, add a publicIP and then I was able to connect to it.
+
+This should have been an Ubuntu instance... but the configuration should be fine.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/08-cloudwatch-logs$ ssh -i ~/Desktop/joels-key-pair.pem ec2-user@34.229.95.16
+
+       __|  __|_  )
+       _|  (     /   Amazon Linux 2 AMI
+      ___|\___|___|
+
+https://aws.amazon.com/amazon-linux-2/
+5 package(s) needed for security, out of 14 available
+Run "sudo yum update" to apply all updates.
+[ec2-user@ip-10-0-42-171 ~]$ /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-config-wizard
+-bash: /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-config-wizard: No such file or directory
+[ec2-user@ip-10-0-42-171 ~]$ sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-config-wizard
+sudo: /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-config-wizard: command not found
+[ec2-user@ip-10-0-42-171 ~]$ cat /etc/issue
+\S
+Kernel \r on an \m
+
+[ec2-user@ip-10-0-42-171 ~]$ sudo yum install amazon-cloudwatch-agent
+Loaded plugins: extras_suggestions, langpacks, priorities, update-motd
+Resolving Dependencies
+--> Running transaction check
+---> Package amazon-cloudwatch-agent.x86_64 0:1.247352.0-1.amzn2 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+========================================================================================================================================================================================
+ Package                                              Arch                                Version                                         Repository                               Size
+========================================================================================================================================================================================
+Installing:
+ amazon-cloudwatch-agent                              x86_64                              1.247352.0-1.amzn2                              amzn2-core                               45 M
+
+Transaction Summary
+========================================================================================================================================================================================
+Install  1 Package
+
+Total download size: 45 M
+Installed size: 203 M
+Is this ok [y/d/N]: y
+Downloading packages:
+amazon-cloudwatch-agent-1.247352.0-1.amzn2.x86_64.rpm                                                                                                            |  45 MB  00:00:00
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+create group cwagent, result: 0
+create user cwagent, result: 0
+create user aoc, result: 6
+  Installing : amazon-cloudwatch-agent-1.247352.0-1.amzn2.x86_64                                                                                                                    1/1
+  Verifying  : amazon-cloudwatch-agent-1.247352.0-1.amzn2.x86_64                                                                                                                    1/1
+
+Installed:
+  amazon-cloudwatch-agent.x86_64 0:1.247352.0-1.amzn2
+
+Complete!
+
+```
+
+Creation below:
+
+```
+Please check the above content of the config.
+The config file is also located at /opt/aws/amazon-cloudwatch-agent/bin/config.json.
+Edit it manually if needed.
+Do you want to store the config in the SSM parameter store?
+1. yes
+2. no
+default choice: [1]:
+
+What parameter store name do you want to use to store your config? (Use 'AmazonCloudWatch-' prefix if you use our managed AWS policy)
+default choice: [AmazonCloudWatch-linux]
+^C
+[ec2-user@ip-10-0-42-171 ~]$ sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-config-wizard
+================================================================
+= Welcome to the Amazon CloudWatch Agent Configuration Manager =
+=                                                              =
+= CloudWatch Agent allows you to collect metrics and logs from =
+= your host and send them to CloudWatch. Additional CloudWatch =
+= charges may apply.                                           =
+================================================================
+On which OS are you planning to use the agent?
+1. linux
+2. windows
+3. darwin
+default choice: [1]:
+1
+Trying to fetch the default region based on ec2 metadata...
+Are you using EC2 or On-Premises hosts?
+1. EC2
+2. On-Premises
+default choice: [1]:
+1
+Which user are you planning to run the agent?
+1. root
+2. cwagent
+3. others
+default choice: [1]:
+2
+Do you want to turn on StatsD daemon?
+1. yes
+2. no
+default choice: [1]:
+1
+Which port do you want StatsD daemon to listen to?
+default choice: [8125]
+
+What is the collect interval for StatsD daemon?
+1. 10s
+2. 30s
+3. 60s
+default choice: [1]:
+
+What is the aggregation interval for metrics collected by StatsD daemon?
+1. Do not aggregate
+2. 10s
+3. 30s
+4. 60s
+default choice: [4]:
+
+Do you want to monitor metrics from CollectD? WARNING: CollectD must be installed or the Agent will fail to start
+1. yes
+2. no
+default choice: [1]:
+
+Do you want to monitor any host metrics? e.g. CPU, memory, etc.
+1. yes
+2. no
+default choice: [1]:
+
+Do you want to monitor cpu metrics per core?
+1. yes
+2. no
+default choice: [1]:
+
+Do you want to add ec2 dimensions (ImageId, InstanceId, InstanceType, AutoScalingGroupName) into all of your metrics if the info is available?
+1. yes
+2. no
+default choice: [1]:
+
+Do you want to aggregate ec2 dimensions (InstanceId)?
+1. yes
+2. no
+default choice: [1]:
+
+Would you like to collect your metrics at high resolution (sub-minute resolution)? This enables sub-minute resolution for all metrics, but you can customize for specific metrics in the output json file.
+1. 1s
+2. 10s
+3. 30s
+4. 60s
+default choice: [4]:
+
+Which default metrics config do you want?
+1. Basic
+2. Standard
+3. Advanced
+4. None
+default choice: [1]:
+3
+Current config as follows:
+{
+  "agent": {
+    "metrics_collection_interval": 60,
+    "run_as_user": "cwagent"
+  },
+  "metrics": {
+    "aggregation_dimensions": [
+      [
+        "InstanceId"
+      ]
+    ],
+    "append_dimensions": {
+      "AutoScalingGroupName": "${aws:AutoScalingGroupName}",
+      "ImageId": "${aws:ImageId}",
+      "InstanceId": "${aws:InstanceId}",
+      "InstanceType": "${aws:InstanceType}"
+    },
+    "metrics_collected": {
+      "collectd": {
+        "metrics_aggregation_interval": 60
+      },
+      "cpu": {
+        "measurement": [
+          "cpu_usage_idle",
+          "cpu_usage_iowait",
+          "cpu_usage_user",
+          "cpu_usage_system"
+        ],
+        "metrics_collection_interval": 60,
+        "resources": [
+          "*"
+        ],
+        "totalcpu": false
+      },
+      "disk": {
+        "measurement": [
+          "used_percent",
+          "inodes_free"
+        ],
+        "metrics_collection_interval": 60,
+        "resources": [
+          "*"
+        ]
+      },
+      "diskio": {
+        "measurement": [
+          "io_time",
+          "write_bytes",
+          "read_bytes",
+          "writes",
+          "reads"
+        ],
+        "metrics_collection_interval": 60,
+        "resources": [
+          "*"
+        ]
+      },
+      "mem": {
+        "measurement": [
+          "mem_used_percent"
+        ],
+        "metrics_collection_interval": 60
+      },
+      "netstat": {
+        "measurement": [
+          "tcp_established",
+          "tcp_time_wait"
+        ],
+        "metrics_collection_interval": 60
+      },
+      "statsd": {
+        "metrics_aggregation_interval": 60,
+        "metrics_collection_interval": 10,
+        "service_address": ":8125"
+      },
+      "swap": {
+        "measurement": [
+          "swap_used_percent"
+        ],
+        "metrics_collection_interval": 60
+      }
+    }
+  }
+}
+Are you satisfied with the above config? Note: it can be manually customized after the wizard completes to add additional items.
+1. yes
+2. no
+default choice: [1]:
+1
+Do you have any existing CloudWatch Log Agent (http://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AgentReference.html) configuration file to import for migration?
+1. yes
+2. no
+default choice: [2]:
+1
+What is the file path for the existing cloudwatch log agent configuration file?
+default choice: [/var/awslogs/etc/awslogs.conf]
+```
+
+
 - We need to generate a Cloud Watch configuration file to be included
   in your Cloud Formation Template. The simplest way to approach this
   is to start an EC2 instance with the Cloud Watch agent installed and
@@ -119,6 +382,7 @@ repo:
 
 - The wizard will prompt you to use `collectd`, but we do not recommend this
   as it can cause the agent to fail to start
+Removed the collectd to start.
 
 - Modify the template mappings to reference your
   own VPC ID's and Subnet ID generated in other lessons,
@@ -126,6 +390,22 @@ repo:
 
 - Once you have added the Cloud Watch configuration to your Cloud Formation template,
   delete the running stack, and relaunch.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/08-cloudwatch-logs$ aws cloudformation --profile temp create-stack --stack-name Joels08-1 --template-body file://vpc.yaml
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels08-1/4c2e0270-044d-11ed-8c0b-0a5b40936121"
+}
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/08-cloudwatch-logs$ !2261
+aws cloudformation --profile temp update-stack --stack-name Joels08-1 --template-body file://8.1.2.yml
+
+An error occurred (InsufficientCapabilitiesException) when calling the UpdateStack operation: Requires capabilities : [CAPABILITY_IAM]
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/08-cloudwatch-logs$ aws cloudformation --profile temp update-stack --stack-name Joels08-1 --template-body file://8.1.2.yml --capabilities CAPABILITY_NAMED_IAM
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels08-1/4c2e0270-044d-11ed-8c0b-0a5b40936121"
+}
+
+```
 
 - Use the AWS CLI to display the log events for your group and stream from 8.1.1.
 
