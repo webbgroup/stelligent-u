@@ -52,11 +52,48 @@ identifiable flow of data into that group. Use the AWS CLI to create a
 log group and log stream:
 
 - Name the log group based on your username: *first.last*.c9logs
+```
+aws logs create-log-group --log-group-name joel.webb.c9logs --profile temp
+```
 
 - Name the log stream named c9.training in your log group.
+```
+aws logs create-log-stream --log-group-name joel.webb.c9logs --log-stream-name c9.training --profile temp
+```
 
 When you're done, list the log groups and the log streams to confirm
 they exist.
+
+```
+aws logs describe-log-groups --profile temp
+{
+    "logGroups": [
+        {
+            "logGroupName": "joel.webb.c9logs",
+            "creationTime": 1657887654779,
+            "metricFilterCount": 0,
+            "arn": "arn:aws:logs:us-east-1:324320755747:log-group:joel.webb.c9logs:*",
+            "storedBytes": 0
+        }
+    ]
+}
+
+```
+
+```
+aws logs describe-log-streams --log-group-name joel.webb.c9logs --profile temp
+{
+    "logStreams": [
+        {
+            "logStreamName": "c9.training",
+            "creationTime": 1657887757739,
+            "arn": "arn:aws:logs:us-east-1:324320755747:log-group:joel.webb.c9logs:log-stream:c9.training",
+            "storedBytes": 0
+        }
+    ]
+}
+
+```
 
 #### Lab 8.1.2: The CloudWatch agent
 
