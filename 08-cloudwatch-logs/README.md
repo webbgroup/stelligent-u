@@ -577,9 +577,66 @@ for the resources that will use it:
 
 - Use the awslogs utility again to view those changes.
 
+Conflicted with my previous lesson. needed to purge it.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/08-cloudwatch-logs$ aws s3 rb s3://joels-module08-trail-bucket --profile temp --force
+delete: s3://joels-module08-trail-bucket/AWSLogs/324320755747/CloudTrail/
+remove_bucket: joels-module08-trail-bucket
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/awslogs$ aws logs get-log-events --log-group-name joel.webb.c9logs --log-stream-name c9.training --no-verify-ssl --profile temp
+urllib3/connectionpool.py:1043: InsecureRequestWarning: Unverified HTTPS request is being made to host 'logs.us-east-1.amazonaws.com'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings
+{
+    "events": [
+        {
+            "timestamp": 1657898242616,
+            "message": "2022/07/15 15:17:21 I! 2022/07/15 15:17:21 D! [EC2] Found active network interface",
+            "ingestionTime": 1657898257740
+        },
+        {
+            "timestamp": 1657898242616,
+            "message": "I! Detected the instance is EC2",
+            "ingestionTime": 1657898257740
+        },
+        {
+            "timestamp": 1657898242616,
+            "message": "2022/07/15 15:17:21 Reading json config file path: /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json ...",
+            "ingestionTime": 1657898257740
+        },
+
+```
+
+```
+awslogs
+```
+
+
 #### Lab 8.2.3: Clean up
 
 - Delete any stacks that you made for this topic.
+
+Completed
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u$ aws s3 rb s3://joels-module08-trail-bucket --profile temp --force
+delete: s3://joels-module08-trail-bucket/AWSLogs/324320755747/CloudTrail/us-east-1/2022/07/15/324320755747_CloudTrail_us-east-1_20220715T1720Z_r8eBd7BlcuuthL7t.json.gz
+delete: s3://joels-module08-trail-bucket/AWSLogs/324320755747/CloudTrail/us-east-1/2022/07/15/324320755747_CloudTrail_us-east-1_20220715T1725Z_ruCmg47TMuLoiWFf.json.gz
+delete: s3://joels-module08-trail-bucket/AWSLogs/324320755747/CloudTrail/
+delete: s3://joels-module08-trail-bucket/AWSLogs/324320755747/CloudTrail/us-east-1/2022/07/15/324320755747_CloudTrail_us-east-1_20220715T1715Z_Q3NMZ6qBONYxz1mh.json.gz
+delete: s3://joels-module08-trail-bucket/AWSLogs/324320755747/CloudTrail/us-east-1/2022/07/15/324320755747_CloudTrail_us-east-1_20220715T1730Z_dephK2OatqHe8HOA.json.gz
+delete: s3://joels-module08-trail-bucket/AWSLogs/324320755747/CloudTrail/us-east-1/2022/07/15/324320755747_CloudTrail_us-east-1_20220715T1745Z_hNO9HN3bOt7udFPb.json.gz
+delete: s3://joels-module08-trail-bucket/AWSLogs/324320755747/CloudTrail/us-east-1/2022/07/15/324320755747_CloudTrail_us-east-1_20220715T1755Z_RqXKQxD9KUsilUCB.json.gz
+delete: s3://joels-module08-trail-bucket/AWSLogs/324320755747/CloudTrail/us-east-1/2022/07/15/324320755747_CloudTrail_us-east-1_20220715T1805Z_yH9RKhXJENEB14dm.json.gz
+delete: s3://joels-module08-trail-bucket/AWSLogs/324320755747/CloudTrail/us-east-1/2022/07/15/324320755747_CloudTrail_us-east-1_20220715T1800Z_kYe4HQkImViQRiZd.json.gz
+delete: s3://joels-module08-trail-bucket/AWSLogs/324320755747/CloudTrail/us-east-1/2022/07/15/324320755747_CloudTrail_us-east-1_20220715T1815Z_HbhMqzQzvwfrAkSc.json.gz
+delete: s3://joels-module08-trail-bucket/AWSLogs/324320755747/CloudTrail/us-east-1/2022/07/15/324320755747_CloudTrail_us-east-1_20220715T1810Z_Raz7fYMRBQfBaOTz.json.gz
+delete: s3://joels-module08-trail-bucket/AWSLogs/324320755747/CloudTrail/us-east-1/2022/07/15/324320755747_CloudTrail_us-east-1_20220715T1820Z_G6IpAt9WOuHKe1bm.json.gz
+delete: s3://joels-module08-trail-bucket/AWSLogs/324320755747/CloudTrail/us-east-1/2022/07/15/324320755747_CloudTrail_us-east-1_20220715T1735Z_LLDjlxvNz22CyE0n.json.gz
+delete: s3://joels-module08-trail-bucket/AWSLogs/324320755747/CloudTrail/us-east-1/2022/07/15/324320755747_CloudTrail_us-east-1_20220715T1750Z_aZaabmfyPaVawyjI.json.gz
+remove_bucket: joels-module08-trail-bucket
+```
 
 - Make sure you keep all of the CloudFormation templates from this
   lesson in your GitHub repo.
@@ -591,6 +648,10 @@ for the resources that will use it:
 _What type of events might be important to track in an AWS account? If
 you were automating mitigating actions for the events, what might they
 be and what AWS resource(s) would you use?_
+
+API calls
+Authentications
+Authorizations
 
 #### Task
 
