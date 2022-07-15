@@ -56,24 +56,14 @@ Resources:
         config:
           files:
             /opt/aws/amazon-cloudwatch-agent/amazon-cloudwatch-agent.json:
-              content:
+              content: |
                 {
                   "agent": {
-                    "metrics_collection_interval": 60,
-                    "run_as_user": "cwagent"
+                    "metrics_collection_interval": 10,
+                    "logfile": "/opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log"
                   },
                   "metrics": {
-                    "aggregation_dimensions": [
-                      [
-                        "InstanceId"
-                      ]
-                    ],
-                    "append_dimensions": {
-                      "AutoScalingGroupName": "${aws:AutoScalingGroupName}",
-                      "ImageId": "${aws:ImageId}",
-                      "InstanceId": "${aws:InstanceId}",
-                      "InstanceType": "${aws:InstanceType}"
-                    },
+                    "namespace": "joelsMetrics",
                     "metrics_collected": {
                       "cpu": {
                         "resources": [
@@ -120,8 +110,7 @@ Resources:
                           "swap_used",
                           "swap_free",
                           "swap_used_percent"
-                        ],
-                        "metrics_collection_interval": 60
+                        ]
                       },
                       "mem": {
                         "measurement": [
@@ -156,13 +145,10 @@ Resources:
                           "sleeping",
                           "dead"
                         ]
-                      },
-                      "statsd": {
-                        "metrics_aggregation_interval": 60,
-                        "metrics_collection_interval": 10,
-                        "service_address": ":8125"
                       }
-                    }
+                    },
+                    "aggregation_dimensions" : [["ImageId"], ["InstanceId", "InstanceType"], ["d1"],[]],
+                    "force_flush_interval" : 30
                   },
                   "logs": {
                     "logs_collected": {
