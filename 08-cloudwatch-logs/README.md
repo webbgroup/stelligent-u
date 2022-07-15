@@ -509,6 +509,11 @@ You can tear down your EC2 stack at this point.
 Use the AWS CLI to remove the log group and log stream you created
 earlier.
 
+```
+aws cloudformation --profile temp delete-stack --stack-name Joels08-2
+aws cloudformation --profile temp delete-stack --stack-name Joels08-1
+```
+
 You'll need [jorgebastida/awslogs](https://github.com/jorgebastida/awslogs)
 in Lesson 8.2.1, so now's a good time to install it on your laptop. You may
 find that it's handy for client engagements and future lab work as well.
@@ -520,9 +525,12 @@ company's business. It's helpful to know what CloudWatch Log's service
 limitations are.*
 
 - What are the minimum and maximum retention times?
+1 day to 3653 (10 years)
 
 - Instead of keeping data in CW Logs forever, can you do anything else
   with them? What might a useful lifecycle for logs look like?
+60 days live
+60+ archived off.
 
 ## Lesson 8.2: CloudWatch Logs with CloudTrail events
 
