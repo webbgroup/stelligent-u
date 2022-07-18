@@ -61,12 +61,61 @@ Create and test a simple AWS Lambda function using the Lambda console.
 
 - Use the wizard to create a new Lambda using your choice of language.
 
+Used the Wizard on the console
+
 - Update the lambda to return "Hello AWS!" and use the "Test" tool to
   run a test.
 
+Then switch to Sublime to execute.
+
 - Review the options you have for testing and running Lambdas.
 
+```
+{
+  "statusCode": 200,
+  "body": "\"Hello AWS!\""
+}
+```
+
 - When you're done, delete the Lambda.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/09-lambda$ aws lambda list-functions --profile temp
+{
+    "Functions": [
+        {
+            "FunctionName": "joelsLamdaFunction",
+            "FunctionArn": "arn:aws:lambda:us-east-1:324320755747:function:joelsLamdaFunction",
+            "Runtime": "python3.8",
+            "Role": "arn:aws:iam::324320755747:role/service-role/joelsLamdaFunction-role-jpjt77zj",
+            "Handler": "lambda_function.lambda_handler",
+            "CodeSize": 813,
+            "Description": "",
+            "Timeout": 3,
+            "MemorySize": 128,
+            "LastModified": "2022-07-18T13:12:40.000+0000",
+            "CodeSha256": "sijk7PB/ysr4Vdg4ySouRcAuYlXw5P9TdXzTiTT/H80=",
+            "Version": "$LATEST",
+            "TracingConfig": {
+                "Mode": "PassThrough"
+            },
+            "RevisionId": "9e85fa0e-c11e-4f78-93ab-b92ce66acfde",
+            "PackageType": "Zip",
+            "Architectures": [
+                "x86_64"
+            ],
+            "EphemeralStorage": {
+                "Size": 512
+            }
+        }
+    ]
+}
+
+```
+
+```
+aws lambda delete-function --function-name joelsLamdaFunction --profile temp
+```
 
 #### Lab 9.1.2: Lambda behind API Gateway
 

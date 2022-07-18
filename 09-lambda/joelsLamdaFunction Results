@@ -1,0 +1,8 @@
+joelsLamdaFunction Results
+
+Log output: START RequestId: 2efa008f-defc-4798-b8e2-562bd5ad804e Version: $LATEST
+END RequestId: 2efa008f-defc-4798-b8e2-562bd5ad804e
+REPORT RequestId: 2efa008f-defc-4798-b8e2-562bd5ad804e	Duration: 1.09 ms	Billed Duration: 2 ms	Memory Size: 128 MB	Max Memory Used: 38 MB	Init Duration: 114.29 ms	
+
+
+Result: {"statusCode": 200, "body": "\"Hello AWS!\""}
