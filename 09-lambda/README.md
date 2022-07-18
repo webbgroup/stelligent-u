@@ -307,11 +307,45 @@ a table in DynamoDB:
 
 - Add a DynamoDB table with several attributes of your choice
 
+Added
+```
+  MyDDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: JoelsModule09
+      AttributeDefinitions:
+        - AttributeName: Key1
+          AttributeType: S
+      KeySchema:
+        - AttributeName: Key1
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+```
+
 - Update the Lambda code to take input based on the attributes and
   insert new items into the DynamoDB table.
 
 Test the code using an API call as you've done before. Confirm that the
 call is inserting the item in the table.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/09-lambda$ aws cloudformation --profile temp create-stack --stack-name Joels09 --template-body file://cfn-lambda-9-2-1.yaml --capabilities CAPABILITY_NAMED_IAM
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels09/6fcd1a70-06c5-11ed-93cc-0a27a51d9701"
+}
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/09-lambda$ aws lambda invoke --function-name Joels09-MyLambda-EgCak4dWMFo5 --payload '{ "key1": "value1", "key2": "value2" }' response.json --profile temp --cli-binary-format raw-in-base64-out
+{
+    "StatusCode": 200,
+    "ExecutedVersion": "$LATEST"
+}
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/09-lambda$ cat response.json
+{"statusCode": 200, "body": "\"value1 and value2 written successfully to JoelsModule09\""}
+```
 
 #### Lab 9.2.2: Lambda via CloudWatch Rules
 
