@@ -138,7 +138,7 @@ Using API gateway to run a Lambda function.
   function.
 
 ```
-aws cloudformation --profile temp create-stack --stack-name Joels09 --template-body file://cfn-lambda.yaml --capabilities CAPABILITY_NAMED_IAM
+aws cloudformation --profile temp create-stack --stack-name Joels09 --template-body file://cfn-lambda-9-1-2.yaml --capabilities CAPABILITY_NAMED_IAM
 {
     "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels09/391799b0-06a2-11ed-a255-124e5ba9dc41"
 }
@@ -197,6 +197,7 @@ joel@joels-desktop:~/Documents/Stelligent/stelligent-u/09-lambda$ aws lambda get
 - Lambdas can take a payload like JSON as input. Rewrite the function
   to take a JSON payload and simply return the payload, or an item
   from the payload.
+
 ```
 
 joel@joels-desktop:~/Documents/Stelligent/stelligent-u/09-lambda$ aws lambda invoke --function-name Joels09-MyLambda-kuzr2jYZQNZU --payload '{ "key1": "value1", "key2": "value2" }' response.json --profile temp --cli-binary-format raw-in-base64-out
@@ -218,12 +219,59 @@ Use the AWS CLI to create Lambda functions:
   separate file and update the Lambda resource to reference the
   handler.
 
+```
+aws cloudformation --profile temp create-stack --stack-name Joels09-storage --template-body file://cfn-lambda-9-1-3-storage.yaml --capabilities CAPABILITY_NAMED_IAM
+```
+
 - Use the "aws cloudformation package" and "\... deploy" commands to
   create the CloudFormation stack. Note: The "package" command will
   need an S3 bucket to temporarily store the deployment package.
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/09-lambda$ aws s3 ls --profile temp | grep -i joel
+2022-06-27 11:24:39 joels-fullaccess-s3-bucket-11-15
+2022-06-27 11:24:39 joels-fullaccess-s3-bucket-11-16
+2022-06-27 10:38:03 joels-read-only-s3-bucket-10-16
+2022-06-27 09:56:23 joels-read-only-s3-bucket-9-56
+2022-07-18 12:22:26 joels-stelligent-u-9.1.3
+```
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/09-lambda$ aws s3 cp code/ s3://joels-stelligent-u-9.1.3 --profile temp --recursive
+upload: code/echo.py to s3://joels-stelligent-u-9.1.3/echo.py
+```
 - Use the API gateway to make a test call to the lambda to confirm
   it's working.
+
+Had to zip up the script into a zip file as Lambda didn't seem to like the straight Python file
+```zip echo.zip echo.py
+  adding: echo.py (deflated 33%)
+```
+
+Copying it up
+```
+aws s3 cp code/echo.zip s3://joels-stelligent-u-9.1.3 --profile temp
+```
+
+Creating the stack
+```
+aws cloudformation --profile temp create-stack --stack-name Joels09 --template-body file://cfn-lambda-9-1-3.yaml --capabilities CAPABILITY_NAMED_IAM
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels09/d0584780-06bf-11ed-b798-121ea4522005"
+}
+```
+
+invoking the function
+```
+aws lambda invoke --function-name Joels09-MyLambda-UimoX8Bh3JLn --payload '{ "key1": "value1", "key2": "value2" }' response.json --profile temp --cli-binary-format raw-in-base64-out
+{
+    "StatusCode": 200,
+    "ExecutedVersion": "$LATEST"
+}
+cat response.json
+{"statusCode": 200, "body": "\"First Key is value1\""}joel@joels-desktop:~/Documents/Stelligent/stelligent-u/09-lambda$
+```
+
+Got the same as before
 
 ### Retrospective 9.1
 

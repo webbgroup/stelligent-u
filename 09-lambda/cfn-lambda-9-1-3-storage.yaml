@@ -1,0 +1,14 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  MyCodeBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: "joels-stelligent-u-9.1.3"
+        AccessControl: "BucketOwnerFullControl"
+
+Outputs:
+  CodeBucket:
+    Value: !Ref MyCodeBucket
+    Export:
+      Name: JoelsModule9CodeBucket
