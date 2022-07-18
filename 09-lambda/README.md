@@ -137,9 +137,78 @@ Using API gateway to run a Lambda function.
 - Use the AWS CLI to call the API gateway which will call your Lambda
   function.
 
+```
+aws cloudformation --profile temp create-stack --stack-name Joels09 --template-body file://cfn-lambda.yaml --capabilities CAPABILITY_NAMED_IAM
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels09/391799b0-06a2-11ed-a255-124e5ba9dc41"
+}
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/09-lambda$ aws lambda get-function --function-name Joels09-MyLambda-kuzr2jYZQNZU --profile temp
+{
+    "Configuration": {
+        "FunctionName": "Joels09-MyLambda-kuzr2jYZQNZU",
+        "FunctionArn": "arn:aws:lambda:us-east-1:324320755747:function:Joels09-MyLambda-kuzr2jYZQNZU",
+        "Runtime": "python3.9",
+        "Role": "arn:aws:iam::324320755747:role/MyLambdaExecutionRole",
+        "Handler": "index.lambda_handler",
+        "CodeSize": 272,
+        "Description": "",
+        "Timeout": 3,
+        "MemorySize": 128,
+        "LastModified": "2022-07-18T14:03:08.078+0000",
+        "CodeSha256": "0sy82GKgXIHCHUlIZkzxLzPBWq1oaGysKfiwo8D8NDc=",
+        "Version": "$LATEST",
+        "TracingConfig": {
+            "Mode": "PassThrough"
+        },
+        "RevisionId": "a82659ff-fe19-4613-a33c-6c8c28ee3aac",
+        "State": "Active",
+        "LastUpdateStatus": "Successful",
+        "PackageType": "Zip",
+        "Architectures": [
+            "x86_64"
+        ],
+        "EphemeralStorage": {
+            "Size": 512
+        }
+    },
+    "Code": {
+        "RepositoryType": "S3",
+        "Location": "https://prod-04-2014-tasks.s3.us-east-1.amazonaws.com/snapshots/324320755747/Joels09-MyLambda-kuzr2jYZQNZU-e50abb38-5ccf-4cbb-8005-2f0eb5a16e87?versionId=2nxPKpz_Cd5TXXjRI3Ei6CW4nG0gTk5R&X-Amz-Security-Token=IQoJb3JpZ2luX2VjELb%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMSJHMEUCIQDsS1B4zRdRV0nnzSGJzkmUk%2BBABfE3J9QlwgUqY76CUAIgQzu0A5GAliWDm9RKpx%2BsCrGBFbYxdA8kLB3kNtapwMMq2wQI7v%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARAAGgw3NDk2Nzg5MDI4MzkiDL7MK3CyVXscdBxVoiqvBPDiSXSwCXEavsprAN9oNisyNd7CK5180mLqu0cqXMtdxFIyOkmp6dnHzfLuuJCDuALhsQwwpHz9NEm%2FHy1dGn%2F4FM9Fa6sHI59rKr1YDwfvnFyKdOvz4HlQG4KAqegEkVICoBvVqofITNSrNf03hRlIVLjv%2BoKh%2BC3aXjKKRYHZurbGY8Jgpr9j9yOUtLkM6%2Fdmijs1uzkS4bvFHh4zAVXLAMqBnt%2F%2BH2Y%2FnYnio6bNuyaEpjBnktMujXfjYyJL0uIlTD2X8s02jxDkx83F8aHq9btyYZ2UPh3n%2BlBd8AnPEoS4%2B2uzFI6TwsweyDro0jnB2Kfd3M01x6g6h9fpFdbJ9ROuvpvoet%2Bm6Dl6zzMu9pn9mA6qhfOJo6h5c27D2c5cb7nihvCbwAkjNNoxpRb3LvgcW1A9otRyzVKQ8OE1O4XBGrxWy%2FV6wazXmoMmZjFqptJnWsy2ryr9234W7w1fPnid5cSFJWoac2XevfUgE3f0UiffRdODlILbKJ4jR1jigm%2BQFgO0rx7qOp9hdDah0YO1fFEOgSGL%2BS71VPHZVVywj4MjYOLYYJBrxfcimyfhd12uIYJbo1u5X3VzJSMdgTTQgyQIpXxi4WvOvUlOVSHghSbQmyiLpwHg8b0JyUpkK1EJCG2PCU9kRsJBQxbg%2B8M6k3sh5tF2Jr5QzUqZHhIgrQchjfin8p4oeB42A6xE45phc5I5IAarV3T5puhm9yfweQUOhvlI78HFe%2Bsw8rTVlgY6qQHQ6SZPWCo0XWmik3WhNJYsRCWHqcOd5ieaAbxOzMX4VdKVFaduCKreHsafc6m%2FIxXKmmwnxKxjbqqeQklp%2Bh%2BRHTqqnqkTQDAqRDAud%2FvFNZL5kSClWBjAUtygV%2FvD34DZPdTgArU5ksdi6PVmIL5Z%2FzhQRZLDgWYxx6fx5Wnl0V5vllg9KEYeAfXRqNglPDWizAddK7pZjNoWXFkXuXC%2FAyLeH%2F0cVcme&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20220718T141242Z&X-Amz-SignedHeaders=host&X-Amz-Expires=599&X-Amz-Credential=ASIA25DCYHY33TYRIVUJ%2F20220718%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=dcb8f3f9a3e8659f373246d773d1a2ea0dde5f1edcfb50482ba0c14dab42e3ff"
+    },
+    "Tags": {
+        "aws:cloudformation:stack-name": "Joels09",
+        "aws:cloudformation:stack-id": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels09/391799b0-06a2-11ed-a255-124e5ba9dc41",
+        "aws:cloudformation:logical-id": "MyLambda"
+    }
+}
+```
+
+```
+ aws lambda invoke --function-name Joels09-MyLambda-kuzr2jYZQNZU response.json --profile temp
+{
+    "StatusCode": 200,
+    "ExecutedVersion": "$LATEST"
+}
+```
+
 - Lambdas can take a payload like JSON as input. Rewrite the function
   to take a JSON payload and simply return the payload, or an item
   from the payload.
+```
+
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/09-lambda$ aws lambda invoke --function-name Joels09-MyLambda-kuzr2jYZQNZU --payload '{ "key1": "value1", "key2": "value2" }' response.json --profile temp --cli-binary-format raw-in-base64-out
+{
+    "StatusCode": 200,
+    "ExecutedVersion": "$LATEST"
+}
+```
+```
+cat response.json
+{"statusCode": 200, "body": "\"First Key is value1\""}
+```
 
 #### Lab 9.1.3: Lambda & CloudFormation with awscli
 
