@@ -9,7 +9,7 @@ Resources:
     Properties:
       Description: Joels 10.1.1 Key
       Enabled: true
-      EnableKeyRotation: false
+      EnableKeyRotation: true
       KeyPolicy:
         Statement:
         - Sid: AllowIAMPermissions
@@ -50,6 +50,6 @@ Resources:
           Resource: '*'
 Outputs:
   MyAccountId:
-    Value: !Ref ${AWS::AccountId}
+    Value: !Ref 'AWS::AccountId'
     Export:
       Name: JoelsId

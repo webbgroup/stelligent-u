@@ -45,6 +45,13 @@ Create a CFN Template that
 
 - For a key policy, set your IAM user as Key Administrator and as a Key User
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/10-kms$ aws cloudformation --profile temp create-stack --stack-name Joels10 --template-body file://cfn-kms-10-1-1.yaml --capabilities CAPABILITY_NAMED_IAM
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels10/04d42690-06d0-11ed-a490-0af0396780d5"
+}
+```
+
 #### Lab 10.1.2 : Create a KMS Alias
 
 Update your CFN template to add a KMS Alias with a snazzy name.
