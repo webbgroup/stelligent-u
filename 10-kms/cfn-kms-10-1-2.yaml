@@ -1,0 +1,63 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description:
+  Joels Key Management Storage
+
+Resources:
+  JoelsKMSKey:
+    #AWS-DOC http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-kms-key.html
+    Type: "AWS::KMS::Key"
+    Properties:
+      Description: Joels 10.1.1 Key
+      Enabled: true
+      EnableKeyRotation: true
+      KeyPolicy:
+        Statement:
+        - Sid: AllowIAMPermissions
+          Effect: Allow
+          Principal:
+            AWS: !Sub arn:aws:iam::${AWS::AccountId}:root
+          Action: kms:*
+          Resource: '*'
+        - Sid: KeyAdministration
+          Effect: Allow
+          Principal:
+            AWS: !Sub 'arn:aws:iam::${AWS::AccountId}:user/joel.webb.labs'
+          Action:
+            - 'kms:Create*'
+            - 'kms:Describe*'
+            - 'kms:Enable*'
+            - 'kms:List*'
+            - 'kms:Put*'
+            - 'kms:Update*'
+            - 'kms:Revoke*'
+            - 'kms:Disable*'
+            - 'kms:Get*'
+            - 'kms:Delete*'
+            - 'kms:ScheduleKeyDeletion'
+            - 'kms:CancelKeyDeletion'
+          Resource: '*'
+        - Sid: KeyUsage
+          Effect: Allow
+          Principal:
+            AWS: !Sub 'arn:aws:iam::${AWS::AccountId}:user/joel.webb.labs'
+          Action:
+            - 'kms:DescribeKey'
+            - 'kms:Encrypt'
+            - 'kms:Decrypt'
+            - 'kms:ReEncrypt*'
+            - 'kms:GenerateDataKey'
+            - 'kms:GenerateDataKeyWithoutPlaintext'
+          Resource: '*'
+  KeyAlias:
+    #AWS-DOC http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-kms-alias.html
+    Type: "AWS::KMS::Alias"
+    Properties:
+      AliasName: alias/JoelsModule10Key
+      TargetKeyId: !Ref JoelsKMSKey
+
+Outputs:
+  MyAccountId:
+    Value: !Ref 'AWS::AccountId'
+    Export:
+      Name: JoelsId
