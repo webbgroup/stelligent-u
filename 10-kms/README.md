@@ -57,6 +57,12 @@ joel@joels-desktop:~/Documents/Stelligent/stelligent-u/10-kms$ aws cloudformatio
 Update your CFN template to add a KMS Alias with a snazzy name.
 Associate your CMK with this alias.
 
+#### Lab 10.1.3: Encrypt a text file with your KMS CMK
+
+Use the AWS KMS CLI to encrypt a plaintext file with a secret message
+(maybe that combo to the safe, or your luggage password). Send your file
+to a colleague with administrator access.
+
 ```
 joel@joels-desktop:~/Documents/Stelligent/stelligent-u/10-kms$ aws kms encrypt --key-id alias/JoelsModule10Key  --profile temp --plaintext fileb:///tmp/sample9-1-3.yaml > /tmp/EncryptedFile.txt
 joel@joels-desktop:~/Documents/Stelligent/stelligent-u/10-kms$ cat /tmp/EncryptedFile.txt
@@ -67,11 +73,6 @@ joel@joels-desktop:~/Documents/Stelligent/stelligent-u/10-kms$ cat /tmp/Encrypte
 }
 ```
 
-#### Lab 10.1.3: Encrypt a text file with your KMS CMK
-
-Use the AWS KMS CLI to encrypt a plaintext file with a secret message
-(maybe that combo to the safe, or your luggage password). Send your file
-to a colleague with administrator access.
 
 #### Lab 10.1.4: Decrypt a ciphertext file
 
