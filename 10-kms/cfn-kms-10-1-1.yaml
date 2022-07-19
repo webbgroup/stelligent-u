@@ -2,7 +2,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description:
   Joels Key Management Storage
-
 Resources:
   JoelsKMSKey:
     #AWS-DOC http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-kms-key.html
@@ -49,13 +48,6 @@ Resources:
             - 'kms:GenerateDataKey'
             - 'kms:GenerateDataKeyWithoutPlaintext'
           Resource: '*'
-
-#AWS-DOC http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-kms-alias.html
-Type: "AWS::KMS::Alias"
-Properties:
-  AliasName: JoelsModule10Key
-  TargetKeyId: !Ref JoelsKMSKey
-
 Outputs:
   MyAccountId:
     Value: !Ref 'AWS::AccountId'
