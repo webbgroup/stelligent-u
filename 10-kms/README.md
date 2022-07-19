@@ -219,6 +219,38 @@ Delete your KMS CFN Stack.
 
 _What happened to your CMK? Why?_
 
+The key remains... but the alias is gone.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/10-kms$ aws kms describe-key --key-id 6ff84455-5648-47f2-aa41-5c06d0bdcf5a --profile temp
+{
+    "KeyMetadata": {
+        "AWSAccountId": "324320755747",
+        "KeyId": "6ff84455-5648-47f2-aa41-5c06d0bdcf5a",
+        "Arn": "arn:aws:kms:us-east-1:324320755747:key/6ff84455-5648-47f2-aa41-5c06d0bdcf5a",
+        "CreationDate": "2022-07-19T08:02:43.248000-04:00",
+        "Enabled": false,
+        "Description": "Joels 10.1.1 Key",
+        "KeyUsage": "ENCRYPT_DECRYPT",
+        "KeyState": "PendingDeletion",
+        "DeletionDate": "2022-08-18T13:28:26.308000-04:00",
+        "Origin": "AWS_KMS",
+        "KeyManager": "CUSTOMER",
+        "CustomerMasterKeySpec": "SYMMETRIC_DEFAULT",
+        "KeySpec": "SYMMETRIC_DEFAULT",
+        "EncryptionAlgorithms": [
+            "SYMMETRIC_DEFAULT"
+        ],
+        "MultiRegion": false
+    }
+}
+
+```
+
+I think it is gone because if they key is removed, and your files remain, you won't be able to read your files anymore until you create a new key?
+
+But that doesn't explain if you could decrypt them if a key is rotated at that point.
+
 ### Retrospective 10.2
 
 Check out the code for [stelligent/crossing](https://github.com/stelligent/crossing)
