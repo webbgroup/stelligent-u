@@ -92,6 +92,39 @@ Create a CFN template that specifies an IAM Role.
   - List all the Roles
   - Describe the specific Role your Stack created.
 
+>!This is hidden text!<
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws iam list-roles --profile temp | grep -A 20 -i joel -B 4
+            "MaxSessionDuration": 3600
+        },
+        {
+            "Path": "/",
+            "RoleName": "joelsreadonlystack-JoelsMyIamRole-JBZR005LLTKV",
+            "RoleId": "AROAUXAYGAARXSJFLYIUD",
+            "Arn": "arn:aws:iam::324320755747:role/joelsreadonlystack-JoelsMyIamRole-JBZR005LLTKV",
+            "CreateDate": "2022-06-24T15:16:46+00:00",
+            "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Effect": "Allow",
+                        "Principal": {
+                            "Service": "iam.amazonaws.com"
+                        },
+                        "Action": "sts:AssumeRole"
+                    }
+                ]
+            },
+            "Description": "",
+            "MaxSessionDuration": 3600
+        },
+        {
+            "Path": "/",
+            "RoleName": "JohnMitchellLambdaS3CodeE-SingletonServiceRoleDDD8-1KWLSU21NT3UA",
+            "RoleId": "AROAUXAYGAARRDDSDBRJP",
+```
+
 #### Lab 3.1.2: Customer Managed Policy
 
 Update the template and the corresponding Stack to make the IAM Role's
@@ -104,6 +137,45 @@ inline policy more generally usable:
 - Attach the new resource to the IAM Role.
 
 - Update the Stack using the modified template.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws cloudformation --profile temp update-stack --stack-name joelsreadonlystack --template-body file://cfn-readonlyrole.yaml --capabilities CAPABILITY_NAMED_IAM
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/joelsreadonlystack/46789ee0-f3d0-11ec-9908-0a16f5aec431"
+}
+
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws iam list-roles --profile temp | grep -A 20 -i joel -B 4
+            "MaxSessionDuration": 3600
+        },
+        {
+            "Path": "/",
+            "RoleName": "joelsreadonlystack-JoelsMyIamRole-JBZR005LLTKV",
+            "RoleId": "AROAUXAYGAARXSJFLYIUD",
+            "Arn": "arn:aws:iam::324320755747:role/joelsreadonlystack-JoelsMyIamRole-JBZR005LLTKV",
+            "CreateDate": "2022-06-24T15:16:46+00:00",
+            "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Effect": "Allow",
+                        "Principal": {
+                            "Service": "iam.amazonaws.com"
+                        },
+                        "Action": "sts:AssumeRole"
+                    }
+                ]
+            },
+            "Description": "",
+            "MaxSessionDuration": 3600
+        },
+        {
+            "Path": "/",
+            "RoleName": "JohnMitchellLambdaS3CodeE-SingletonServiceRoleDDD8-1KWLSU21NT3UA",
+            "RoleId": "AROAUXAYGAARRDDSDBRJP",
+```
 
 #### Lab 3.1.3: Customer Managed Policy Re-Use
 
@@ -121,6 +193,8 @@ policy:
   indicate the re-use of the policy.
 
 - Update the Stack. *Did the stack update work?*
+
+  Yes
 
   - Query the stack to determine its state.
   - If the stack update was not successful,
@@ -140,6 +214,15 @@ Replace the customer managed policy with
 
 - Update the stack.
 
+Updated:
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws cloudformation --profile temp update-stack --stack-name joelsreadonlystack --template-body file://cfn-readonlyrole.yaml --capabilities CAPABILITY_NAMED_IAM
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/joelsreadonlystack/46789ee0-f3d0-11ec-9908-0a16f5aec431"
+}
+```
+
 #### Lab 3.1.5: Policy Simulator
 
 Read about the [AWS Policy Simulator](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_testing-policies.html)
@@ -155,9 +238,23 @@ tool and practice using it.
   - `ec2:RunInstances`
   - `ec2:DescribeSecurityGroups`
 
+  Policy Similator works great
+
+  ```
+  https://policysim.aws.amazon.com/home/index.jsp?#roles/joelsreadonlystack-JoelsIAMReadOnlyRole-8P5XJ7PZO19G
+  ```
+
+  1. Choose Roles
+  2. Then in Policy Simulator role, Search for the Technology To Use, then run the Policy Simulator
+
 #### Lab 3.1.6: Clean Up
 
 Clean up after yourself by deleting the stack.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws cloudformation --profile temp delete-stack --stack-name joelsreadonlystack
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$
+```
 
 ### Retrospective 3.1
 
@@ -168,10 +265,98 @@ stack's two roles in order to pass those values to the CLI function. You
 probably used the AWS web console to get the ARN for each role. What
 could you have done to your CFN template to make that unnecessary?_
 
+Dunno.
+
+
 #### Task: Stack Outputs
 
 Institute that change from the Question above. Recreate the stack as per
 Lab 3.1.5, and demonstrate how to retrieve the ARNs.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws iam simulate-custom-policy \
+>     --policy-input-list '{"Version":"2012-10-17","Statement":{"Effect":"Allow","Action":"sts:AssumeRole","Resource":"*","Condition":{"DateGreaterThan":{"aws:CurrentTime":"2018-08-16T12:00:00Z"}}}}' \
+>     --action-names iam:CreateRole \
+>     --profile temp
+{
+    "EvaluationResults": [
+        {
+            "EvalActionName": "iam:CreateRole",
+            "EvalResourceName": "*",
+            "EvalDecision": "implicitDeny",
+            "MatchedStatements": [],
+            "MissingContextValues": [
+                "aws:CurrentTime"
+            ]
+        }
+    ]
+}
+```
+
+```
+--resource-arns
+--caller-arn
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws cloudformation --profile temp create-stack --stack-name joelsreadonlystack --template-body file://cfn-readonlyrole.yaml --capabilities CAPABILITY_NAMED_IAM
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/joelsreadonlystack/c963b790-f61e-11ec-9eba-120d12b05dcf"
+}
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws iam list-roles --profile temp | grep -i -C10 joel
+                            "Service": "lambda.amazonaws.com"
+                        },
+                        "Action": "sts:AssumeRole"
+                    }
+                ]
+            },
+            "MaxSessionDuration": 3600
+        },
+        {
+            "Path": "/",
+            "RoleName": "joelsreadonlystack-JoelsGlobalReadOnlyRole-100GO0I7TJE5N",
+            "RoleId": "AROAUXAYGAAR6YA2ZAWAK",
+            "Arn": "arn:aws:iam::324320755747:role/joelsreadonlystack-JoelsGlobalReadOnlyRole-100GO0I7TJE5N",
+            "CreateDate": "2022-06-27T13:41:07+00:00",
+            "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Effect": "Allow",
+                        "Principal": {
+                            "AWS": "arn:aws:iam::324320755747:user/joel.webb.labs",
+                            "Service": "iam.amazonaws.com"
+                        },
+                        "Action": "sts:AssumeRole"
+                    }
+                ]
+            },
+            "Description": "My Own Policy that uses Native Managed ReadOnly",
+            "MaxSessionDuration": 3600
+        },
+        {
+            "Path": "/",
+            "RoleName": "joelsreadonlystack-JoelsIAMReadOnlyRole-D7LZV3PG1729",
+            "RoleId": "AROAUXAYGAARQV5PEXSUI",
+            "Arn": "arn:aws:iam::324320755747:role/joelsreadonlystack-JoelsIAMReadOnlyRole-D7LZV3PG1729",
+            "CreateDate": "2022-06-27T13:41:08+00:00",
+            "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Effect": "Allow",
+                        "Principal": {
+                            "AWS": "arn:aws:iam::324320755747:user/joel.webb.labs",
+                            "Service": "iam.amazonaws.com"
+                        },
+                        "Action": "sts:AssumeRole"
+                    }
+                ]
+            },
+            "Description": "Customer Managed Policy",
+            "MaxSessionDuration": 3600
+        },
+```
 
 ## Lesson 3.2: Trust Relationships & Assuming Roles
 
@@ -204,6 +389,12 @@ your User to assume that role.
 
 - The role should reference the AWS managed policy ReadOnlyAccess.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws sts assume-role --role-arn arn:aws:iam::324320755747:role/joelsreadonlystack-JoelsGlobalReadOnlyRole-EWMFEK88ADO5 --role-session-name joels-assume-role-test --profile temp
+
+An error occurred (AccessDenied) when calling the AssumeRole operation: User: arn:aws:iam::324320755747:user/joel.webb.labs is not authorized to perform: sts:AssumeRole on resource: arn:aws:iam::324320755747:role/joelsreadonlystack-JoelsGlobalReadOnlyRole-EWMFEK88ADO5
+```
+
 - Add a trust relationship to the role that enables your specific IAM
   user to assume that role.
 
@@ -211,6 +402,13 @@ your User to assume that role.
 
 - Using the AWS CLI, assume that new role. If this fails, take note of
   the error you receive, diagnose the issue and fix it.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws sts assume-role --role-arn arn:aws:iam::324320755747:role/joelsreadonlystack-JoelsGlobalReadOnlyRole-EWMFEK88ADO5 --role-session-name joels-assume-role-test --profile temp
+
+An error occurred (AccessDenied) when calling the AssumeRole operation: User: arn:aws:iam::324320755747:user/joel.webb.labs is not authorized to perform: sts:AssumeRole on resource: arn:aws:iam::324320755747:role/joelsreadonlystack-JoelsGlobalReadOnlyRole-EWMFEK88ADO5
+
+```
 
 *Hint: Instead of setting up a new profile in your \~/.aws/credentials
 file, use [aws sts assume-role](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp_use-resources.html#using-temp-creds-sdk-cli).
@@ -230,6 +428,43 @@ Test the capabilities of this new Role.
   - If it succeeded, troubleshoot how Read access allowed the role
     to create a bucket.
 
+I couldn't assume the Role
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws sts assume-role --role-arn arn:aws:iam::324320755747:role/joelsreadonlystack-JoelsGlobalReadOnlyRole-852K0G5NVEO8 --role-session-name joelsS3SessionTest --profile temp
+
+An error occurred (AccessDenied) when calling the AssumeRole operation: User: arn:aws:iam::324320755747:user/joel.webb.labs is not authorized to perform: sts:AssumeRole on resource: arn:aws:iam::324320755747:role/joelsreadonlystack-JoelsGlobalReadOnlyRole-852K0G5NVEO8
+
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws sts assume-role --role-arn arn:aws:iam::324320755747:role/joelsreadonlystack-JoelsIAMReadOnlyRole-UV235Z1W8OWS --role-session-name joelsS3SessionTest --profile temp
+{
+    "Credentials": {
+        "AccessKeyId": "ASIAUXAYGAARQXOESZ5G",
+        "SecretAccessKey": "BhjHIkrLKqguM/n1Xp7ydSAwfJgo+8e3zav8pKjz",
+        "SessionToken": "<redacted>",
+        "Expiration": "2022-06-24T21:57:22+00:00"
+    },
+    "AssumedRoleUser": {
+        "AssumedRoleId": "AROAUXAYGAARSCZHBQN5N:joelsS3SessionTest",
+        "Arn": "arn:aws:sts::324320755747:assumed-role/joelsreadonlystack-JoelsIAMReadOnlyRole-UV235Z1W8OWS/joelsS3SessionTest"
+    }
+}
+
+```
+
+###### notice this is using my temp credentials
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 mb s3://joels-read-only-s3-bucket-9-56 --region us-west-2 --profile temp
+make_bucket: joels-read-only-s3-bucket-9-56
+```
+And now this is using the assumed role credentials
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 mb s3://joels-read-only-s3-bucket-9-57 --region us-west-2 --profile readOnlyUser
+make_bucket failed: s3://joels-read-only-s3-bucket-9-57 An error occurred (AccessDenied) when calling the CreateBucket operation: Access Denied
+```
+
 #### Lab 3.2.3: Add privileges to the role
 
 Update the CFN template to give this role the ability to upload to S3
@@ -237,12 +472,48 @@ buckets.
 
 - Create an S3 bucket.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 mb s3://joels-read-only-s3-bucket-9-56 --region us-west-2 --profile temp
+make_bucket: joels-read-only-s3-bucket-9-56
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws cloudformation --profile temp update-stack --stack-name joelsreadonlystack --template-body file://cfn-readonlyrole.yaml --capabilities CAPABILITY_NAMED_IAM
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/joelsreadonlystack/c963b790-f61e-11ec-9eba-120d12b05dcf"
+}
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 mb s3://joels-read-only-s3-bucket-10-16 --region us-west-2 --profile readOnlyUser
+make_bucket failed: s3://joels-read-only-s3-bucket-10-16 An error occurred (AccessDenied) when calling the CreateBucket operation: Access Denied
+```
+
 - Using either an inline policy or an AWS managed policy, provide the
   role with S3 full access
 
 - Update the stack.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 mb s3://joels-read-only-s3-bucket-10-16 --region us-west-2 --profile readOnlyIamUser
+make_bucket: joels-read-only-s3-bucket-10-16
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ echo $?
+0
+```
+
 - Assuming this role again, try to upload a text file to the bucket.
+
+##### Validate who I am though first
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws sts get-caller-identity --profile readOnlyUser
+{
+    "UserId": "AROAUXAYGAAR6YA2ZAWAK:joelsS3SessionTest",
+    "Account": "324320755747",
+    "Arn": "arn:aws:sts::324320755747:assumed-role/joelsreadonlystack-JoelsGlobalReadOnlyRole-100GO0I7TJE5N/joelsS3SessionTest"
+}
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 cp /tmp/blahblah s3://joels-read-only-s3-bucket-10-16/ --region us-west-2 --profile readOnlyIamUser
+upload: ../../../../../../tmp/blahblah to s3://joels-read-only-s3-bucket-10-16/blahblah
+```
 
 - If it failed, troubleshoot the error iteratively until the role is
   able to upload a file to the bucket.
@@ -250,6 +521,18 @@ buckets.
 #### Lab 3.2.4: Clean up
 
 Clean up. Take the actions necessary to delete the stack.
+
+```
+aws cloudformation --profile temp delete-stack --stack-name joelsreadonlystack
+```
+
+Looks like the temporary user credentials are deleted as well.
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws sts get-caller-identity --profile readOnlyIamUser
+
+An error occurred (InvalidClientTokenId) when calling the GetCallerIdentity operation: The security token included in the request is invalid.
+
+```
 
 ### Retrospective 3.2
 
@@ -259,6 +542,8 @@ _In the context of an AWS User or Role, what is the difference between
 an inline policy and a customer managed policy? What are the differences
 between a customer managed policy and an AWS managed policy?_
 
+One is more granular, and the AWS managed is more broadly used and maintained by Amazon.
+
 #### Question: Role Assumption
 
 _When assuming a role, are the permissions of the initial principal
@@ -266,6 +551,8 @@ mixed with those of the role being assumed?
 Describe how that could easily be demonstrated with both a
 [positive and negative testing](https://www.guru99.com/positive-vs-negative-testing.html)
 approach._
+
+It would be very easy to create programatic unit test to test out a stack before the stack itself goes to the next environment.
 
 ## Lesson 3.3: Fine-Grained Controls With Policies
 
@@ -302,8 +589,90 @@ demonstrate you have full access to each bucket with this new role.
 
 - As your User:
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws iam list-roles --profile temp | grep -i -C10 joels
+                            "Service": "lambda.amazonaws.com"
+                        },
+                        "Action": "sts:AssumeRole"
+                    }
+                ]
+            },
+            "MaxSessionDuration": 3600
+        },
+        {
+            "Path": "/",
+            "RoleName": "joelss3stack-JoelsGlobalReadOnlyRole-6TXY4M4Y2R2F",
+            "RoleId": "AROAUXAYGAARXWKN6EUB7",
+            "Arn": "arn:aws:iam::324320755747:role/joelss3stack-JoelsGlobalReadOnlyRole-6TXY4M4Y2R2F",
+            "CreateDate": "2022-06-27T15:24:38+00:00",
+            "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Effect": "Allow",
+                        "Principal": {
+                            "AWS": "arn:aws:iam::324320755747:user/joel.webb.labs",
+                            "Service": "iam.amazonaws.com"
+                        },
+                        "Action": "sts:AssumeRole"
+                    }
+                ]
+            },
+            "Description": "My Own Policy that uses Native Managed ReadOnly",
+            "MaxSessionDuration": 3600
+        },
+        {
+            "Path": "/",
+            "RoleName": "joelss3stack-JoelsS3CustomerManagedRole-1FGE7K5FIA60D",
+            "RoleId": "AROAUXAYGAAR7EIKQTT4V",
+            "Arn": "arn:aws:iam::324320755747:role/joelss3stack-JoelsS3CustomerManagedRole-1FGE7K5FIA60D",
+            "CreateDate": "2022-06-27T15:24:37+00:00",
+            "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Effect": "Allow",
+                        "Principal": {
+                            "AWS": "arn:aws:iam::324320755747:user/joel.webb.labs",
+                            "Service": "iam.amazonaws.com"
+
+```
+
   - list the contents of your 2 new buckets
   - upload a file to each new bucket
+
+  ```
+  joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws sts assume-role --role-arn arn:aws:iam::324320755747:role/joelss3stack-JoelsS3CustomerManagedRole-1FGE7K5FIA60D --role-session-name joelsS3SessionTest --profile temp
+{
+    "Credentials": {
+        "AccessKeyId": "ASIAUXAYGAAR2VY7L4WZ",
+        "SecretAccessKey": "222KXBzUruDqpMwjVMQC3afm6R/yeggjvEw99Q1z",
+        "SessionToken": "===REDACTED==="
+    },
+    "AssumedRoleUser": {
+        "AssumedRoleId": "AROAUXAYGAAR7EIKQTT4V:joelsS3SessionTest",
+        "Arn": "arn:aws:sts::324320755747:assumed-role/joelss3stack-JoelsS3CustomerManagedRole-1FGE7K5FIA60D/joelsS3SessionTest"
+    }
+}
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws sts get-caller-identity --profile S3FullAccessUser
+
+Partial credentials found in shared-credentials-file, missing: aws_secret_access_key
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws sts get-caller-identity --profile S3FullAccessUser
+{
+    "UserId": "AROAUXAYGAAR7EIKQTT4V:joelsS3SessionTest",
+    "Account": "324320755747",
+    "Arn": "arn:aws:sts::324320755747:assumed-role/joelss3stack-JoelsS3CustomerManagedRole-1FGE7K5FIA60D/joelsS3SessionTest"
+}
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 cp /tmp/blahblah s3:joels-fullaccess-s3-bucket-11-15/ --profile S3FullAccessUser
+
+usage: aws s3 cp <LocalPath> <S3Uri> or <S3Uri> <LocalPath> or <S3Uri> <S3Uri>
+Error: Invalid argument type
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 cp /tmp/blahblah s3://joels-fullaccess-s3-bucket-11-15/ --profile S3FullAccessUser
+upload: ../../../../../../tmp/blahblah to s3://joels-fullaccess-s3-bucket-11-15/blahblah
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 cp /tmp/blahblah s3://joels-fullaccess-s3-bucket-11-16/ --profile S3FullAccessUser
+upload: ../../../../../../tmp/blahblah to s3://joels-fullaccess-s3-bucket-11-16/blahblah
+
+  ```
 
 - Assume the new role and repeat those two checks as that role.
 
@@ -345,6 +714,47 @@ that grants list access only to objects that start with "lebowski/".
   - If it *doesn't work*, troubleshoot why and fix either the role's
     policy or the list command syntax until you are able to
     list a file.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws sts assume-role --role-arn arn:aws:iam::324320755747:role/joelss3stack-JoelsS3CustomerManagedRole-1FGE7K5FIA60D --role-session-name joelsS3SessionTest --profile temp
+{
+    "Credentials": {
+        "AccessKeyId": "ASIAUXAYGAARWAKNDLGI",
+        "SecretAccessKey": "9HQfn4zIZqMdvOBbdohy/NR3EY5fqM2SbR0ccCwo",
+        "SessionToken": "REDACTED",
+        "Expiration": "2022-06-27T18:17:15+00:00"
+    },
+    "AssumedRoleUser": {
+        "AssumedRoleId": "AROAUXAYGAAR7EIKQTT4V:joelsS3SessionTest",
+        "Arn": "arn:aws:sts::324320755747:assumed-role/joelss3stack-JoelsS3CustomerManagedRole-1FGE7K5FIA60D/joelsS3SessionTest"
+    }
+}
+
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws sts get-caller-identity --profile S3FullAccessUser
+{
+    "UserId": "AROAUXAYGAAR7EIKQTT4V:joelsS3SessionTest",
+    "Account": "324320755747",
+    "Arn": "arn:aws:sts::324320755747:assumed-role/joelss3stack-JoelsS3CustomerManagedRole-1FGE7K5FIA60D/joelsS3SessionTest"
+}
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 ls s3://joels-fullaccess-s3-bucket-11-16/ --profile S3FullAccessUser
+2022-06-27 11:33:38         56 blahblah
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 ls s3://joels-fullaccess-s3-bucket-11-15/ --profile S3FullAccessUser
+2022-06-27 11:33:25         56 blahblah
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 ls s3://joels-fullaccess-s3-bucket-11-15/* --profile S3FullAccessUser
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 ls s3://joels-fullaccess-s3-bucket-11-15/* --profile S3FullAccessUser
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 ls s3://joels-fullaccess-s3-bucket-11-15/ --profile S3FullAccessUser
+2022-06-27 11:33:25         56 blahblah
+2022-06-27 14:00:06         25 lebowski.txt
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 ls s3://joels-fullaccess-s3-bucket-11-15/blablah --profile S3FullAccessUser
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/03-iam$ aws s3 ls s3://joels-fullaccess-s3-bucket-11-15/lebowski.txt --profile S3FullAccessUser
+2022-06-27 14:00:06         25 lebowski.txt
+
+```
+
+
 
 ### Retrospective
 
