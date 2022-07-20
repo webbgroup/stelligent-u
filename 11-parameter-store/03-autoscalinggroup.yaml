@@ -1,0 +1,121 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+  ParameterName:
+    Type: AWS::SSM::Parameter::Name
+    Default: /joel.webb.labs/stelligent-u/lab11/joel.webb/Username
+    Description: "User Name For Stelligent Engineers"
+
+  UserName:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /joel.webb.labs/stelligent-u/lab11/joel.webb/Username
+
+  Name:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /joel.webb.labs/stelligent-u/lab11/joel.webb/Name
+
+  Title:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /joel.webb.labs/stelligent-u/lab11/joel.webb/Title
+
+  Address:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /joel.webb.labs/stelligent-u/lab11/joel.webb/Address
+
+  State:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /joel.webb.labs/stelligent-u/lab11/joel.webb/State
+
+  Timezone:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /joel.webb.labs/stelligent-u/lab11/joel.webb/Timezone
+
+  Team:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /joel.webb.labs/stelligent-u/lab11/joel.webb/Team
+
+  StartDate:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /joel.webb.labs/stelligent-u/lab11/joel.webb/StartDate
+
+Resources:
+  WebServerAsg:
+    #AWS-DOC http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-group.html
+    Type: 'AWS::AutoScaling::AutoScalingGroup'
+    Properties:
+      AutoScalingGroupName: 'AutomationBoxes'
+      VPCZoneIdentifier:
+        - !ImportValue joels-subnet1
+        - !ImportValue joels-subnet2
+      DesiredCapacity: '3'
+      HealthCheckType: 'ELB'
+      HealthCheckGracePeriod: 30
+      LaunchConfigurationName: !Ref WebServersLC
+      MaxSize: '3'
+      MinSize: '3'
+      TargetGroupARNs:
+        - !ImportValue joels-target-group
+      Tags:
+        - Key: Name
+          PropagateAtLaunch: true
+          Value: joels-aws-linux-asg
+
+  WebServersLC:
+    #AWS-DOC http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-launchconfig.html
+    Type: 'AWS::AutoScaling::LaunchConfiguration'
+    Properties:
+      ImageId: ami-0cff7528ff583bf9a
+      InstanceType: 't2.micro'
+      LaunchConfigurationName: 'SimpleWebServerLC'
+      SecurityGroups:
+        - !ImportValue joels-sg-http
+      UserData:
+        Fn::Base64:
+          Fn::Sub: |
+            #!/bin/bash -xe
+
+            amazon-linux-extras install nginx1.12
+
+            # Install the files and packages from the metadata
+            /opt/aws/bin/cfn-init -v \
+              --stack ${AWS::StackName} \
+              --resource WebServersLC \
+              --configsets All \
+              --region ${AWS::Region}
+
+            # Signal the status from cfn-init
+            /opt/aws/bin/cfn-signal -e $? \
+              --stack ${AWS::StackName} \
+              --resource WebServersLC \
+              --region ${AWS::Region}
+
+    Metadata:
+      'AWS::CloudFormation::Init':
+        configSets:
+          All:
+            - ConfigureStelligentProject
+        ConfigureStelligentProject:
+          packages:
+            yum:
+              nginx: []
+          files:
+            /usr/share/nginx/html/index.html:
+              content: !Sub |
+                <h1>Automation for ${ParameterName}</h1>
+                <p>UserName: ${UserName}</p>
+                <p>Full Name: ${Name}</p>
+                <p>UserName: ${UserName}</p>
+                <p>Title: ${Title}</p>
+                <p>Address: ${Address}, ${State}</p>
+                <p>Time Zone: ${Timezone}</p>
+                <p>Team: ${Team}</p>
+                <p>Start Date ${StartDate}</p>
+              mode: '000644'
+              owner: root
+              group: root
+          services:
+            sysvinit:
+              nginx:
+                enabled: 'true'
+                ensureRunning: 'true'

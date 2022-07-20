@@ -258,6 +258,27 @@ This gives us an incredibly convenient way to maintain stack parameters
 without the hassle of updating JSON files and keeping them in sync
 through S3 or git repositories.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/11-parameter-store$ aws cloudformation --profile temp create-stack --stack-name Joels1101 --template-body file://01-vpc.yaml
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels1101/720210d0-084f-11ed-884e-0ae60f7e9549"
+}
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/11-parameter-store$ aws cloudformation --profile temp create-stack --stack-name Joels1102 --template-body file://02-autoscalinggroup.yaml
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels1102/de0c3ab0-0851-11ed-98da-0a9fd7ef9ac1"
+}
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/11-parameter-store$ aws cloudformation --profile temp create-stack --stack-name Joels1103 --template-body file://03-load-balancer.yaml
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels1102/b9449220-0853-11ed-94d3-0e3835ee0445"
+}
+```
+
 Make a copy of the original EC2 stack from the Load Balancing topic.
 Instead of creating a web server with a page that says "Automation for
 the People", make one that describes an engineer.
@@ -271,6 +292,14 @@ the People", make one that describes an engineer.
 
 - Show the value of each of those stack parameters in the web page
   that nginx serves.
+
+```
+aws cloudformation --profile temp create-stack --stack-name Joels1100 --template-body file://00-loadconfig.yaml
+aws cloudformation --profile temp create-stack --stack-name Joels1101 --template-body file://01-vpc.yaml
+aws cloudformation --profile temp create-stack --stack-name Joels1102 --template-body file://02-load-balancer.yaml
+aws cloudformation --profile temp create-stack --stack-name Joels1103 --template-body file://03-autoscalinggroup.yaml
+```
+
 
 When you launch your stack, make sure the web page shows the values of
 all the keys that you set in lab 1.
