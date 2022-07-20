@@ -1,0 +1,57 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description:
+  Joels Parameter Stack
+Parameters:
+  Name:
+    Type: String
+    Default: Joe_Shmoe
+  Title:
+    Type: String
+    Default: Engineer
+  Address:
+    Type: String
+    Default: 123_Main_Street
+
+Resources:
+  EngineerName:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub /joel.webb.labs/stelligent-u/lab11/${Name}/EngineerName
+      Type: String
+      Value: !Ref Name
+  EngineerTitle:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub /joel.webb.labs/stelligent-u/lab11/${Name}/EngineerTitle
+      Type: String
+      Value: !Ref Title
+  EngineerAddress:
+    Type: AWS
+
+    #AWS-DOC http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ssm-document.html
+    Type: "AWS::SSM::Document"
+    Properties:
+      Content: JSON object
+
+
+
+/*Every Parameter Store value type can be a string.
+
+At the top of the sub-tree, use a name for the engineer as your key value. See the Name constraints in the PutParameter API docs for limitations. Try to enforce some of those limitations in your stack's parameter properties, too. (E.g. set an AllowedPattern and MaxLength. Can you set any other limitations?).
+
+Store all other keys under that.
+
+Store the engineer's team name under "team".
+
+Store their timezone under "timezone".
+
+Store their home state as a 2-letter prefix under "state".
+
+Store their start date under "start-date".
+
+Launch the stack with a parameter file that sets information for yourself.
+*/
+
+Outputs:
+  set of outputs
