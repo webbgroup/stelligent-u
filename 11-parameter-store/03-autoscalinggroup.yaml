@@ -3,17 +3,24 @@ AWSTemplateFormatVersion: '2010-09-09'
 
 Parameters:
   ParameterName:
+    # AWS-DOC https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ssm-parameter.html
+    # Note to Joel, See how we are calling the Name of the object with ::Name?
     Type: AWS::SSM::Parameter::Name
     Default: /joel.webb.labs/stelligent-u/lab11/joel.webb/Username
     Description: "User Name For Stelligent Engineers"
 
   UserName:
+    # Note to Joel, See how we are calling the Value of the object with adding ::Value?
     Type: AWS::SSM::Parameter::Value<String>
     Default: /joel.webb.labs/stelligent-u/lab11/joel.webb/Username
 
   Name:
     Type: AWS::SSM::Parameter::Value<String>
     Default: /joel.webb.labs/stelligent-u/lab11/joel.webb/Name
+
+  MiddleName:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /joel.webb.labs/stelligent-u/lab11/joel.webb/MiddleName
 
   Title:
     Type: AWS::SSM::Parameter::Value<String>
@@ -105,6 +112,7 @@ Resources:
                 <h1>Automation for ${ParameterName}</h1>
                 <p>UserName: ${UserName}</p>
                 <p>Full Name: ${Name}</p>
+                <p>MiddleName: ${MiddleName}</p>
                 <p>UserName: ${UserName}</p>
                 <p>Title: ${Title}</p>
                 <p>Address: ${Address}, ${State}</p>

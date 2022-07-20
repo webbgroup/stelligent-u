@@ -318,6 +318,8 @@ document linked in the previous paragraph:
 > values are set when the stack is created or updated, so they might
 > differ from the latest values in Parameter Store.
 
+They look correct
+
 #### Lab 11.1.4: Secure Strings
 
 One of the features that makes Parameter Store *so* compelling is the
@@ -333,8 +335,17 @@ stack from lab 1.
 First, use the awscli to store the middle name of an engineer in the
 hierarchy you created earlier.
 
+
 - The middle name should be a
   [Secure String](https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-paramstore-about.html#sysman-paramstore-securestring).
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/11-parameter-store$ aws ssm put-parameter --profile temp --name '/joel.webb.labs/stelligent-u/lab11/joel.webb/MiddleName' --value "Bryan" --type SecureString
+{
+    "Version": 1,
+    "Tier": "Standard"
+}
+```
 
 - Store the info under the key "middle-name" within the given
   engineer's hierarchy.
@@ -344,8 +355,59 @@ hierarchy you created earlier.
   [generating a new one](https://docs.aws.amazon.com/cli/latest/reference/kms/create-key.html)
   if you have to.
 
+Created the key here on the website GUI:
+
+Key: 5586844c-6fd3-40ba-a0db-1bef2ee2204c
+ARN:arn:aws:kms:us-east-1:324320755747:key/5586844c-6fd3-40ba-a0db-1bef2ee2204c
+Name: joels-secret-key
+
+Then I deleted it and recreated it.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/11-parameter-store$ aws ssm delete-parameter --profile temp --name '/joel.webb.labs/stelligent-u/lab11/joel.webb/MiddleName'
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/11-parameter-store$ aws ssm put-parameter --profile temp --name '/joel.webb.labs/stelligent-u/lab11/joel.webb/MiddleName' --value "Bryan" --type SecureString --key-id 5586844c-6fd3-40ba-a0db-1bef2ee2204c
+{
+    "Version": 1,
+    "Tier": "Standard"
+}
+```
+
+Validation: Looks like it is definitely encrypted
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/11-parameter-store$ aws ssm get-parameter --profile temp --name '/joel.webb.labs/stelligent-u/lab11/joel.webb/MiddleName'
+{
+    "Parameter": {
+        "Name": "/joel.webb.labs/stelligent-u/lab11/joel.webb/MiddleName",
+        "Type": "SecureString",
+        "Value": "AQICAHiAY3ofQNCClFaq4zl9TyRk+hqBIUgifYshlfuVgd1q6wHmkw2M6RNz8kyCoPEgipBGAAAAYzBhBgkqhkiG9w0BBwagVDBSAgEAME0GCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQM8axhwvQ/NAJ4LSoWAgEQgCAKlokAQluyiDZOqzVuEcAZt3y4X736MuG6hQthikgXjg==",
+        "Version": 1,
+        "LastModifiedDate": "2022-07-20T15:04:19.078000-04:00",
+        "ARN": "arn:aws:ssm:us-east-1:324320755747:parameter/joel.webb.labs/stelligent-u/lab11/joel.webb/MiddleName",
+        "DataType": "text"
+    }
+}
+
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/11-parameter-store$ aws ssm get-parameter --profile temp --name '/joel.webb.labs/stelligent-u/lab11/joel.webb/MiddleName' --with-decryption
+{
+    "Parameter": {
+        "Name": "/joel.webb.labs/stelligent-u/lab11/joel.webb/MiddleName",
+        "Type": "SecureString",
+        "Value": "Bryan",
+        "Version": 1,
+        "LastModifiedDate": "2022-07-20T15:04:19.078000-04:00",
+        "ARN": "arn:aws:ssm:us-east-1:324320755747:parameter/joel.webb.labs/stelligent-u/lab11/joel.webb/MiddleName",
+        "DataType": "text"
+    }
+}
+
+```
+
 Then, in your template, look up the value of "middle-name" and add it to
 the web page served by nginx.
+
 
 ### Retrospective 11.1
 
