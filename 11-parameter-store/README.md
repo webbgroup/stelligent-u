@@ -109,9 +109,137 @@ Look at ways to read your parameter data.
   and
   [GetParametersByPath](https://boto3.readthedocs.io/en/latest/reference/services/ssm.html#SSM.Client.get_parameters_by_path)
 
+
+
 - You can invoke those same API queries through the
   [aws ssm](https://docs.aws.amazon.com/cli/latest/reference/ssm/index.html)
   CLI
+
+get-parameter
+```
+aws ssm get-parameter --name '/joel.webb.labs/stelligent-u/lab11/joel.webb/Address' --profile temp
+{
+    "Parameter": {
+        "Name": "/joel.webb.labs/stelligent-u/lab11/joel.webb/Address",
+        "Type": "String",
+        "Value": "1234 Main Street",
+        "Version": 1,
+        "LastModifiedDate": "2022-07-20T11:03:42.062000-04:00",
+        "ARN": "arn:aws:ssm:us-east-1:324320755747:parameter/joel.webb.labs/stelligent-u/lab11/joel.webb/Address",
+        "DataType": "text"
+    }
+}
+```
+
+Another search
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/11-parameter-store$ aws ssm get-parameter --name '/joel.webb.labs/stelligent-u/lab11/joel.webb/Username' --profile temp
+{
+    "Parameter": {
+        "Name": "/joel.webb.labs/stelligent-u/lab11/joel.webb/Username",
+        "Type": "String",
+        "Value": "joel.webb",
+        "Version": 1,
+        "LastModifiedDate": "2022-07-20T11:03:41.135000-04:00",
+        "ARN": "arn:aws:ssm:us-east-1:324320755747:parameter/joel.webb.labs/stelligent-u/lab11/joel.webb/Username",
+        "DataType": "text"
+    }
+}
+
+```
+
+Search by path
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/11-parameter-store$ aws ssm get-parameters-by-path --path '/joel.webb.labs/stelligent-u/lab11/joel.webb/' --profile temp
+{
+    "Parameters": [
+        {
+            "Name": "/joel.webb.labs/stelligent-u/lab11/joel.webb/Address",
+            "Type": "String",
+            "Value": "1234 Main Street",
+            "Version": 1,
+            "LastModifiedDate": "2022-07-20T11:03:42.062000-04:00",
+            "ARN": "arn:aws:ssm:us-east-1:324320755747:parameter/joel.webb.labs/stelligent-u/lab11/joel.webb/Address",
+            "DataType": "text"
+        },
+        {
+            "Name": "/joel.webb.labs/stelligent-u/lab11/joel.webb/Email",
+            "Type": "String",
+            "Value": "1234@stelligent.com",
+            "Version": 1,
+            "LastModifiedDate": "2022-07-20T11:03:55.323000-04:00",
+            "ARN": "arn:aws:ssm:us-east-1:324320755747:parameter/joel.webb.labs/stelligent-u/lab11/joel.webb/Email",
+            "DataType": "text"
+        },
+        {
+            "Name": "/joel.webb.labs/stelligent-u/lab11/joel.webb/Name",
+            "Type": "String",
+            "Value": "Joel Webb",
+            "Version": 1,
+            "LastModifiedDate": "2022-07-20T11:03:41.405000-04:00",
+            "ARN": "arn:aws:ssm:us-east-1:324320755747:parameter/joel.webb.labs/stelligent-u/lab11/joel.webb/Name",
+            "DataType": "text"
+        },
+        {
+            "Name": "/joel.webb.labs/stelligent-u/lab11/joel.webb/StartDate",
+            "Type": "String",
+            "Value": "06-13-2022",
+            "Version": 1,
+            "LastModifiedDate": "2022-07-20T11:03:41.571000-04:00",
+            "ARN": "arn:aws:ssm:us-east-1:324320755747:parameter/joel.webb.labs/stelligent-u/lab11/joel.webb/StartDate",
+            "DataType": "text"
+        },
+        {
+            "Name": "/joel.webb.labs/stelligent-u/lab11/joel.webb/State",
+            "Type": "String",
+            "Value": "NC",
+            "Version": 1,
+            "LastModifiedDate": "2022-07-20T11:03:42.344000-04:00",
+            "ARN": "arn:aws:ssm:us-east-1:324320755747:parameter/joel.webb.labs/stelligent-u/lab11/joel.webb/State",
+            "DataType": "text"
+        },
+        {
+            "Name": "/joel.webb.labs/stelligent-u/lab11/joel.webb/Team",
+            "Type": "String",
+            "Value": "Engineering",
+            "Version": 1,
+            "LastModifiedDate": "2022-07-20T11:03:41.806000-04:00",
+            "ARN": "arn:aws:ssm:us-east-1:324320755747:parameter/joel.webb.labs/stelligent-u/lab11/joel.webb/Team",
+            "DataType": "text"
+        },
+        {
+            "Name": "/joel.webb.labs/stelligent-u/lab11/joel.webb/Timezone",
+            "Type": "String",
+            "Value": "EST",
+            "Version": 1,
+            "LastModifiedDate": "2022-07-20T11:03:42.046000-04:00",
+            "ARN": "arn:aws:ssm:us-east-1:324320755747:parameter/joel.webb.labs/stelligent-u/lab11/joel.webb/Timezone",
+            "DataType": "text"
+        },
+        {
+            "Name": "/joel.webb.labs/stelligent-u/lab11/joel.webb/Title",
+            "Type": "String",
+            "Value": "Engineer",
+            "Version": 1,
+            "LastModifiedDate": "2022-07-20T11:03:41.729000-04:00",
+            "ARN": "arn:aws:ssm:us-east-1:324320755747:parameter/joel.webb.labs/stelligent-u/lab11/joel.webb/Title",
+            "DataType": "text"
+        },
+        {
+            "Name": "/joel.webb.labs/stelligent-u/lab11/joel.webb/Username",
+            "Type": "String",
+            "Value": "joel.webb",
+            "Version": 1,
+            "LastModifiedDate": "2022-07-20T11:03:41.135000-04:00",
+            "ARN": "arn:aws:ssm:us-east-1:324320755747:parameter/joel.webb.labs/stelligent-u/lab11/joel.webb/Username",
+            "DataType": "text"
+        }
+    ]
+}
+
+```
 
 Use all 3 methods to read your parameters individually and to fetch the
 entire subtree with a single query.
@@ -120,6 +248,7 @@ entire subtree with a single query.
 
 _When you look at your stack in the CloudFormation console, can you find
 the values of your parameter resources there?_
+On the Parameters page yes.
 
 #### Lab 11.1.3: Integration with CloudFormation
 
