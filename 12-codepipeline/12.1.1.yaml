@@ -22,7 +22,7 @@ Parameters:
   Branch:
     Type: String
     AllowedPattern: '[A-Za-z0-9-]+'
-    Default: module12
+    Default: 12-codepipeline
 
   AppStackName:
     Type: String
