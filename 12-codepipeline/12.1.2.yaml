@@ -1,6 +1,6 @@
 ---
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Lab 12.1.1
+Description: Lab 12.1.2
 
 Parameters:
   GitHubToken:
