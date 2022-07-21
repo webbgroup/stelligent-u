@@ -18,9 +18,9 @@ Parameters:
     Type: AWS::SSM::Parameter::Value<String>
     Default: /joel.webb.labs/stelligent-u/lab11/joel.webb/Name
 
-  MiddleName:
-    Type: AWS::SSM::Parameter::Value<String>
-    Default: /joel.webb.labs/stelligent-u/lab11/joel.webb/MiddleName
+  #MiddleName:
+  #  Type: AWS::SSM::Parameter::Value<String>
+  #  Default: /joel.webb.labs/stelligent-u/lab11/joel.webb/MiddleName
 
   Title:
     Type: AWS::SSM::Parameter::Value<String>
@@ -112,7 +112,7 @@ Resources:
                 <h1>Automation for ${ParameterName}</h1>
                 <p>UserName: ${UserName}</p>
                 <p>Full Name: ${Name}</p>
-                <p>MiddleName: ${MiddleName}</p>
+                <p>MiddleName: $(aws ssm get-parameter --name /joel.webb.labs/stelligent-u/lab11/joel.webb/MiddleName --with-decryption --query Parameter.Value --output text)</p>
                 <p>UserName: ${UserName}</p>
                 <p>Title: ${Title}</p>
                 <p>Address: ${Address}, ${State}</p>
