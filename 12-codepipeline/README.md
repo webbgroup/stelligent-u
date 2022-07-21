@@ -92,6 +92,14 @@ and its minimal set of requisite resources:
 Deploy the Pipeline stack via the AWS CLI; its creation should
 automatically initiate the first Pipeline execution.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/12-codepipeline$ aws cloudformation --profile temp create-stack --stack-name Joels1201 --template-body file://12.1.1.yaml --parameters file://12.1.1.json --capabilities CAPABILITY_NAMED_IAM
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels1201/702680b0-0918-11ed-84eb-0a619c6ccc7f"
+}
+
+```
+
 #### Lab 12.1.2
 
 Add two new stages to your pipeline, utilizing CodeBuild:
