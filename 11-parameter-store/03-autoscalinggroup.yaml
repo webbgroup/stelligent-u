@@ -82,7 +82,9 @@ Resources:
           Fn::Sub: |
             #!/bin/bash -xe
 
-            amazon-linux-extras install nginx1.12
+            amazon-linux-extras install -y aws-cfn-bootstrap
+            amazon-linux-extras install -y nginx1
+            service nginx start
 
             # Install the files and packages from the metadata
             /opt/aws/bin/cfn-init -v \
@@ -97,33 +99,52 @@ Resources:
               --resource WebServersLC \
               --region ${AWS::Region}
 
-    Metadata:
-      'AWS::CloudFormation::Init':
-        configSets:
-          All:
-            - ConfigureStelligentProject
-        ConfigureStelligentProject:
-          packages:
-            yum:
-              nginx: []
-          files:
-            /usr/share/nginx/html/index.html:
-              content: !Sub |
-                <h1>Automation for ${ParameterName}</h1>
-                <p>UserName: ${UserName}</p>
-                <p>Full Name: ${Name}</p>
-                <p>MiddleName: $(aws ssm get-parameter --name /joel.webb.labs/stelligent-u/lab11/joel.webb/MiddleName --with-decryption --query Parameter.Value --output text)</p>
-                <p>UserName: ${UserName}</p>
-                <p>Title: ${Title}</p>
-                <p>Address: ${Address}, ${State}</p>
-                <p>Time Zone: ${Timezone}</p>
-                <p>Team: ${Team}</p>
-                <p>Start Date ${StartDate}</p>
-              mode: '000644'
-              owner: root
-              group: root
-          services:
-            sysvinit:
-              nginx:
-                enabled: 'true'
-                ensureRunning: 'true'
+            # Attempted this as per Laetia and Allen to no avail.
+            #
+            # The following DOESNT WORK either, as it would still need credentals to retreive it.
+
+            middlename=`aws ssm get-parameter --name /joel.webb.labs/stelligent-u/lab11/joel.webb/MiddleName --with-decryption --query Parameter.Value --output text`
+
+            echo <<< EOL
+            <h1>Automation for ${ParameterName}</h1>
+            <p>UserName: ${UserName}</p>
+            <p>Full Name: ${Name}</p>
+            <p>MiddleName: $middlename</p>
+            <p>UserName: ${UserName}</p>
+            <p>Title: ${Title}</p>
+            <p>Address: ${Address}, ${State}</p>
+            <p>Time Zone: ${Timezone}</p>
+            <p>Team Name: ${Team}</p>
+            <p>Start Date ${StartDate}</p>
+            EOL >> /usr/share/nginx/html/index.html;
+
+#    Metadata:
+#      'AWS::CloudFormation::Init':
+#        configSets:
+#          All:
+#            - ConfigureStelligentProject
+#        ConfigureStelligentProject:
+#          packages:
+#            yum:
+#              nginx: []
+#          files:
+#            /usr/share/nginx/html/index.html:
+#              content: !Sub |
+#                <h1>Automation for ${ParameterName}</h1>
+#                <p>UserName: ${UserName}</p>
+#                <p>Full Name: ${Name}</p>
+#                <p>MiddleName: $(aws ssm get-parameter --name /joel.webb.labs/stelligent-u/lab11/joel.webb/MiddleName --with-decryption --query Parameter.Value --output text)</p>
+#                <p>UserName: ${UserName}</p>
+#                <p>Title: ${Title}</p>
+#                <p>Address: ${Address}, ${State}</p>
+#                <p>Time Zone: ${Timezone}</p>
+#                <p>Team: ${Team}</p>
+#                <p>Start Date ${StartDate}</p>
+#              mode: '000644'
+#              owner: root
+#              group: root
+#          services:
+#            sysvinit:
+#              nginx:
+#                enabled: 'true'
+#                ensureRunning: 'true'
