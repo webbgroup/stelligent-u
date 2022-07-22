@@ -169,6 +169,14 @@ you hard-coded any of the following:_
 
 - anything else that might enhance portability
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/12-codepipeline$ aws cloudformation --profile temp create-stack --stack-name Joels1201 --template-body file://12.1.2.yaml --parameters file://12.1.1.json --capabilities CAPABILITY_NAMED_IAM
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels1201/fe51d1b0-09bc-11ed-8186-129312f699c3"
+}
+
+```
+
 #### Task
 
 Delete your pipeline stack and leave your bucket stack alone. Once the
@@ -180,6 +188,9 @@ pipeline stack and use the created roles to recreate the missing role
 for your orphaned bucket stack. To help avoid this in the future it's a
 good idea to define your roles in a separate stack and use the outputs
 in your other stacks.
+
+Correct, but was able to remove via versioning, then empty the bucket, then delete the bucket.
+
 
 ## Lesson 12.2: Pipelines Support Infrastructure as Code
 
@@ -231,7 +242,17 @@ Use the template:
 - Create a stack using this template to ensure it functions as
   expected
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/12-codepipeline$ aws cloudformation --profile temp create-stack --stack-name Joels1221 --template-body file://12.2.1.yaml --capabilities CAPABILITY_NAMED_IAM
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels1221/9e2cc630-09d2-11ed-aa6f-1277a47e4127"
+}
+```
+
 - Delete this stack once the template is working.
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/12-codepipeline$ aws cloudformation --profile temp delete-stack --stack-name Joels1221
+```
 
 #### Lab 12.2.2
 
