@@ -11,12 +11,9 @@ Resources:
   # AWS-DOC https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-dynamodb-table.html
   EmployeesDDBTable:
     Type: AWS::DynamoDB::Table
-    Properties: 
+    Properties:
       TableName: !Ref Employees
-      AttributeDefinitions: 
-        -
-          AttributeName: "ID"
-          AttributeType: "S"
+      AttributeDefinitions:
         -
           AttributeName: "Album"
           AttributeType: "S"
@@ -29,17 +26,16 @@ Resources:
         -
           AttributeName: "NumberOfSongs"
           AttributeType: "N"
-      KeySchema: 
+      KeySchema:
         -
-          AttributeName: "ID"
+          AttributeName: "Album"
           KeyType: "HASH"
         -
           AttributeName: "Artist"
           KeyType: "RANGE"
-      #ProvisionedThroughput:
-      #  ReadCapacityUnits: 5
-      #  WriteCapacityUnits: 5
-      BillingMode: "PAY_PER_REQUEST"
+      ProvisionedThroughput:
+        ReadCapacityUnits: "5"
+        WriteCapacityUnits: "5"
       GlobalSecondaryIndexes:
         -
           IndexName: "myGSI"
@@ -54,6 +50,10 @@ Resources:
             NonKeyAttributes:
               - "Album"
               - "NumberOfSongs"
+            ProjectionType: "INCLUDE"
+          ProvisionedThroughput:
+            ReadCapacityUnits: "5"
+            WriteCapacityUnits: "5"
         -
           IndexName: "myGSI2"
           KeySchema:
@@ -68,9 +68,9 @@ Resources:
               - "Album"
               - "Artist"
             ProjectionType: "INCLUDE"
-      #    ProvisionedThroughput:
-      #      ReadCapacityUnits: "5"
-      #      WriteCapacityUnits: "5"
+          ProvisionedThroughput:
+            ReadCapacityUnits: "5"
+            WriteCapacityUnits: "5"
       LocalSecondaryIndexes:
         -
           IndexName: "myLSI"
