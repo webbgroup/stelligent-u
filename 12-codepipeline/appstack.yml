@@ -5,10 +5,10 @@ Description: App stack for module 12.2
 Parameters:
   PartsTableName:
     Type: String
-    Default: AllenF-Module122-BikeParts
+    Default: Joels-Module122-Employees
 
 Resources:
-  BikePartsDDBTable:
+  EmployeesDDBTable:
     Type: AWS::DynamoDB::Table
     Properties: 
       TableName: !Ref PartsTableName
@@ -39,11 +39,11 @@ Resources:
 
 Outputs:
   PartsTableName:
-    Value: !Ref BikePartsDDBTable
+    Value: !Ref EmployeesDDBTable
     Export:
-      Name: AllenF122PartsTableName
+      Name: Joels-12-2-PartsTableName
 
   PartsTableArn:
-    Value: !GetAtt BikePartsDDBTable.Arn
+    Value: !GetAtt EmployeesDDBTable.Arn
     Export:
-      Name: AllenF122PartsTableArn
+      Name: Joels-12-2-PartsTableArn
