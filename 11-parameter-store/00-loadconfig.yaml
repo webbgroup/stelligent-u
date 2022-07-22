@@ -1,0 +1,123 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description:
+  Joels Parameter Stack
+Parameters:
+  Username:
+    Type: String
+    Default: JoeShmoe
+    MaxLength: 15
+    MinLength: 5
+#    AllowedPattern: '/[^a-zA-Z0-9\.\-_]+/'
+    AllowedPattern: '^[a-zA-Z0-9\._-]{1,15}$'
+  Name:
+    Type: String
+    Default: Joe_Shmoe
+    MaxLength: 15
+  Email:
+    Type: String
+    Default: 1234@stelligent.com
+    MaxLength: 25
+    AllowedPattern: '^[^\s@]+@[^\s@]+\.[^\s@]+'
+  Title:
+    Type: String
+    Default: Engineer
+    MaxLength: 20
+  Address:
+    Type: String
+    Default: 123_Main_Street
+    MaxLength: 25
+  State:
+    Type: String
+    Default: NC
+    MaxLength: 2
+  Team:
+    Type: String
+    Default: Engineering
+    AllowedValues:
+      - Engineering
+      - Development
+      - Operations
+    MaxLength: 12
+  Timezone:
+    Type: String
+    Default: EST
+    AllowedValues:
+      - EST
+      - CST
+      - MST
+      - PST
+    MaxLength: 3
+  StartDate:
+    Type: String
+    Default: 01-01-2000
+    AllowedPattern: '^(0[1-9]|1[0-2])(\/|-)([0-3][0-9])(\/|-)([0-9]{4})$'
+    MaxLength: 10
+
+Resources:
+  EngineerUserName:
+    # AWS::SSM::#AWS-DOC https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ssm-parameter.html
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Name: !Sub /joel.webb.labs/stelligent-u/lab11/${Username}/Username
+      Type: String
+      Value: !Ref Username
+  EngineerName:
+    # AWS::SSM::#AWS-DOC https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ssm-parameter.html
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Name: !Sub /joel.webb.labs/stelligent-u/lab11/${Username}/Name
+      Type: String
+      Value: !Ref Name
+  EngineerEmail:
+    # AWS::SSM::#AWS-DOC https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ssm-parameter.html
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Name: !Sub /joel.webb.labs/stelligent-u/lab11/${Username}/Email
+      Type: String
+      Value: !Ref Email
+  EngineerTitle:
+    # AWS::SSM::#AWS-DOC https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ssm-parameter.html
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Name: !Sub /joel.webb.labs/stelligent-u/lab11/${Username}/Title
+      Type: String
+      Value: !Ref Title
+  EngineerAddress:
+    # AWS::SSM::#AWS-DOC https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ssm-parameter.html
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Name: !Sub /joel.webb.labs/stelligent-u/lab11/${Username}/Address
+      Type: String
+      Value: !Ref Address
+  EngineerState:
+    # AWS::SSM::#AWS-DOC https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ssm-parameter.html
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Name: !Sub /joel.webb.labs/stelligent-u/lab11/${Username}/State
+      Type: String
+      Value: !Ref State
+  EngineerTeam:
+    # AWS::SSM::#AWS-DOC https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ssm-parameter.html
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Name: !Sub /joel.webb.labs/stelligent-u/lab11/${Username}/Team
+      Type: String
+      Value: !Ref Team
+  EngineerTimezone:
+    # AWS::SSM::#AWS-DOC https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ssm-parameter.html
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Name: !Sub /joel.webb.labs/stelligent-u/lab11/${Username}/Timezone
+      Type: String
+      Value: !Ref Timezone
+  EngineerStartDate:
+    # AWS::SSM::#AWS-DOC https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ssm-parameter.html
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Name: !Sub /joel.webb.labs/stelligent-u/lab11/${Username}/StartDate
+      Type: String
+      Value: !Ref StartDate
+
+#Outputs:
+#  set of outputs

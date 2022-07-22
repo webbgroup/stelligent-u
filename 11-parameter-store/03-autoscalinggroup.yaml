@@ -1,0 +1,150 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+  ParameterName:
+    # AWS-DOC https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ssm-parameter.html
+    # Note to Joel, See how we are calling the Name of the object with ::Name?
+    Type: AWS::SSM::Parameter::Name
+    Default: /joel.webb.labs/stelligent-u/lab11/joel.webb/Username
+    Description: "User Name For Stelligent Engineers"
+
+  UserName:
+    # Note to Joel, See how we are calling the Value of the object with adding ::Value?
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /joel.webb.labs/stelligent-u/lab11/joel.webb/Username
+
+  Name:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /joel.webb.labs/stelligent-u/lab11/joel.webb/Name
+
+  #MiddleName:
+  #  Type: AWS::SSM::Parameter::Value<String>
+  #  Default: /joel.webb.labs/stelligent-u/lab11/joel.webb/MiddleName
+
+  Title:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /joel.webb.labs/stelligent-u/lab11/joel.webb/Title
+
+  Address:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /joel.webb.labs/stelligent-u/lab11/joel.webb/Address
+
+  State:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /joel.webb.labs/stelligent-u/lab11/joel.webb/State
+
+  Timezone:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /joel.webb.labs/stelligent-u/lab11/joel.webb/Timezone
+
+  Team:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /joel.webb.labs/stelligent-u/lab11/joel.webb/Team
+
+  StartDate:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /joel.webb.labs/stelligent-u/lab11/joel.webb/StartDate
+
+Resources:
+  WebServerAsg:
+    #AWS-DOC http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-group.html
+    Type: 'AWS::AutoScaling::AutoScalingGroup'
+    Properties:
+      AutoScalingGroupName: 'AutomationBoxes'
+      VPCZoneIdentifier:
+        - !ImportValue joels-subnet1
+        - !ImportValue joels-subnet2
+      DesiredCapacity: '3'
+      HealthCheckType: 'ELB'
+      HealthCheckGracePeriod: 30
+      LaunchConfigurationName: !Ref WebServersLC
+      MaxSize: '3'
+      MinSize: '3'
+      TargetGroupARNs:
+        - !ImportValue joels-target-group
+      Tags:
+        - Key: Name
+          PropagateAtLaunch: true
+          Value: joels-aws-linux-asg
+
+  WebServersLC:
+    #AWS-DOC http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-launchconfig.html
+    Type: 'AWS::AutoScaling::LaunchConfiguration'
+    Properties:
+      ImageId: ami-0cff7528ff583bf9a
+      InstanceType: 't2.micro'
+      LaunchConfigurationName: 'SimpleWebServerLC'
+      SecurityGroups:
+        - !ImportValue joels-sg-http
+      UserData:
+        Fn::Base64:
+          Fn::Sub: |
+            #!/bin/bash -xe
+
+            amazon-linux-extras install -y aws-cfn-bootstrap
+            amazon-linux-extras install -y nginx1
+            service nginx start
+
+            # Install the files and packages from the metadata
+            /opt/aws/bin/cfn-init -v \
+              --stack ${AWS::StackName} \
+              --resource WebServersLC \
+              --configsets All \
+              --region ${AWS::Region}
+
+            # Signal the status from cfn-init
+            /opt/aws/bin/cfn-signal -e $? \
+              --stack ${AWS::StackName} \
+              --resource WebServersLC \
+              --region ${AWS::Region}
+
+            # Attempted this as per Laetia and Allen to no avail.
+            #
+            # The following DOESNT WORK either, as it would still need credentals to retreive it.
+
+            middlename=`aws ssm get-parameter --name /joel.webb.labs/stelligent-u/lab11/joel.webb/MiddleName --with-decryption --query Parameter.Value --output text`
+
+            echo <<< EOL
+            <h1>Automation for ${ParameterName}</h1>
+            <p>UserName: ${UserName}</p>
+            <p>Full Name: ${Name}</p>
+            <p>MiddleName: $middlename</p>
+            <p>UserName: ${UserName}</p>
+            <p>Title: ${Title}</p>
+            <p>Address: ${Address}, ${State}</p>
+            <p>Time Zone: ${Timezone}</p>
+            <p>Team Name: ${Team}</p>
+            <p>Start Date ${StartDate}</p>
+            EOL >> /usr/share/nginx/html/index.html;
+
+#    Metadata:
+#      'AWS::CloudFormation::Init':
+#        configSets:
+#          All:
+#            - ConfigureStelligentProject
+#        ConfigureStelligentProject:
+#          packages:
+#            yum:
+#              nginx: []
+#          files:
+#            /usr/share/nginx/html/index.html:
+#              content: !Sub |
+#                <h1>Automation for ${ParameterName}</h1>
+#                <p>UserName: ${UserName}</p>
+#                <p>Full Name: ${Name}</p>
+#                <p>MiddleName: $(aws ssm get-parameter --name /joel.webb.labs/stelligent-u/lab11/joel.webb/MiddleName --with-decryption --query Parameter.Value --output text)</p>
+#                <p>UserName: ${UserName}</p>
+#                <p>Title: ${Title}</p>
+#                <p>Address: ${Address}, ${State}</p>
+#                <p>Time Zone: ${Timezone}</p>
+#                <p>Team: ${Team}</p>
+#                <p>Start Date ${StartDate}</p>
+#              mode: '000644'
+#              owner: root
+#              group: root
+#          services:
+#            sysvinit:
+#              nginx:
+#                enabled: 'true'
+#                ensureRunning: 'true'

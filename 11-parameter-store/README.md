@@ -109,9 +109,137 @@ Look at ways to read your parameter data.
   and
   [GetParametersByPath](https://boto3.readthedocs.io/en/latest/reference/services/ssm.html#SSM.Client.get_parameters_by_path)
 
+
+
 - You can invoke those same API queries through the
   [aws ssm](https://docs.aws.amazon.com/cli/latest/reference/ssm/index.html)
   CLI
+
+get-parameter
+```
+aws ssm get-parameter --name '/joel.webb.labs/stelligent-u/lab11/joel.webb/Address' --profile temp
+{
+    "Parameter": {
+        "Name": "/joel.webb.labs/stelligent-u/lab11/joel.webb/Address",
+        "Type": "String",
+        "Value": "1234 Main Street",
+        "Version": 1,
+        "LastModifiedDate": "2022-07-20T11:03:42.062000-04:00",
+        "ARN": "arn:aws:ssm:us-east-1:324320755747:parameter/joel.webb.labs/stelligent-u/lab11/joel.webb/Address",
+        "DataType": "text"
+    }
+}
+```
+
+Another search
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/11-parameter-store$ aws ssm get-parameter --name '/joel.webb.labs/stelligent-u/lab11/joel.webb/Username' --profile temp
+{
+    "Parameter": {
+        "Name": "/joel.webb.labs/stelligent-u/lab11/joel.webb/Username",
+        "Type": "String",
+        "Value": "joel.webb",
+        "Version": 1,
+        "LastModifiedDate": "2022-07-20T11:03:41.135000-04:00",
+        "ARN": "arn:aws:ssm:us-east-1:324320755747:parameter/joel.webb.labs/stelligent-u/lab11/joel.webb/Username",
+        "DataType": "text"
+    }
+}
+
+```
+
+Search by path
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/11-parameter-store$ aws ssm get-parameters-by-path --path '/joel.webb.labs/stelligent-u/lab11/joel.webb/' --profile temp
+{
+    "Parameters": [
+        {
+            "Name": "/joel.webb.labs/stelligent-u/lab11/joel.webb/Address",
+            "Type": "String",
+            "Value": "1234 Main Street",
+            "Version": 1,
+            "LastModifiedDate": "2022-07-20T11:03:42.062000-04:00",
+            "ARN": "arn:aws:ssm:us-east-1:324320755747:parameter/joel.webb.labs/stelligent-u/lab11/joel.webb/Address",
+            "DataType": "text"
+        },
+        {
+            "Name": "/joel.webb.labs/stelligent-u/lab11/joel.webb/Email",
+            "Type": "String",
+            "Value": "1234@stelligent.com",
+            "Version": 1,
+            "LastModifiedDate": "2022-07-20T11:03:55.323000-04:00",
+            "ARN": "arn:aws:ssm:us-east-1:324320755747:parameter/joel.webb.labs/stelligent-u/lab11/joel.webb/Email",
+            "DataType": "text"
+        },
+        {
+            "Name": "/joel.webb.labs/stelligent-u/lab11/joel.webb/Name",
+            "Type": "String",
+            "Value": "Joel Webb",
+            "Version": 1,
+            "LastModifiedDate": "2022-07-20T11:03:41.405000-04:00",
+            "ARN": "arn:aws:ssm:us-east-1:324320755747:parameter/joel.webb.labs/stelligent-u/lab11/joel.webb/Name",
+            "DataType": "text"
+        },
+        {
+            "Name": "/joel.webb.labs/stelligent-u/lab11/joel.webb/StartDate",
+            "Type": "String",
+            "Value": "06-13-2022",
+            "Version": 1,
+            "LastModifiedDate": "2022-07-20T11:03:41.571000-04:00",
+            "ARN": "arn:aws:ssm:us-east-1:324320755747:parameter/joel.webb.labs/stelligent-u/lab11/joel.webb/StartDate",
+            "DataType": "text"
+        },
+        {
+            "Name": "/joel.webb.labs/stelligent-u/lab11/joel.webb/State",
+            "Type": "String",
+            "Value": "NC",
+            "Version": 1,
+            "LastModifiedDate": "2022-07-20T11:03:42.344000-04:00",
+            "ARN": "arn:aws:ssm:us-east-1:324320755747:parameter/joel.webb.labs/stelligent-u/lab11/joel.webb/State",
+            "DataType": "text"
+        },
+        {
+            "Name": "/joel.webb.labs/stelligent-u/lab11/joel.webb/Team",
+            "Type": "String",
+            "Value": "Engineering",
+            "Version": 1,
+            "LastModifiedDate": "2022-07-20T11:03:41.806000-04:00",
+            "ARN": "arn:aws:ssm:us-east-1:324320755747:parameter/joel.webb.labs/stelligent-u/lab11/joel.webb/Team",
+            "DataType": "text"
+        },
+        {
+            "Name": "/joel.webb.labs/stelligent-u/lab11/joel.webb/Timezone",
+            "Type": "String",
+            "Value": "EST",
+            "Version": 1,
+            "LastModifiedDate": "2022-07-20T11:03:42.046000-04:00",
+            "ARN": "arn:aws:ssm:us-east-1:324320755747:parameter/joel.webb.labs/stelligent-u/lab11/joel.webb/Timezone",
+            "DataType": "text"
+        },
+        {
+            "Name": "/joel.webb.labs/stelligent-u/lab11/joel.webb/Title",
+            "Type": "String",
+            "Value": "Engineer",
+            "Version": 1,
+            "LastModifiedDate": "2022-07-20T11:03:41.729000-04:00",
+            "ARN": "arn:aws:ssm:us-east-1:324320755747:parameter/joel.webb.labs/stelligent-u/lab11/joel.webb/Title",
+            "DataType": "text"
+        },
+        {
+            "Name": "/joel.webb.labs/stelligent-u/lab11/joel.webb/Username",
+            "Type": "String",
+            "Value": "joel.webb",
+            "Version": 1,
+            "LastModifiedDate": "2022-07-20T11:03:41.135000-04:00",
+            "ARN": "arn:aws:ssm:us-east-1:324320755747:parameter/joel.webb.labs/stelligent-u/lab11/joel.webb/Username",
+            "DataType": "text"
+        }
+    ]
+}
+
+```
 
 Use all 3 methods to read your parameters individually and to fetch the
 entire subtree with a single query.
@@ -120,6 +248,7 @@ entire subtree with a single query.
 
 _When you look at your stack in the CloudFormation console, can you find
 the values of your parameter resources there?_
+On the Parameters page yes.
 
 #### Lab 11.1.3: Integration with CloudFormation
 
@@ -128,6 +257,27 @@ CloudFormation can use Parameter Store keys and values as
 This gives us an incredibly convenient way to maintain stack parameters
 without the hassle of updating JSON files and keeping them in sync
 through S3 or git repositories.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/11-parameter-store$ aws cloudformation --profile temp create-stack --stack-name Joels1101 --template-body file://01-vpc.yaml
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels1101/720210d0-084f-11ed-884e-0ae60f7e9549"
+}
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/11-parameter-store$ aws cloudformation --profile temp create-stack --stack-name Joels1102 --template-body file://02-autoscalinggroup.yaml
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels1102/de0c3ab0-0851-11ed-98da-0a9fd7ef9ac1"
+}
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/11-parameter-store$ aws cloudformation --profile temp create-stack --stack-name Joels1103 --template-body file://03-load-balancer.yaml
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels1102/b9449220-0853-11ed-94d3-0e3835ee0445"
+}
+```
 
 Make a copy of the original EC2 stack from the Load Balancing topic.
 Instead of creating a web server with a page that says "Automation for
@@ -142,6 +292,14 @@ the People", make one that describes an engineer.
 
 - Show the value of each of those stack parameters in the web page
   that nginx serves.
+
+```
+aws cloudformation --profile temp create-stack --stack-name Joels1100 --template-body file://00-loadconfig.yaml
+aws cloudformation --profile temp create-stack --stack-name Joels1101 --template-body file://01-vpc.yaml
+aws cloudformation --profile temp create-stack --stack-name Joels1102 --template-body file://02-load-balancer.yaml
+aws cloudformation --profile temp create-stack --stack-name Joels1103 --template-body file://03-autoscalinggroup.yaml
+```
+
 
 When you launch your stack, make sure the web page shows the values of
 all the keys that you set in lab 1.
@@ -160,6 +318,8 @@ document linked in the previous paragraph:
 > values are set when the stack is created or updated, so they might
 > differ from the latest values in Parameter Store.
 
+They look correct
+
 #### Lab 11.1.4: Secure Strings
 
 One of the features that makes Parameter Store *so* compelling is the
@@ -175,8 +335,17 @@ stack from lab 1.
 First, use the awscli to store the middle name of an engineer in the
 hierarchy you created earlier.
 
+
 - The middle name should be a
   [Secure String](https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-paramstore-about.html#sysman-paramstore-securestring).
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/11-parameter-store$ aws ssm put-parameter --profile temp --name '/joel.webb.labs/stelligent-u/lab11/joel.webb/MiddleName' --value "Bryan" --type SecureString
+{
+    "Version": 1,
+    "Tier": "Standard"
+}
+```
 
 - Store the info under the key "middle-name" within the given
   engineer's hierarchy.
@@ -186,8 +355,59 @@ hierarchy you created earlier.
   [generating a new one](https://docs.aws.amazon.com/cli/latest/reference/kms/create-key.html)
   if you have to.
 
+Created the key here on the website GUI:
+
+Key: 5586844c-6fd3-40ba-a0db-1bef2ee2204c
+ARN:arn:aws:kms:us-east-1:324320755747:key/5586844c-6fd3-40ba-a0db-1bef2ee2204c
+Name: joels-secret-key
+
+Then I deleted it and recreated it.
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/11-parameter-store$ aws ssm delete-parameter --profile temp --name '/joel.webb.labs/stelligent-u/lab11/joel.webb/MiddleName'
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/11-parameter-store$ aws ssm put-parameter --profile temp --name '/joel.webb.labs/stelligent-u/lab11/joel.webb/MiddleName' --value "Bryan" --type SecureString --key-id 5586844c-6fd3-40ba-a0db-1bef2ee2204c
+{
+    "Version": 1,
+    "Tier": "Standard"
+}
+```
+
+Validation: Looks like it is definitely encrypted
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/11-parameter-store$ aws ssm get-parameter --profile temp --name '/joel.webb.labs/stelligent-u/lab11/joel.webb/MiddleName'
+{
+    "Parameter": {
+        "Name": "/joel.webb.labs/stelligent-u/lab11/joel.webb/MiddleName",
+        "Type": "SecureString",
+        "Value": "AQICAHiAY3ofQNCClFaq4zl9TyRk+hqBIUgifYshlfuVgd1q6wHmkw2M6RNz8kyCoPEgipBGAAAAYzBhBgkqhkiG9w0BBwagVDBSAgEAME0GCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQM8axhwvQ/NAJ4LSoWAgEQgCAKlokAQluyiDZOqzVuEcAZt3y4X736MuG6hQthikgXjg==",
+        "Version": 1,
+        "LastModifiedDate": "2022-07-20T15:04:19.078000-04:00",
+        "ARN": "arn:aws:ssm:us-east-1:324320755747:parameter/joel.webb.labs/stelligent-u/lab11/joel.webb/MiddleName",
+        "DataType": "text"
+    }
+}
+
+```
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/11-parameter-store$ aws ssm get-parameter --profile temp --name '/joel.webb.labs/stelligent-u/lab11/joel.webb/MiddleName' --with-decryption
+{
+    "Parameter": {
+        "Name": "/joel.webb.labs/stelligent-u/lab11/joel.webb/MiddleName",
+        "Type": "SecureString",
+        "Value": "Bryan",
+        "Version": 1,
+        "LastModifiedDate": "2022-07-20T15:04:19.078000-04:00",
+        "ARN": "arn:aws:ssm:us-east-1:324320755747:parameter/joel.webb.labs/stelligent-u/lab11/joel.webb/MiddleName",
+        "DataType": "text"
+    }
+}
+
+```
+
 Then, in your template, look up the value of "middle-name" and add it to
 the web page served by nginx.
+
 
 ### Retrospective 11.1
 
