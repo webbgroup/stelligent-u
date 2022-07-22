@@ -73,9 +73,9 @@ Resources:
         Image: aws/codebuild/amazonlinux2-x86_64-standard:4.0
         Type: LINUX_CONTAINER
         EnvironmentVariables:
-          Name: S3_BUCKET
-          Type: PLAINTEXT
-          Value: !Ref StackBucketName
+          - Name: S3_BUCKET
+            Type: PLAINTEXT
+            Value: !Ref StackBucketName
       ServiceRole: !Ref CodeBuildRole
 
   MyCodePipeline:
