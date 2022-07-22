@@ -36,9 +36,10 @@ Resources:
         -
           AttributeName: "Artist"
           KeyType: "RANGE"
-      ProvisionedThroughput:
-        ReadCapacityUnits: 5
-        WriteCapacityUnits: 5
+      #ProvisionedThroughput:
+      #  ReadCapacityUnits: 5
+      #  WriteCapacityUnits: 5
+      BillingMode: "PAY_PER_REQUEST"
       GlobalSecondaryIndexes:
         -
           IndexName: "myGSI"
@@ -67,9 +68,9 @@ Resources:
               - "Album"
               - "Artist"
             ProjectionType: "INCLUDE"
-          ProvisionedThroughput:
-            ReadCapacityUnits: "5"
-            WriteCapacityUnits: "5"
+      #    ProvisionedThroughput:
+      #      ReadCapacityUnits: "5"
+      #      WriteCapacityUnits: "5"
       LocalSecondaryIndexes:
         -
           IndexName: "myLSI"

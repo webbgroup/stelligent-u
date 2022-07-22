@@ -324,6 +324,15 @@ and the Deploy stage should consist of two actions:
   - this *actually applies the changes* that were laid out when the
     ChangeSet was created
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/12-codepipeline$ aws cloudformation --profile temp create-stack --stack-name Joels1222 --template-body file://12.2.2.yaml --parameters file://12.1.1.json --capabilities CAPABILITY_NAMED_IAM
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels1222/bbdfa910-09f8-11ed-9970-0e40f5ee4e7d"
+}
+```
+
+Created changes to the DB. It did error out as expected.
+
 #### Lab 12.2.3
 
 The previous Lab used a combination of *creating* and then *executing* a
