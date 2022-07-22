@@ -134,6 +134,8 @@ https://us-east-1.console.aws.amazon.com/codesuite/codepipeline/pipelines?region
 _Is executing a CloudFormation template a legitimate example of an
 "application"? Provide an explanation._
 
+Somewhat, there are other methodologies that still need to happen for a standard application
+
 #### Question: Pipeline Template
 
 _Is your Pipeline template portable? Update and re-create your Pipeline if
@@ -141,9 +143,29 @@ you hard-coded any of the following:_
 
 - the name of the 'application' stack
 
+```
+  AppStackName:
+    Type: String
+    AllowedPattern: '[A-Za-z0-9-]+'
+    Default: joels-module12-app
+```
+
 - the repository name, the branch to track, or personal access token
 
+```
+  Repo:
+    Type: String
+    AllowedPattern: '[A-Za-z0-9-]+'
+    Default: stelligent-u
+```
+
 - the S3 bucket name
+
+```
+  StackBucketName:
+    Type: String
+    Default: joels-module12.codepipeline.bucket
+```
 
 - anything else that might enhance portability
 
