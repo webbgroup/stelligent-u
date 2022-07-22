@@ -123,6 +123,10 @@ them, including the CFN resources you need:
 
 - the CodeBuild resources themselves, including build specs
 
+See here:
+https://us-east-1.console.aws.amazon.com/codesuite/codepipeline/pipelines?region=us-east-1&pipelines-meta=eyJmIjp7InRleHQiOiIifSwicyI6eyJwcm9wZXJ0eSI6InVwZGF0ZWQiLCJkaXJlY3Rpb24iOi0xfSwibiI6MTAsImkiOjB9
+
+
 ### Retrospective 12.1
 
 #### Question: CloudFormation Template
