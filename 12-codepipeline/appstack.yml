@@ -36,7 +36,7 @@ Resources:
         -
           AttributeName: "Artist"
           KeyType: "RANGE"
-      ProvisionedThroughput: 
+      ProvisionedThroughput:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
       GlobalSecondaryIndexes:
@@ -85,6 +85,9 @@ Resources:
               - "Artist"
               - "NumberOfSongs"
             ProjectionType: "INCLUDE"
+          ProvisionedThroughput:
+            ReadCapacityUnits: "5"
+            WriteCapacityUnits: "5"
 
   DdbTableRole:
     # AWS-DOC https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html
