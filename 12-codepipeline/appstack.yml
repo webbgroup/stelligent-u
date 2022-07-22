@@ -3,26 +3,28 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: App stack for module 12.2
 
 Parameters:
-  PartsTableName:
+  Employees:
     Type: String
-    Default: Joels-Module122-Employees
+    Default: Joels-Module12-2-2-Employees
 
 Resources:
+  # AWS-DOC https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-dynamodb-table.html
   EmployeesDDBTable:
     Type: AWS::DynamoDB::Table
     Properties: 
-      TableName: !Ref PartsTableName
+      TableName: !Ref Employees
       AttributeDefinitions: 
-        - AttributeName: ID3
+        - AttributeName: ID
           AttributeType: S
       KeySchema: 
-        - AttributeName: ID3
+        - AttributeName: ID
           KeyType: HASH
       ProvisionedThroughput: 
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
 
   DdbTableRole:
+    # AWS-DOC https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
