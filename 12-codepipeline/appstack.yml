@@ -14,14 +14,77 @@ Resources:
     Properties: 
       TableName: !Ref Employees
       AttributeDefinitions: 
-        - AttributeName: ID
-          AttributeType: S
+        -
+          AttributeName: "ID"
+          AttributeType: "S"
+        -
+          AttributeName: "Album"
+          AttributeType: "S"
+        -
+          AttributeName: "Artist"
+          AttributeType: "S"
+        -
+          AttributeName: "Sales"
+          AttributeType: "N"
+        -
+          AttributeName: "NumberOfSongs"
+          AttributeType: "N"
       KeySchema: 
-        - AttributeName: ID
-          KeyType: HASH
+        -
+          AttributeName: "ID"
+          KeyType: "HASH"
+        -
+          AttributeName: "Artist"
+          KeyType: "RANGE"
       ProvisionedThroughput: 
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
+      GlobalSecondaryIndexes:
+        -
+          IndexName: "myGSI"
+          KeySchema:
+            -
+              AttributeName: "Sales"
+              KeyType: "HASH"
+            -
+              AttributeName: "Artist"
+              KeyType: "RANGE"
+          Projection:
+            NonKeyAttributes:
+              - "Album"
+              - "NumberOfSongs"
+        -
+          IndexName: "myGSI2"
+          KeySchema:
+            -
+              AttributeName: "NumberOfSongs"
+              KeyType: "HASH"
+            -
+              AttributeName: "Sales"
+              KeyType: "RANGE"
+          Projection:
+            NonKeyAttributes:
+              - "Album"
+              - "Artist"
+            ProjectionType: "INCLUDE"
+          ProvisionedThroughput:
+            ReadCapacityUnits: "5"
+            WriteCapacityUnits: "5"
+      LocalSecondaryIndexes:
+        -
+          IndexName: "myLSI"
+          KeySchema:
+            -
+              AttributeName: "Album"
+              KeyType: "HASH"
+            -
+              AttributeName: "Sales"
+              KeyType: "RANGE"
+          Projection:
+            NonKeyAttributes:
+              - "Artist"
+              - "NumberOfSongs"
+            ProjectionType: "INCLUDE"
 
   DdbTableRole:
     # AWS-DOC https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html

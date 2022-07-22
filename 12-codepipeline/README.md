@@ -260,14 +260,56 @@ Create a pipeline that leverages CodePipeline and CodeBuild to deploy
 the application stack (the table you just designed), with these
 requirements:
 
+
 - the pipeline should use a [CloudFormation ChangeSet](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-changesets.html)
   to either deploy or update the application stack
 
 - the *first* time the pipeline is executed, it should create the
   stack using a 'CREATE' type of ChangeSet
 
+
+```
+        - Name: DeployChangeSet
+          ActionTypeId:
+            Category: Deploy
+            Owner: AWS
+            Provider: CloudFormation
+            Version: '1'
+          InputArtifacts:
+            - Name: SourceCode
+          Configuration:
+            ActionMode: CHANGE_SET_EXECUTE
+            ChangeSetName: IncomingChanges
+            Capabilities: CAPABILITY_IAM
+            RoleArn: !GetAtt CfnRole.Arn
+            StackName: !Ref AppStackName
+          RunOrder: 3
+```
+
 - each *subsequent* pipeline execution should update the stack, again
   using an 'UPDATE' type of ChangeSet
+
+```
+      - Name: DeployApp
+        Actions:
+        - Name: CreateChangeSet
+          ActionTypeId:
+            Category: Deploy
+            Owner: AWS
+            Provider: CloudFormation
+            Version: '1'
+          InputArtifacts:
+            - Name: SourceCode
+          Configuration:
+            ActionMode: CHANGE_SET_REPLACE
+            ChangeSetName: IncomingChanges
+            Capabilities: CAPABILITY_IAM
+            RoleArn: !GetAtt CfnRole.Arn
+            StackName: !Ref AppStackName
+            TemplatePath: !Sub SourceCode::${AppStackTemplatePath}
+          RunOrder: 1
+```
+
 
 The Pipeline should therefore have a Source stage and a Deploy stage,
 and the Deploy stage should consist of two actions:
