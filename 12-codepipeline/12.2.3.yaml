@@ -40,6 +40,96 @@ Resources:
       VersioningConfiguration:
         Status: Enabled
 
+  ## Suggested
+  SnsTopic:
+    Type: AWS::SNS::Topic
+
+  # ApprovalLambdaFunction:
+  #   Type: AWS::Lambda::Function
+  #   Properties:
+  #     Handler: index.handler
+  #     Runtime: nodejs
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: "/"
+      Policies:
+        - PolicyName: LambdaExecutionPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: "arn:aws:logs:*:*:*"
+              - Effect: Allow
+                Action:
+                  - cloudformation:DescribeChangeSet
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - sns:Publish
+                Resource: !Ref SnsTopic
+
+  CheckChangeSetLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: index.handler
+      Runtime: python3.8
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        ZipFile: |
+          import boto3
+          import json
+          import os
+
+          def handler(event, context):
+              # Extract ChangeSet details from the event
+              detail = event['detail']
+              change_set_name = detail['changeSetId'].split('/')[-1]
+              stack_name = detail['stackName']
+
+              # Initialize CloudFormation and SNS clients
+              client = boto3.client('cloudformation')
+              sns = boto3.client('sns')
+
+              # Get ChangeSet details
+              response = client.describe_change_set(
+                  ChangeSetName=change_set_name,
+                  StackName=stack_name
+              )
+
+              # Check if ChangeSet wants to drop and recreate the DynamoDB table
+              recreate_table = False
+              for change in response['Changes']:
+                  if change['ResourceChange']['Action']
+
+  PipelineLambdaInvokePolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: PipelineLambdaInvokePolicy
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - lambda:InvokeFunction
+            Resource: !GetAtt CheckChangeSetLambda.Arn
+      Roles:
+        - !Ref PipelineRole
+
   CodePipeline:
     Type: AWS::CodePipeline::Pipeline
     # AWS-DOC https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-codepipeline-pipeline.html
@@ -87,8 +177,18 @@ Resources:
             StackName: !Ref AppStackName
             TemplatePath: !Sub SourceCode::${AppStackTemplatePath}
           RunOrder: 1
+        - Name: CheckChangeSet
+          ActionTypeId:
+            Category: Invoke
+            Owner: AWS
+            Provider: Lambda
+            Version: '1'
+          Configuration:
+            FunctionName: !GetAtt CheckChangeSetLambda.Arn
+            UserParameters: !Sub "{\"stackName\": \"${AppStackName}\", \"changeSetName\": \"IncomingChanges\"}"
+          RunOrder: 2
 
-      - Name: ApproveChangeSet
+      - Name: Approval
         Actions:
         - Name: ApproveTheChanges
           ActionTypeId:
@@ -96,6 +196,9 @@ Resources:
             Owner: AWS
             Provider: Manual
             Version: '1'
+          Configuration:
+            #NotificationArn: !Ref SnsTopic
+            CustomData: "Please review the ChangeSet details before approving."
           RunOrder: 2
 
       - Name: DeployChangeSet
