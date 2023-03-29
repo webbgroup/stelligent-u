@@ -184,7 +184,7 @@ Resources:
             Provider: Lambda
             Version: '1'
           Configuration:
-            FunctionName: !GetAtt CheckChangeSetLambda.Arn
+            FunctionName: CheckChangeSetLambda
             UserParameters: !Sub "{\"stackName\": \"${AppStackName}\", \"changeSetName\": \"IncomingChanges\"}"
           RunOrder: 2
 
