@@ -40,6 +40,8 @@ Parameters:
 Resources:
   ArtifactBucket:
     Type: AWS::S3::Bucket
+    ### DANGEROUS IN PROD
+    DeletionPolicy: Delete  # <-- Remove this line to preserve artifacts
     Properties:
       VersioningConfiguration:
         Status: Enabled
