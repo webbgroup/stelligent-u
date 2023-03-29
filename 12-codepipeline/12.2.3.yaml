@@ -250,6 +250,7 @@ Resources:
                 - codebuild:StartBuild
                 - codebuild:BatchGetBuilds
                 - iam:PassRole
+                - lambda:InvokeFunction
                 Effect: Allow
                 Resource: '*'
   CfnRole:
