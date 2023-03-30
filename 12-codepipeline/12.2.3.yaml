@@ -98,6 +98,9 @@ Resources:
           import os
 
           def handler(event, context):
+              # Print the event object for debugging
+              print(f"Event: {json.dumps(event)}")
+
               # Extract ChangeSet details from the event
               detail = event['detail']
               change_set_name = detail['changeSetId'].split('/')[-1]
@@ -116,7 +119,9 @@ Resources:
               # Check if ChangeSet wants to drop and recreate the DynamoDB table
               recreate_table = False
               for change in response['Changes']:
-                  if change['ResourceChange']['Action']
+                  if change['ResourceChange']['Action'] == 'Remove' and change['ResourceChange']['ResourceType'] == 'AWS::DynamoDB::Table':
+                      recreate_table = True
+                      break
 
   PipelineLambdaInvokePolicy:
     Type: AWS::IAM::Policy
