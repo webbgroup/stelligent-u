@@ -46,12 +46,6 @@ Resources:
   SnsTopic:
     Type: AWS::SNS::Topic
 
-  # ApprovalLambdaFunction:
-  #   Type: AWS::Lambda::Function
-  #   Properties:
-  #     Handler: index.handler
-  #     Runtime: nodejs
-
   LambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -84,6 +78,11 @@ Resources:
                 Action:
                   - sns:Publish
                 Resource: !Ref SnsTopic
+              - Effect: 'Allow'
+                Action:
+                  - 'codepipeline:PutJobSuccessResult'
+                  - 'codepipeline:PutJobFailureResult'
+                Resource: '*'
 
   CheckChangeSetLambda:
     Type: AWS::Lambda::Function
@@ -123,6 +122,8 @@ Resources:
                   if change['ResourceChange']['Action'] in ('Replace', 'Remove') and change['ResourceChange']['ResourceType'] == 'AWS::DynamoDB::Table':
                       recreate_table = True
                       break
+
+              code_pipeline.put_job_success_result(jobId=job_id)
 
 
   PipelineLambdaInvokePolicy:
