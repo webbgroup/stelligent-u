@@ -80,8 +80,8 @@ Resources:
                 Resource: !Ref SnsTopic
               - Effect: 'Allow'
                 Action:
-                  - 'codepipeline:PutJobSuccessResult'
-                  - 'codepipeline:PutJobFailureResult'
+                  - codepipeline:PutJobSuccessResult
+                  - codepipeline:PutJobFailureResult
                 Resource: '*'
 
   CheckChangeSetLambda:
@@ -122,6 +122,11 @@ Resources:
                   if change['ResourceChange']['Action'] in ('Replace', 'Remove') and change['ResourceChange']['ResourceType'] == 'AWS::DynamoDB::Table':
                       recreate_table = True
                       break
+
+              # Publish a message to the SNS topic if the table is being dropped and recreated
+              if recreate_table:
+                  message = f"The ChangeSet for stack {stack_name} will recreate the DynamoDB table. Please review the changes."
+                  sns.publish(TopicArn=os.environ['SNS_TOPIC_ARN'], Message=message)
 
               code_pipeline.put_job_success_result(jobId=job_id)
 
