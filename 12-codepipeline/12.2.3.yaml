@@ -105,6 +105,7 @@ Resources:
 
               # Extract ChangeSet details from the event
               job_data = event['CodePipeline.job']['data']
+              job_id = event['CodePipeline.job']['id']
               user_parameters = json.loads(job_data['actionConfiguration']['configuration']['UserParameters'])
               stack_name = user_parameters['stackName']
               change_set_name = user_parameters['changeSetName']
