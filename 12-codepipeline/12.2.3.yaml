@@ -100,6 +100,9 @@ Resources:
               # Print the event object for debugging
               print(f"Event: {json.dumps(event)}")
 
+              # Initialize CodePipeline client
+              code_pipeline = boto3.client('codepipeline')
+
               # Extract ChangeSet details from the event
               job_data = event['CodePipeline.job']['data']
               user_parameters = json.loads(job_data['actionConfiguration']['configuration']['UserParameters'])
