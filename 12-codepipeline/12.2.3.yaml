@@ -102,9 +102,10 @@ Resources:
               print(f"Event: {json.dumps(event)}")
 
               # Extract ChangeSet details from the event
-              detail = event['detail']
-              change_set_name = detail['changeSetId'].split('/')[-1]
-              stack_name = detail['stackName']
+              job_data = event['CodePipeline.job']['data']
+              user_parameters = json.loads(job_data['actionConfiguration']['configuration']['UserParameters'])
+              stack_name = user_parameters['stackName']
+              change_set_name = user_parameters['changeSetName']
 
               # Initialize CloudFormation and SNS clients
               client = boto3.client('cloudformation')
@@ -119,9 +120,10 @@ Resources:
               # Check if ChangeSet wants to drop and recreate the DynamoDB table
               recreate_table = False
               for change in response['Changes']:
-                  if change['ResourceChange']['Action'] == 'Remove' and change['ResourceChange']['ResourceType'] == 'AWS::DynamoDB::Table':
+                  if change['ResourceChange']['Action'] in ('Replace', 'Remove') and change['ResourceChange']['ResourceType'] == 'AWS::DynamoDB::Table':
                       recreate_table = True
                       break
+
 
   PipelineLambdaInvokePolicy:
     Type: AWS::IAM::Policy
