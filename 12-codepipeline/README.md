@@ -360,6 +360,13 @@ CodePipeline feature: an Approval action.
 - Otherwise, approve the continuation of the pipeline, allowing the
   pipeline to continue creating or updating the application stack.
 
+```
+aws cloudformation --profile temp create-stack --stack-name Joels1223 --template-body file://12.2.3.yaml --parameters file://12.1.1.json --capabilities CAPABILITY_NAMED_IAM
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels1223/27d2fcd0-dac3-11ed-b7c1-0af2c76cc20b"
+}
+```
+
 ### Retrospective 12.2
 
 Commit a change to the master branch of your repository to
