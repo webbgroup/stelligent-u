@@ -274,6 +274,10 @@ Resources:
                 - lambda:InvokeFunction
                 Effect: Allow
                 Resource: '*'
+              - Effect: Allow
+                Action:
+                  - sns:Publish
+                Resource: !Ref SnsTopic
   CfnRole:
     Type: AWS::IAM::Role
     # AWS-DOC https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html
