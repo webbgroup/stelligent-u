@@ -90,6 +90,9 @@ Resources:
       Handler: index.handler
       Runtime: python3.8
       Role: !GetAtt LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          SNS_TOPIC_ARN: !Ref SnsTopic
       Code:
         ZipFile: |
           import boto3
@@ -122,18 +125,17 @@ Resources:
 
               # Check if ChangeSet wants to drop and recreate the DynamoDB table
               recreate_table = False
+              changes_summary = ""
               for change in response['Changes']:
+                  changes_summary += f"- {change['ResourceChange']['ResourceType']} ({change['ResourceChange']['Action']})\n"
                   if change['ResourceChange']['Action'] in ('Replace', 'Remove') and change['ResourceChange']['ResourceType'] == 'AWS::DynamoDB::Table':
                       recreate_table = True
-                      break
 
-              # Publish a message to the SNS topic if the table is being dropped and recreated
-              if recreate_table:
-                  message = f"The ChangeSet for stack {stack_name} will recreate the DynamoDB table. Please review the changes."
-                  sns.publish(TopicArn=os.environ['SNS_TOPIC_ARN'], Message=message)
+              # Publish a message to the SNS topic with the changes summary
+              message = f"The ChangeSet for stack {stack_name} includes the following changes:\n\n{changes_summary}"
+              sns.publish(TopicArn=os.environ['SNS_TOPIC_ARN'], Message=message)
 
               code_pipeline.put_job_success_result(jobId=job_id)
-
 
   PipelineLambdaInvokePolicy:
     Type: AWS::IAM::Policy
@@ -216,7 +218,7 @@ Resources:
             Provider: Manual
             Version: '1'
           Configuration:
-            #NotificationArn: !Ref SnsTopic
+            NotificationArn: !Ref SnsTopic
             CustomData: "Please review the ChangeSet details before approving."
           RunOrder: 2
 
