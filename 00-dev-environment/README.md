@@ -54,6 +54,13 @@ and then run some simple commands to confirm access using your keys:
 - [list-buckets](https://docs.aws.amazon.com/cli/latest/reference/s3api/list-buckets.html)
 - [describe-instances](https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-instances.html)
 
+type this to start off with after you create your key
+```
+aws configure
+```
+
+the access id and secreate access key needs to be stored locally
+
 Remember that the combination of an access key and a secret key are
 the same as user credentials and should not be given out or stored
 in a public location like a GitHub repository, nor should they be
@@ -133,16 +140,19 @@ authorized to in the labs account. These tokens will last approximately
 1. Create a script to automate the gathering and assigning of the temporary
   AWS MFA credentials from Option 1.
 1. Try to reduce the amount of manual input as much as possible.
+Completed getcreds.sh
 
 ##### Question 0.1.1: 1
 
 What method did you use to store the aws credentials?  What are some other
 options?
+Temp File to output
 
 ###### Question 0.1.1: 2
 
 Which AWS environment variable cannot be set in order to run the
 `aws sts get-session-token` command?
+SessionToken because you're fetching it
 
 ##### Option 2: Using AWS Vault to automatically handle your temporary tokens
 
