@@ -1,0 +1,319 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Pipeline Stack for 12.2
+
+Parameters:
+  GitHubToken:
+    Type: String
+    NoEcho: true
+    MinLength: '40'
+    MaxLength: '40'
+
+  Username:
+    Type: String
+    AllowedPattern: '[A-Za-z0-9-]+'
+    Default: webbgroup
+
+  Repo:
+    Type: String
+    AllowedPattern: '[A-Za-z0-9-]+'
+    Default: stelligent-u
+
+  Branch:
+    Type: String
+    AllowedPattern: '[A-Za-z0-9-]+'
+    Default: 12-codepipeline
+
+  AppStackName:
+    Type: String
+    AllowedPattern: '[A-Za-z0-9-]+'
+    Default: Joels-Module122-Employees
+
+  AppStackTemplatePath:
+    Type: String
+    Default: 12-codepipeline/appstack.yml
+
+Resources:
+  ArtifactBucket:
+    Type: AWS::S3::Bucket
+    ### DANGEROUS IN PROD
+    DeletionPolicy: Delete  # <-- Remove this line to preserve artifacts
+    Properties:
+      VersioningConfiguration:
+        Status: Enabled
+
+  ## Suggested
+  SnsTopic:
+    Type: AWS::SNS::Topic
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: "/"
+      Policies:
+        - PolicyName: LambdaExecutionPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: "arn:aws:logs:*:*:*"
+              - Effect: Allow
+                Action:
+                  - cloudformation:DescribeChangeSet
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - sns:Publish
+                Resource: !Ref SnsTopic
+              - Effect: 'Allow'
+                Action:
+                  - codepipeline:PutJobSuccessResult
+                  - codepipeline:PutJobFailureResult
+                Resource: '*'
+
+  CheckChangeSetLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: index.handler
+      Runtime: python3.8
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          SNS_TOPIC_ARN: !Ref SnsTopic
+      Code:
+        ZipFile: |
+          import boto3
+          import json
+          import os
+
+          def handler(event, context):
+              # Print the event object for debugging
+              print(f"Event: {json.dumps(event)}")
+
+              # Initialize CodePipeline client
+              code_pipeline = boto3.client('codepipeline')
+
+              # Extract ChangeSet details from the event
+              job_data = event['CodePipeline.job']['data']
+              job_id = event['CodePipeline.job']['id']
+              user_parameters = json.loads(job_data['actionConfiguration']['configuration']['UserParameters'])
+              stack_name = user_parameters['stackName']
+              change_set_name = user_parameters['changeSetName']
+
+              # Initialize CloudFormation and SNS clients
+              client = boto3.client('cloudformation')
+              sns = boto3.client('sns')
+
+              # Get ChangeSet details
+              response = client.describe_change_set(
+                  ChangeSetName=change_set_name,
+                  StackName=stack_name
+              )
+
+              # Check if ChangeSet wants to drop and recreate the DynamoDB table
+              recreate_table = False
+              changes_summary = ""
+              for change in response['Changes']:
+                  changes_summary += f"- {change['ResourceChange']['ResourceType']} ({change['ResourceChange']['Action']})\n"
+                  if change['ResourceChange']['Action'] in ('Replace', 'Remove') and change['ResourceChange']['ResourceType'] == 'AWS::DynamoDB::Table':
+                      recreate_table = True
+
+              # Publish a message to the SNS topic with the changes summary
+              message = f"The ChangeSet for stack {stack_name} includes the following changes:\n\n{changes_summary}"
+              sns.publish(TopicArn=os.environ['SNS_TOPIC_ARN'], Message=message)
+
+              code_pipeline.put_job_success_result(jobId=job_id)
+
+  PipelineLambdaInvokePolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: PipelineLambdaInvokePolicy
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - lambda:InvokeFunction
+            Resource: !GetAtt CheckChangeSetLambda.Arn
+      Roles:
+        - !Ref PipelineRole
+
+  CodePipeline:
+    Type: AWS::CodePipeline::Pipeline
+    # AWS-DOC https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-codepipeline-pipeline.html
+    Properties:
+      ArtifactStore:
+        Type: S3
+        Location: !Ref ArtifactBucket
+      RestartExecutionOnUpdate: true
+      RoleArn: !GetAtt PipelineRole.Arn
+      Stages:
+      - Name: Source
+        Actions:
+        - Name: GetSource
+          InputArtifacts: []
+          ActionTypeId:
+            Category: Source
+            Owner: ThirdParty
+            Version: '1'
+            Provider: GitHub
+          OutputArtifacts:
+          - Name: SourceCode
+          Configuration:
+            Owner: !Ref Username
+            Repo: !Ref Repo
+            Branch: !Ref Branch
+            PollForSourceChanges: false
+            OAuthToken: !Ref GitHubToken
+          RunOrder: 1
+
+      - Name: DeployApp
+        Actions:
+        - Name: CreateChangeSet
+          ActionTypeId:
+            Category: Deploy
+            Owner: AWS
+            Provider: CloudFormation
+            Version: '1'
+          InputArtifacts:
+            - Name: SourceCode
+          Configuration:
+            ActionMode: CHANGE_SET_REPLACE
+            ChangeSetName: IncomingChanges
+            Capabilities: CAPABILITY_IAM
+            RoleArn: !GetAtt CfnRole.Arn
+            StackName: !Ref AppStackName
+            TemplatePath: !Sub SourceCode::${AppStackTemplatePath}
+          RunOrder: 1
+        - Name: CheckChangeSet
+          ActionTypeId:
+            Category: Invoke
+            Owner: AWS
+            Provider: Lambda
+            Version: '1'
+          Configuration:
+            FunctionName: !Ref CheckChangeSetLambda
+            UserParameters: !Sub "{\"stackName\": \"${AppStackName}\", \"changeSetName\": \"IncomingChanges\"}"
+          RunOrder: 2
+
+      - Name: Approval
+        Actions:
+        - Name: ApproveTheChanges
+          ActionTypeId:
+            Category: Approval
+            Owner: AWS
+            Provider: Manual
+            Version: '1'
+          Configuration:
+            NotificationArn: !Ref SnsTopic
+            CustomData: "Please review the ChangeSet details before approving."
+          RunOrder: 2
+
+      - Name: DeployChangeSet
+        Actions:
+        - Name: DeployTheChanges
+          ActionTypeId:
+            Category: Deploy
+            Owner: AWS
+            Provider: CloudFormation
+            Version: '1'
+          InputArtifacts:
+            - Name: SourceCode
+          Configuration:
+            ActionMode: CHANGE_SET_EXECUTE
+            ChangeSetName: IncomingChanges
+            Capabilities: CAPABILITY_IAM
+            RoleArn: !GetAtt CfnRole.Arn
+            StackName: !Ref AppStackName
+          RunOrder: 3
+  
+  PipelineRole:
+    Type: AWS::IAM::Role
+    # AWS-DOC https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action: [sts:AssumeRole]
+          Effect: Allow
+          Principal:
+            Service: [codepipeline.amazonaws.com]
+        Version: '2012-10-17'
+      Path: /
+      Policies:
+        - PolicyName: CodePipelineAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                - s3:*
+                - cloudformation:CreateStack
+                - cloudformation:DescribeStacks
+                - cloudformation:DeleteStack
+                - cloudformation:UpdateStack
+                - cloudformation:CreateChangeSet
+                - cloudformation:ExecuteChangeSet
+                - cloudformation:DeleteChangeSet
+                - cloudformation:DescribeChangeSet
+                - cloudformation:SetStackPolicy
+                - codebuild:StartBuild
+                - codebuild:BatchGetBuilds
+                - iam:PassRole
+                - lambda:InvokeFunction
+                Effect: Allow
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - sns:Publish
+                Resource: !Ref SnsTopic
+  CfnRole:
+    Type: AWS::IAM::Role
+    # AWS-DOC https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: cloudformation.amazonaws.com
+          Action: sts:AssumeRole
+      Policies:
+        - PolicyName: CloudFormationCodePipeline
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                - iam:CreateRole
+                - iam:DeleteRole
+                - iam:AttachRolePolicy
+                - iam:DetachRolePolicy
+                - dynamodb:*
+                Resource: '*'
+
+  GitHubWebHook:
+    Type: AWS::CodePipeline::Webhook
+    Properties: 
+      Authentication: GITHUB_HMAC
+      AuthenticationConfiguration:
+        SecretToken: !Ref GitHubToken
+      Filters: 
+        - JsonPath: '$.ref'
+          MatchEquals: refs/heads/{Branch}
+      Name: String
+      RegisterWithThirdParty: true
+      TargetAction: GetSource
+      TargetPipeline: !Ref CodePipeline
+      TargetPipelineVersion: !GetAtt CodePipeline.Version

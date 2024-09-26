@@ -92,6 +92,14 @@ and its minimal set of requisite resources:
 Deploy the Pipeline stack via the AWS CLI; its creation should
 automatically initiate the first Pipeline execution.
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/12-codepipeline$ aws cloudformation --profile temp create-stack --stack-name Joels1201 --template-body file://12.1.1.yaml --parameters file://12.1.1.json --capabilities CAPABILITY_NAMED_IAM
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels1201/702680b0-0918-11ed-84eb-0a619c6ccc7f"
+}
+
+```
+
 #### Lab 12.1.2
 
 Add two new stages to your pipeline, utilizing CodeBuild:
@@ -115,12 +123,18 @@ them, including the CFN resources you need:
 
 - the CodeBuild resources themselves, including build specs
 
+See here:
+https://us-east-1.console.aws.amazon.com/codesuite/codepipeline/pipelines?region=us-east-1&pipelines-meta=eyJmIjp7InRleHQiOiIifSwicyI6eyJwcm9wZXJ0eSI6InVwZGF0ZWQiLCJkaXJlY3Rpb24iOi0xfSwibiI6MTAsImkiOjB9
+
+
 ### Retrospective 12.1
 
 #### Question: CloudFormation Template
 
 _Is executing a CloudFormation template a legitimate example of an
 "application"? Provide an explanation._
+
+Somewhat, there are other methodologies that still need to happen for a standard application
 
 #### Question: Pipeline Template
 
@@ -129,11 +143,39 @@ you hard-coded any of the following:_
 
 - the name of the 'application' stack
 
+```
+  AppStackName:
+    Type: String
+    AllowedPattern: '[A-Za-z0-9-]+'
+    Default: joels-module12-app
+```
+
 - the repository name, the branch to track, or personal access token
+
+```
+  Repo:
+    Type: String
+    AllowedPattern: '[A-Za-z0-9-]+'
+    Default: stelligent-u
+```
 
 - the S3 bucket name
 
+```
+  StackBucketName:
+    Type: String
+    Default: joels-module12.codepipeline.bucket
+```
+
 - anything else that might enhance portability
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/12-codepipeline$ aws cloudformation --profile temp create-stack --stack-name Joels1201 --template-body file://12.1.2.yaml --parameters file://12.1.1.json --capabilities CAPABILITY_NAMED_IAM
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels1201/fe51d1b0-09bc-11ed-8186-129312f699c3"
+}
+
+```
 
 #### Task
 
@@ -146,6 +188,9 @@ pipeline stack and use the created roles to recreate the missing role
 for your orphaned bucket stack. To help avoid this in the future it's a
 good idea to define your roles in a separate stack and use the outputs
 in your other stacks.
+
+Correct, but was able to remove via versioning, then empty the bucket, then delete the bucket.
+
 
 ## Lesson 12.2: Pipelines Support Infrastructure as Code
 
@@ -197,7 +242,17 @@ Use the template:
 - Create a stack using this template to ensure it functions as
   expected
 
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/12-codepipeline$ aws cloudformation --profile temp create-stack --stack-name Joels1221 --template-body file://12.2.1.yaml --capabilities CAPABILITY_NAMED_IAM
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels1221/9e2cc630-09d2-11ed-aa6f-1277a47e4127"
+}
+```
+
 - Delete this stack once the template is working.
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/12-codepipeline$ aws cloudformation --profile temp delete-stack --stack-name Joels1221
+```
 
 #### Lab 12.2.2
 
@@ -205,14 +260,56 @@ Create a pipeline that leverages CodePipeline and CodeBuild to deploy
 the application stack (the table you just designed), with these
 requirements:
 
+
 - the pipeline should use a [CloudFormation ChangeSet](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-changesets.html)
   to either deploy or update the application stack
 
 - the *first* time the pipeline is executed, it should create the
   stack using a 'CREATE' type of ChangeSet
 
+
+```
+        - Name: DeployChangeSet
+          ActionTypeId:
+            Category: Deploy
+            Owner: AWS
+            Provider: CloudFormation
+            Version: '1'
+          InputArtifacts:
+            - Name: SourceCode
+          Configuration:
+            ActionMode: CHANGE_SET_EXECUTE
+            ChangeSetName: IncomingChanges
+            Capabilities: CAPABILITY_IAM
+            RoleArn: !GetAtt CfnRole.Arn
+            StackName: !Ref AppStackName
+          RunOrder: 3
+```
+
 - each *subsequent* pipeline execution should update the stack, again
   using an 'UPDATE' type of ChangeSet
+
+```
+      - Name: DeployApp
+        Actions:
+        - Name: CreateChangeSet
+          ActionTypeId:
+            Category: Deploy
+            Owner: AWS
+            Provider: CloudFormation
+            Version: '1'
+          InputArtifacts:
+            - Name: SourceCode
+          Configuration:
+            ActionMode: CHANGE_SET_REPLACE
+            ChangeSetName: IncomingChanges
+            Capabilities: CAPABILITY_IAM
+            RoleArn: !GetAtt CfnRole.Arn
+            StackName: !Ref AppStackName
+            TemplatePath: !Sub SourceCode::${AppStackTemplatePath}
+          RunOrder: 1
+```
+
 
 The Pipeline should therefore have a Source stage and a Deploy stage,
 and the Deploy stage should consist of two actions:
@@ -226,6 +323,15 @@ and the Deploy stage should consist of two actions:
 
   - this *actually applies the changes* that were laid out when the
     ChangeSet was created
+
+```
+joel@joels-desktop:~/Documents/Stelligent/stelligent-u/12-codepipeline$ aws cloudformation --profile temp create-stack --stack-name Joels1222 --template-body file://12.2.2.yaml --parameters file://12.1.1.json --capabilities CAPABILITY_NAMED_IAM
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels1222/bbdfa910-09f8-11ed-9970-0e40f5ee4e7d"
+}
+```
+
+Created changes to the DB. It did error out as expected.
 
 #### Lab 12.2.3
 
@@ -253,6 +359,13 @@ CodePipeline feature: an Approval action.
 
 - Otherwise, approve the continuation of the pipeline, allowing the
   pipeline to continue creating or updating the application stack.
+
+```
+aws cloudformation --profile temp create-stack --stack-name Joels1223 --template-body file://12.2.3.yaml --parameters file://12.1.1.json --capabilities CAPABILITY_NAMED_IAM
+{
+    "StackId": "arn:aws:cloudformation:us-east-1:324320755747:stack/Joels1223/27d2fcd0-dac3-11ed-b7c1-0af2c76cc20b"
+}
+```
 
 ### Retrospective 12.2
 
